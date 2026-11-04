@@ -1,0 +1,89 @@
+import * as THREE from 'three';
+
+const phases = [
+ ['A','AWATI 🌽','Plantação de milho','Javali gigante','🐗','AWATI','milho',['milho','onça','água','árvore'],'🌽'],
+ ['DJ','DJAGWARETE 🐆','Floresta fechada','Onça guardiã','🐆','DJAGWARETE','onça',['onça','galinha','peixe','relâmpago'],'🐾'],
+ ['E','EITSY 🐝','Clareira das flores','Abelha-rainha','🐝','EITSY','abelha-mãe',['abelha-mãe','árvore','gato','milho'],'🌼'],
+ ['GW','GWARÁ 🐺','Campo da mata','Lobo guardião','🐺','GWARÁ','lobo',['lobo','água','peixe','galinha'],'🌾'],
+ ['I','CAMINHO I 🌳','Trilha das teias','Aranha da floresta','🕷️','NHANDU','aranha',['aranha','milho','madeira','lobo'],'🕸️'],
+ ['K','KARU 🍃','Trilha dos frutos','Cobra gigante','🐍','KARU','comer',['comer','árvore','onça','água'],'🍃'],
+ ['M','MITÃ 🧸','Aldeia das crianças','Porco-do-mato','🐗','MITÃ','criança',['criança','peixe','galinha','relâmpago'],'🪁'],
+ ['MB','MBORAI 🎵','Caverna musical','Morcego gigante','🦇','MBORAI','termo do projeto: personagem músico',['personagem músico','milho','lobo','água'],'🎶'],
+ ['N','NAMBU 🐦','Mata dos ninhos','Ave guardiã','🦅','NAMBU','ave',['ave','onça','árvore','comer'],'🪺'],
+ ['ND','NDERU 🪨','Ruínas antigas','Guardião de pedra','🗿','NDERU','seu pai',['seu pai','água','gato','milho'],'🪨'],
+ ['NH','NHANDU 🕷️','Floresta das teias','Aranha das teias','🕷️','NHANDU','aranha',['aranha','galinha','peixe','madeira'],'🕸️'],
+ ['O','CAMINHO O 🌙','Floresta noturna','Coruja gigante','🦉','URU KUREA','coruja',['coruja','lobo','milho','água'],'🌙'],
+ ['P','PIRA 🐟','Rio das pedras','Peixe gigante','🐟','PIRA','peixe',['peixe','árvore','aranha','comer'],'💧'],
+ ['R','RREKOA 🏡','Caminho entre aldeias','Guardião da trilha','🛡️','RREKOA','forma do projeto: aldeia no caminho',['aldeia no caminho','onça','galinha','relâmpago'],'🏡'],
+ ['T','TAY 🐜','Vale dos formigueiros','Formiga-rainha','🐜','TAY','formiga',['formiga','peixe','água','árvore'],'🍂'],
+ ['TS','TSUGWAI 🐗','Mata de barro','Porco-do-mato chefe','🐗','TSUGWAI','porco',['porco','lobo','milho','coruja'],'🐾'],
+ ['TX','TXIWI 🐈','Bosque das casas','Felino guardião','🐈','TXIWI','gato',['gato','aranha','água','formiga'],'🐾'],
+ ['U','URU 🐔','Campo do galinheiro','Galo gigante','🐓','URU','galinha',['galinha','onça','árvore','relâmpago'],'🥚'],
+ ['W','WERA ⚡','Floresta da tempestade','Guardião da tempestade','⚡','WERA','relâmpago',['relâmpago','peixe','gato','comer'],'⛈️'],
+ ['Y','YWYRA 🌳','Floresta ancestral','Árvore guardiã','🌳','YWYRA','árvore (conferir sentido na edição adotada)',['árvore','água','milho','lobo'],'🌳'],
+ ["Y’Y",'Y’Y 💧','Grande rio e cachoeira','Guardião das Águas','🌊','Y’Y','água',['água','árvore','onça','galinha'],'💧']
+];
+const colors=[0x8edb78,0x4abf80,0x9fe8a5,0x9bcf67,0x55b98c,0xc5d879,0x8bd49c,0x9079bd,0x65c68e,0xb2a77c,0x4eae79,0x526c83,0x55c9db,0x9cc78a,0x88c85c,0x9a956c,0x7acb9c,0xd4c66b,0x719e83,0x75b86b,0x55c8e9];
+const $=id=>document.getElementById(id);
+let scene,camera,renderer,clock,player,companion,boss,bossTarget,ground,water,phaseIndex=0,lives=3,arrows=10,score=0,bossHP=100,unlocked=1,completed=new Set(),started=false,quizOpen=false,aiming=false,velocityY=0,onGround=true,dodgeTime=0,attackClock=0,spawnedArrows=[],collectibles=[],enemies=[];
+const keys={}; const raycaster=new THREE.Raycaster(); const center=new THREE.Vector2(0,0); const move={x:0,z:0};
+const mat=(color,roughness=.9)=>new THREE.MeshStandardMaterial({color,roughness});
+function box(w,h,d,color,x,y,z,parent=scene){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+function group(){return new THREE.Group();}
+function makeCharacter(x,z,shirt=0x22a7a0){const g=group();const skin=mat(0xb8794f),cloth=mat(shirt),dark=mat(0x49352c),pants=mat(0x315d87);let torso=box(.65,.8,.35,shirt,0,1.25,0,g);let head=box(.52,.52,.5,0xd49a70,0,1.95,0,g);box(.56,.16,.55,0x30251f,0,2.22,0,g);box(.12,.12,.07,0x201b18,-.13,1.98,.27,g);box(.12,.12,.07,0x201b18,.13,1.98,.27,g);let armL=box(.2,.65,.22,shirt,-.43,1.3,0,g),armR=box(.2,.65,.22,shirt,.43,1.3,0,g);let legL=box(.24,.65,.27,0x315d87,-.18,.48,0,g),legR=box(.24,.65,.27,0x315d87,.18,.48,0,g);box(.32,.14,.42,0x49352c,-.18,.12,.04,g);box(.32,.14,.42,0x49352c,.18,.12,.04,g);g.userData={torso,head,armL,armR,legL,legR,walk:0};g.position.set(x,0,z);scene.add(g);return g;}
+function tree(x,z,s=1){const g=group();box(.48*s,1.8*s,.48*s,0x8b5a35,0,.9*s, g);let crown=box(2*s,1.45*s,1.8*s,0x2d9e5c,0,2.1*s, g);crown.material=mat([0x35a85e,0x55bd67,0x278c58][Math.floor(Math.random()*3)]);box(1.4*s,1.1*s,1.4*s,0x65c96b,.2*s,2.65*s,g);g.position.set(x,0,z);scene.add(g);return g;}
+function buildWorld(){while(scene.children.length>0)scene.remove(scene.children[0]);scene.background=new THREE.Color(0x9be4f0);scene.fog=new THREE.Fog(0x9be4f0,24,65);scene.add(new THREE.HemisphereLight(0xe8ffff,0x47734c,2));let sun=new THREE.DirectionalLight(0xfff3cf,2.3);sun.position.set(-8,16,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+ const c=colors[phaseIndex];ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),mat(c));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+ // winding path
+ for(let i=0;i<13;i++){let x=Math.sin(i*.48)*2;let p=box(4,.08,3.3,0xd9bd83,x,.04,-i*3.5);p.rotation.y=Math.sin(i*.48)*.16;}
+ // water ribbon in river phases and final
+ if([12,20].includes(phaseIndex)){water=new THREE.Mesh(new THREE.BoxGeometry(13,.18,45),new THREE.MeshStandardMaterial({color:0x39bde5,transparent:true,opacity:.88,metalness:.15,roughness:.2}));water.position.set(6,.12,-17);scene.add(water);}
+ // trees and plants around path
+ for(let i=0;i<44;i++){let z=4-(i*1.5);let side=i%2?1:-1;let x=side*(5+Math.random()*5);tree(x,z,.7+Math.random()*.65);if(i%3===0){let shrub=box(.8,.5,.8,0x49b65c,x+side*.8,.25,z-1);}}
+ // rocks, flowers, logs
+ for(let i=0;i<18;i++){let x=(Math.random()-.5)*18,z=-Math.random()*42;let r=box(.6+Math.random()*.8,.45,.7,0x9a9a83,x,.22,z);r.rotation.y=Math.random()*2;}
+ // village huts in phase 1 and 14
+ if([0,13].includes(phaseIndex)){for(let i=0;i<3;i++){let x=-8+i*7;box(3,2.2,2.8,0xb77a49,x,1.1,-5-i*3);let roof=box(3.8,.35,3.5,0x9c4c32,x,2.4,-5-i*3);roof.rotation.z=.12;}}
+ // flowers and collectible word tokens
+ for(let i=0;i<3;i++){let token=new THREE.Group();let orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.45,1),new THREE.MeshStandardMaterial({color:0xffd34e,emissive:0x9b5b00,emissiveIntensity:.5}));token.add(orb);let ring=new THREE.Mesh(new THREE.TorusGeometry(.65,.07,8,24),mat(0xffffff));ring.rotation.x=Math.PI/2;token.add(ring);token.position.set((i-1)*2.5,.9,-7-i*8);scene.add(token);collectibles.push(token);}
+ player=makeCharacter(0,5,0x18a9a0);companion=makeCharacter(-2.2,5,0xf08a42);companion.scale.setScalar(.88);
+ // boss creature made of block geometry, themed colors
+ const data=phases[phaseIndex];boss=group();const bossColor=[0x9a633e,0xd18b45,0xf4c64d,0x777b78,0x5a8b4a][phaseIndex%5];box(2.5,2,1.8,bossColor,0,1.6,0,boss);box(1.7,1.25,1.4,bossColor,0,3,0,boss);box(.35,.25,.12,0x202020,-.4,3.1,.72,boss);box(.35,.25,.12,0x202020,.4,3.1,.72,boss);box(.7,.35,.3,0x372c24,0,2.55,.82,boss);for(let i=0;i<4;i++)box(.45,1.1,.5,bossColor,(i%2?1:-1)*.9,.55,(i<2?-.55:.55),boss);boss.position.set(0,0,-25);scene.add(boss);
+ bossTarget=new THREE.Mesh(new THREE.SphereGeometry(.45,16,12),new THREE.MeshStandardMaterial({color:0xfff36a,emissive:0xffb300,emissiveIntensity:1.5}));bossTarget.position.set(0,3.25,.9);boss.add(bossTarget);
+ // ambient critters
+ enemies=[];for(let i=0;i<7;i++){let e=box(.45,.35,.65,[0x8b5a35,0x4c3a2c,0x8d8d8d][i%3],(Math.random()-.5)*12,.2,-5-Math.random()*30);e.userData={phase:Math.random()*6};enemies.push(e);}
+ camera.position.set(0,7,12);camera.lookAt(0,1,0);collectibles.forEach((o,i)=>o.userData.got=false);
+}
+function init(){scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,150);renderer=new THREE.WebGLRenderer({canvas:$('world'),antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;clock=new THREE.Clock();loadProgress();buildWorld();updateHUD();animate();}
+function loadProgress(){try{const s=JSON.parse(localStorage.getItem('tapeMarangatuSave')||'{}');unlocked=s.unlocked||1;completed=new Set(s.completed||[]);score=s.score||0;}catch{}}
+function saveProgress(){localStorage.setItem('tapeMarangatuSave',JSON.stringify({unlocked,completed:[...completed],score}));}
+function updateHUD(){let p=phases[phaseIndex];$('phase-number').textContent=`FASE ${String(phaseIndex+1).padStart(2,'0')} / 21`;$('phase-name').textContent=p[1];$('lives').textContent=lives;$('arrows').textContent=arrows;$('score').textContent=score;$('mission-text').textContent=`Explore ${p[2]} e encontre os 3 símbolos brilhantes!`;$('boss-name').textContent=p[3].toUpperCase();$('boss-emoji').textContent=p[4];$('boss-health').style.width=bossHP+'%';$('boss-state').textContent=bossHP>65?'OBSERVANDO':bossHP>30?'ATENÇÃO!':'QUASE LÁ!';}
+function showToast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1600);}
+function openOverlay(id){$(id).classList.add('show');}function closeOverlay(id){$(id).classList.remove('show');}
+function buildMap(){let grid=$('phase-grid');grid.innerHTML='';phases.forEach((p,i)=>{let b=document.createElement('button');b.className='phase-tile '+(completed.has(i)?'done':i>=unlocked?'locked':'');b.innerHTML=`<span>FASE ${String(i+1).padStart(2,'0')}</span><b>${p[0]}</b><span>${completed.has(i)?'⭐ CONCLUÍDA':i<unlocked?'▶ LIBERADA':'🔒 BLOQUEADA'}</span>`;if(i<unlocked)b.onclick=()=>{phaseIndex=i;closeOverlay('map-screen');startPhase();};grid.appendChild(b);});}
+function startPhase(){lives=3;arrows=10;bossHP=100;quizOpen=false;collectibles=[];spawnedArrows=[];buildWorld();$('boss-panel').style.display='block';$('mission-text').textContent=`Encontre os 3 símbolos brilhantes em ${phases[phaseIndex][2]}!`;updateHUD();started=true;}
+function createArrow(){if(!started||quizOpen||arrows<=0)return;arrows--;let dir=new THREE.Vector3();camera.getWorldDirection(dir);let start=player.position.clone().add(new THREE.Vector3(0,1.55,0));let arrow=box(.08,.08,1.1,0x7b4a25,start.x,start.y,start.z);arrow.lookAt(start.clone().add(dir));arrow.userData={dir:dir.clone(),life:1.8};spawnedArrows.push(arrow);updateHUD();}
+function hitBoss(){if(bossHP<=0)return;if(collectibles.some(o=>!o.userData.got)){showToast('🌟 Encontre os 3 símbolos antes do guardião!');return;}bossHP=Math.max(0,bossHP-20);score+=10;boss.scale.setScalar(1.06);setTimeout(()=>boss&&boss.scale.setScalar(1),100);updateHUD();if(bossHP===0){showToast('🌟 Desafio do conhecimento desbloqueado!');setTimeout(openQuiz,800);}}
+function openQuiz(){quizOpen=true;let p=phases[phaseIndex];$('quiz-emoji').textContent=p[8];$('quiz-question').textContent=`O que significa ${p[5]}?`;$('quiz-feedback').textContent='';let answers=[...p[7]].sort(()=>Math.random()-.5);$('answers').innerHTML='';answers.forEach(a=>{let b=document.createElement('button');b.className='answer';b.textContent=a;b.onclick=()=>{if(a===p[6]){score+=50;completed.add(phaseIndex);unlocked=Math.max(unlocked,Math.min(21,phaseIndex+2));saveProgress();$('quiz-feedback').textContent='🎉 AGUYJEVETE! Resposta correta!';$('quiz-feedback').style.color='#159b65';setTimeout(()=>{closeOverlay('quiz-screen');quizOpen=false;phaseWon();},900);}else{$('quiz-feedback').textContent='Quase! Tente outra vez. 💚';$('quiz-feedback').style.color='#d36a43';}};$('answers').appendChild(b);});openOverlay('quiz-screen');}
+function phaseWon(){let final=phaseIndex===20;$('message-eyebrow').textContent=final?'🌊 GRANDE CONQUISTA':'🏅 CAMINHO CONCLUÍDO';$('message-emoji').textContent=final?'💦🌈':'🏅✨';$('message-title').textContent=final?'AGUYJEVETE!':'MUITO BEM!';$('message-text').textContent=final?'A jornada dos 21 caminhos foi concluída! A água voltou a correr e a floresta está protegida.':'Você aprendeu uma nova palavra e conquistou a medalha deste caminho!';$('next-btn').textContent=final?'VIVER A CONQUISTA':'PRÓXIMA FASE ➜';$('next-btn').onclick=()=>{closeOverlay('message-screen');if(final){started=false;showToast('Nhandewa, nhanhembo’e! 🌿');openOverlay('start-screen');}else{phaseIndex=Math.min(20,phaseIndex+1);startPhase();}};$('message-map-btn').onclick=()=>{closeOverlay('message-screen');buildMap();openOverlay('map-screen');};openOverlay('message-screen');updateHUD();}
+function damagePlayer(){if(dodgeTime>0)return;lives--;updateHUD();showToast('Ops! Desvie do guardião!');if(lives<=0){started=false;$('message-eyebrow').textContent='🌱 NÃO DESISTA';$('message-emoji').textContent='💚';$('message-title').textContent='VAMOS TENTAR DE NOVO!';$('message-text').textContent='Você pode recomeçar esta fase. Seus caminhos conquistados continuam salvos.';$('next-btn').textContent='RECOMEÇAR FASE';$('next-btn').onclick=()=>{closeOverlay('message-screen');startPhase();};$('message-map-btn').style.display='none';openOverlay('message-screen');}}
+function animate(){requestAnimationFrame(animate);let dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;if(started&&!quizOpen){let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0)+move.x,dz=(keys.KeyS?1:0)-(keys.KeyW?1:0)+move.z;let len=Math.hypot(dx,dz);if(len>1){dx/=len;dz/=len;}let speed=keys.ShiftLeft?8:5;player.position.x+=dx*speed*dt;player.position.z+=dz*speed*dt;player.position.x=THREE.MathUtils.clamp(player.position.x,-10,10);player.position.z=THREE.MathUtils.clamp(player.position.z,-3,12);if(keys.Space&&onGround){velocityY=7;onGround=false;}velocityY-=18*dt;player.position.y+=velocityY*dt;if(player.position.y<=0){player.position.y=0;velocityY=0;onGround=true;}if(dodgeTime>0)dodgeTime-=dt;let moving=len>.05;let ud=player.userData;ud.walk+=dt*(moving?10:2);ud.legL.rotation.x=moving?Math.sin(ud.walk)*.65:0;ud.legR.rotation.x=moving?-Math.sin(ud.walk)*.65:0;ud.armL.rotation.x=moving?-Math.sin(ud.walk)*.35:0;ud.armR.rotation.x=moving?Math.sin(ud.walk)*.35:0;companion.position.x=player.position.x-2.2+Math.sin(t*2)*.3;companion.position.z=player.position.z+.6;companion.position.y=Math.abs(Math.sin(t*4))*.08;
+ // camera follows from behind and smoothly turns with movement
+ let desired=new THREE.Vector3(player.position.x,player.position.y+6.2,player.position.z+10.5);camera.position.lerp(desired,.08);camera.lookAt(player.position.x,player.position.y+1.2,player.position.z-4);
+ // collectibles
+ collectibles.forEach((o)=>{o.rotation.y+=dt*1.4;o.position.y=.9+Math.sin(t*3+o.position.z)*.18;if(!o.userData.got&&player.position.distanceTo(o.position)<1.7){o.userData.got=true;o.visible=false;score+=5;updateHUD();showToast('✨ Palavra encontrada! +5 estrelas');let remaining=collectibles.filter(x=>!x.userData.got).length;$('mission-text').textContent=remaining?`Faltam ${remaining} símbolos brilhantes!`:'Símbolos encontrados! Enfrente o guardião!';if(remaining===0)showToast('🎯 Agora enfrente o guardião!');}});
+ // boss idle/charge and collision
+ boss.position.x=Math.sin(t*.7)*2.4;boss.position.z=-24+Math.sin(t*1.1)*.7;boss.rotation.y=Math.sin(t)*.22;bossTarget.visible=Math.sin(t*2)>-.25;bossTarget.position.y=3.2+Math.sin(t*4)*.12;if(Math.sin(t*1.2)>.985&&player.position.distanceTo(boss.position)<5)damagePlayer();
+ enemies.forEach((e,i)=>{e.position.x+=Math.sin(t*1.4+e.userData.phase)*dt*.5;e.rotation.y=Math.sin(t+i)*.4;});
+ // arrow movement and boss collision
+ for(let i=spawnedArrows.length-1;i>=0;i--){let a=spawnedArrows[i];a.position.addScaledVector(a.userData.dir,22*dt);a.userData.life-=dt;if(a.position.distanceTo(boss.position.clone().add(new THREE.Vector3(0,2.4,0)))<2.1&&bossTarget.visible){hitBoss();scene.remove(a);spawnedArrows.splice(i,1);continue;}if(a.userData.life<=0){scene.remove(a);spawnedArrows.splice(i,1);}}
+ attackClock+=dt;if(attackClock>5){attackClock=0;if(Math.random()>.45&&player.position.distanceTo(boss.position)<8)damagePlayer();}
+ }
+ renderer.render(scene,camera);}
+window.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space')e.preventDefault();if(e.code==='KeyR'){arrows=10;updateHUD();showToast('🏹 Flechas recarregadas!');}if(e.code==='Escape'&&started){started=false;buildMap();openOverlay('map-screen');}});window.addEventListener('keyup',e=>keys[e.code]=false);window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});$('world').addEventListener('pointerdown',e=>{if(e.button===0&&started&&!quizOpen)createArrow();});
+$('play-btn').onclick=()=>{closeOverlay('start-screen');startPhase();};$('map-btn').onclick=()=>{buildMap();openOverlay('map-screen');};$('close-map').onclick=()=>closeOverlay('map-screen');
+// mobile joystick
+const joy=$('joystick'),stick=$('stick');let joyActive=false;function joyMove(e){let r=joy.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),max=35,l=Math.hypot(x,y);if(l>max){x=x/l*max;y=y/l*max;}stick.style.transform=`translate(${x}px,${y}px)`;move.x=x/max;move.z=y/max;}
+joy.addEventListener('pointerdown',e=>{joyActive=true;joy.setPointerCapture(e.pointerId);joyMove(e);});joy.addEventListener('pointermove',e=>{if(joyActive)joyMove(e);});function joyEnd(){joyActive=false;move.x=0;move.z=0;stick.style.transform='';}joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+$('jump-btn').onpointerdown=()=>{keys.Space=true;};$('jump-btn').onpointerup=()=>{keys.Space=false;};$('dodge-btn').onclick=()=>{dodgeTime=1.1;player.position.x+=Math.random()>.5?1.6:-1.6;};$('aim-btn').onclick=()=>{aiming=!aiming;showToast(aiming?'🎯 Mira ativada':'Mira normal');};$('fire-btn').onclick=createArrow;
+init();

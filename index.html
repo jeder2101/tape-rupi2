@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#16a66a"><title>Tape Marangatu — Aventura dos 21 Caminhos</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+  </script>
+</head>
+<body>
+  <div id="game">
+    <canvas id="world"></canvas>
+    <header class="hud">
+      <div class="brand"><span class="brand-icon">🌿</span><span>TAPE <b>MARANGATU</b><small>AVENTURA DOS 21 CAMINHOS</small></span></div>
+      <div class="phase-pill"><span id="phase-number">FASE 01 / 21</span><b id="phase-name">AWATI 🌽</b></div>
+      <div class="stats"><span>❤️ <b id="lives">3</b></span><span>🏹 <b id="arrows">10</b></span><span>⭐ <b id="score">0</b></span></div>
+    </header>
+    <div class="mission"><span>🎯 MISSÃO</span><b id="mission-text">Explore o caminho e encontre o desafio!</b></div>
+    <div class="boss-panel" id="boss-panel"><div class="boss-title"><span id="boss-emoji">🐗</span><b id="boss-name">GUARDIÃO DA FASE</b><span id="boss-state">OBSERVANDO</span></div><div class="bar"><i id="boss-health"></i></div></div>
+    <div class="bottom-hint" id="hint">WASD mover · Espaço pular · Shift correr · Clique mirar/disparar</div>
+    <div class="controls-mobile" id="mobile-controls">
+      <div class="joystick" id="joystick"><div class="stick" id="stick"></div></div>
+      <div class="mobile-actions"><button id="jump-btn">⬆️<small>PULAR</small></button><button id="dodge-btn">💨<small>DESVIAR</small></button><button id="aim-btn">🎯<small>MIRAR</small></button><button id="fire-btn">🏹<small>ATIRAR</small></button></div>
+    </div>
+    <div class="overlay show" id="start-screen"><div class="panel start-panel"><div class="eyebrow">🌈 UM MUNDO DE DESCOBERTAS</div><h1>TAPE <span>MARANGATU</span></h1><h2>Aventura dos 21 Caminhos</h2><p>Explore a floresta, conheça palavras Nhandewa e proteja a natureza nesta aventura 3D!</p><div class="hero-figures"><span>🧒🏽</span><span>🧑🏽‍🦱</span><span>🦋</span><span>🌳</span></div><button class="primary" id="play-btn">▶ COMEÇAR A AVENTURA</button><button class="secondary" id="map-btn">🗺️ VER OS 21 CAMINHOS</button><small>Jogo educativo • Computador e celular</small></div></div>
+    <div class="overlay" id="map-screen"><div class="panel map-panel"><button class="close" id="close-map">✕</button><div class="eyebrow">🗺️ SUA JORNADA</div><h2>Os 21 caminhos</h2><div class="phase-grid" id="phase-grid"></div><p class="small-note">Conclua cada caminho para desbloquear o próximo.</p></div></div>
+    <div class="overlay" id="quiz-screen"><div class="panel quiz-panel"><div class="eyebrow">📖 DESAFIO DO CONHECIMENTO</div><div class="quiz-emoji" id="quiz-emoji">🌽</div><h2 id="quiz-question">O que significa AWATI?</h2><div class="answers" id="answers"></div><p id="quiz-feedback" class="feedback"></p></div></div>
+    <div class="overlay" id="message-screen"><div class="panel message-panel"><div class="eyebrow" id="message-eyebrow">🏅 CAMINHO CONCLUÍDO</div><div class="big-emoji" id="message-emoji">🌟</div><h2 id="message-title">AGUYJEVETE!</h2><p id="message-text">Você concluiu esta etapa!</p><button class="primary" id="next-btn">CONTINUAR ➜</button><button class="secondary" id="message-map-btn">VER MAPA</button></div></div>
+    <div class="toast" id="toast"></div>
+  </div>
+  <script type="module" src="game.js"></script>
+</body></html>

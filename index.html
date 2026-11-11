@@ -79,9 +79,10 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .sort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
 .sort-item{padding:10px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
 .sort-item img{width:100%;height:84px;object-fit:contain}
-.answers{display:grid;grid-template-columns:1fr;gap:10px}
-.answers.two-cols{grid-template-columns:1fr 1fr}
-.answer{padding:16px;border-radius:18px;cursor:pointer;text-align:left;font-size:15px;font-weight:800;letter-spacing:.05em;background:var(--glass);border:1px solid var(--stroke);color:var(--text);transition:transform .12s ease,background .2s,border-color .2s;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
+/* RESET GLOBAL — sempre flex-coluna; qualquer override local é resetado no JS */
+.answers{display:flex;flex-direction:column;gap:10px;width:100%;margin:0;padding:0}
+.answer{width:100%;padding:16px;border-radius:18px;cursor:pointer;text-align:left;font-size:15px;font-weight:800;letter-spacing:.05em;background:var(--glass);border:1px solid var(--stroke);color:var(--text);transition:transform .12s ease,background .2s,border-color .2s;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);min-height:56px;display:flex;align-items:center;justify-content:flex-start}
 .answer:not(:disabled):active{transform:scale(.985)}
 .answer:disabled{cursor:default}
 .answer.correct{background:linear-gradient(135deg,rgba(123,228,149,.28),rgba(123,228,149,.12));border-color:rgba(123,228,149,.7);color:#e8ffe8;box-shadow:0 0 22px rgba(123,228,149,.35)}
@@ -94,7 +95,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
 
-/* TOKENS - ORDENAR */
+/* ORDENAR FRASE */
 .tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;padding:12px;border-radius:18px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%;transition:border-color .2s,background .2s}
 .tokens.target{border-color:rgba(123,228,149,.7);background:rgba(123,228,149,.08)}
 .token{padding:10px 14px;border-radius:12px;background:linear-gradient(160deg,rgba(243,201,105,.22),rgba(243,201,105,.08));border:1px solid rgba(243,201,105,.45);color:#f4f6f0;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s,background .2s;letter-spacing:.03em;user-select:none;text-transform:none}
@@ -104,7 +105,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tokens.label-wrap::before{content:attr(data-label);position:absolute;top:6px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .tokens.target.label-wrap::before{color:var(--accent-2)}
 
-/* LIGAR AS PALAVRAS COM LINHAS PEDAGÓGICAS TRACEJADAS */
+/* LIGAR — SETAS PEDAGÓGICAS */
 .match-stage{position:relative;width:100%;padding:10px 4px;margin:4px 0}
 .match-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}
 .match-grid{position:relative;z-index:3;display:grid;grid-template-columns:1fr 1fr;column-gap:clamp(46px,14vw,84px);row-gap:0;width:100%}
@@ -144,7 +145,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .search-word{padding:5px 10px;border-radius:10px;font-size:11px;font-weight:800;letter-spacing:.06em;background:rgba(243,201,105,.10);border:1px solid rgba(243,201,105,.25);color:var(--accent);text-transform:uppercase}
 .search-word.done{background:rgba(123,228,149,.18);border-color:rgba(123,228,149,.55);color:#d8f5df;text-decoration:line-through;opacity:.7}
 
-/* BALÃO DE RESULTADO */
+/* BALÃO */
 .finish-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding-top:10px;animation:fade .4s ease}
 .finish-bubble{position:relative;width:100%;padding:28px 22px 34px;border-radius:32px;background:linear-gradient(165deg,rgba(243,201,105,.22),rgba(255,255,255,.05) 60%,rgba(30,50,38,.85));border:1px solid rgba(243,201,105,.55);box-shadow:0 22px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);text-align:center;animation:bubbleIn .45s cubic-bezier(.2,1.3,.4,1)}
 @keyframes bubbleIn{from{opacity:0;transform:scale(.88) translateY(14px)}to{opacity:1;transform:none}}
@@ -194,6 +195,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .match-item{font-size:11.5px;padding:10px 8px;min-height:50px}
   .match-grid{column-gap:32px}
   .search-cell{font-size:10px}
+  .answer{font-size:13px;padding:12px}
 }
 </style>
 </head>
@@ -647,7 +649,7 @@ const CROSSWORDS = [
       {word:"DJETY",clue:"Batata-doce",row:0,col:0,dir:"H"},
       {word:"DJAPE",clue:"Panela (início)",row:0,col:0,dir:"V"},
       {word:"PIRA",clue:"Peixe",row:3,col:0,dir:"H"},
-      {word:"PYKA",clue:"(Ave) — use apenas como referência",row:3,col:0,dir:"V"}
+      {word:"PYKA",clue:"(Ave) — apenas referência",row:3,col:0,dir:"V"}
     ]
   }
 ].map(buildCrossword);
@@ -912,13 +914,10 @@ function qParentesco(f){
   const item = shuffle(PARENTESCO)[0];
   const outros = shuffle(PARENTESCO.filter(x => x.meaning !== item.meaning)).slice(0, 3);
   return {
-    type:"parentesco",
-    kind:"PARENTESCO",
+    type:"parentesco",kind:"PARENTESCO",
     prompt:"O que significa esta palavra em português?",
     hint:"Termo de parentesco (vol. 2, p.35).",
-    target:item.meaning,
-    targetWord:item.word,
-    audioItem:item,
+    target:item.meaning,targetWord:item.word,audioItem:item,
     choices:shuffle([item.meaning, ...outros.map(x => x.meaning)])
   };
 }
@@ -926,8 +925,7 @@ function qParentesco(f){
 function qOrder(){
   const base = shuffle(FRASES_ORDENAR)[0];
   return {
-    type:"order",
-    kind:"ORDENE A FRASE",
+    type:"order",kind:"ORDENE A FRASE",
     prompt:"Ordene as palavras para formar a frase correta:",
     hint:"Toque nas palavras na ordem certa. Sujeito + complemento + verbo.",
     target: base.tokens.join("|"),
@@ -938,8 +936,7 @@ function qOrder(){
 function qMatch(){
   const selecionados = shuffle(PARES_LIGAR).slice(0, 4);
   return {
-    type:"match",
-    kind:"LIGUE AS PALAVRAS",
+    type:"match",kind:"LIGUE AS PALAVRAS",
     prompt:"Ligue cada palavra Nhandewa ao seu significado:",
     hint:"Toque num item da esquerda e depois no seu correspondente da direita.",
     pairs: selecionados,
@@ -949,8 +946,7 @@ function qMatch(){
 function qCross(){
   const puzzle = shuffle(CROSSWORDS)[0];
   return {
-    type:"cross",
-    kind:"CRUZADINHA",
+    type:"cross",kind:"CRUZADINHA",
     prompt:"Complete a cruzadinha com as palavras Nhandewa:",
     hint:"Digite apenas as letras — sem acento nem espaço.",
     puzzle,
@@ -961,10 +957,9 @@ function qSearch(){
   const set = shuffle(SEARCH_SETS)[0];
   const grid = buildSearchGrid(set.words, set.size);
   return {
-    type:"search",
-    kind:"CAÇA-PALAVRAS",
+    type:"search",kind:"CAÇA-PALAVRAS",
     prompt:"Encontre as palavras Nhandewa escondidas:",
-    hint:"Arraste (ou toque no início e no fim) para marcar cada palavra.",
+    hint:"Toque no início e depois no fim de cada palavra.",
     grid, words: set.words,
     target: set.words.join("|")
   };
@@ -1017,7 +1012,7 @@ const GERADORES = {
 };
 
 const FASES_DISTRIBUICAO = {
-  1:{word:16,number:4,count:5,order:3,match:2},
+  1:{word:14,number:4,count:4,category:3,order:3,match:2},
   2:{word:6,meaning:6,audio:4,count:4,number:2,order:3,match:3,cross:1,search:1},
   3:{meaning:4,reverse:4,category:3,odd:3,count:3,number:2,word:2,order:3,match:2,cross:2,search:2},
   4:{meaning:4,reverse:4,gap:4,cardinal:2,count:3,word:3,odd:3,parentesco:2,order:3,cross:1,search:1},
@@ -1057,21 +1052,7 @@ function montarFase(fase){
   if(unicos.length === 0){
     throw new Error("Nenhum gerador produziu questão para a fase " + fase);
   }
-  const fila = shuffle(unicos).slice(0, QS_PER_FASE);
-
-  if(fase === 1){
-    const adjaka = word("ADJAKÁ");
-    const obj = VOCABULARY.filter(v => v.category === "OBJETOS");
-    const primeira = {
-      type:"word",kind:"VOCABULÁRIO",
-      prompt:"Como se diz «cesto» na língua Nhandewa?",
-      hint:"Observe a imagem e escolha a palavra correta.",
-      target:"ADJAKÁ",imageItem:adjaka,
-      choices:pickN(adjaka,obj,3).map(x=>x.word)
-    };
-    return [primeira, ...fila.filter(q => q.target !== "ADJAKÁ").slice(0, QS_PER_FASE - 1)];
-  }
-  return fila;
+  return shuffle(unicos).slice(0, QS_PER_FASE);
 }
 
 function start(fase){
@@ -1139,6 +1120,21 @@ function createImage(item, className){
   return img;
 }
 
+/* ---------------------------------------------------------------
+   RESET CRÍTICO: sempre limpa o container de alternativas antes de
+   qualquer renderização, impedindo que estilos inline (display,
+   grid-template-columns) de uma questão vazem para outra.
+----------------------------------------------------------------*/
+function limparAnswers(box){
+  box.innerHTML = "";
+  box.style.display = "";
+  box.style.gridTemplateColumns = "";
+  box.style.flexDirection = "";
+  box.style.gap = "";
+  box.classList.remove("two-cols");
+  box.setAttribute("data-kind","");
+}
+
 function render(){
   try{
     const q = state.questions[state.index];
@@ -1156,6 +1152,8 @@ function render(){
     $("feedback").className = "feedback";
     $("next").disabled = true;
     $("next").textContent = state.index === state.questions.length - 1 ? "VER RESULTADO →" : "PRÓXIMO DESAFIO →";
+    const ans = $("answers");
+    if(ans) limparAnswers(ans);
     visual(q);
     answers(q);
   }catch(e){
@@ -1246,9 +1244,7 @@ function visual(q){
         if(!marcado){
           const val = Number(badge.textContent);
           beep(620 + val * 40, .07, "sine", .14);
-        } else {
-          beep(380, .05, "sine", .10);
-        }
+        } else beep(380, .05, "sine", .10);
       });
       wrap.append(figurinha);
     }
@@ -1274,13 +1270,13 @@ function visual(q){
     const grid = document.createElement("div");
     grid.className = "sort-grid";
     q.items.forEach(item => {
-      const box2 = document.createElement("div");
-      box2.className = "sort-item";
-      box2.append(createImage(item, ""));
+      const b2 = document.createElement("div");
+      b2.className = "sort-item";
+      b2.append(createImage(item, ""));
       const n = document.createElement("span");
       n.textContent = "?";
-      box2.append(n);
-      grid.append(box2);
+      b2.append(n);
+      grid.append(b2);
     });
     box.append(grid);
   }
@@ -1358,40 +1354,49 @@ function visual(q){
     });
     box.append(clue);
   }
+  else if(q.type === "match"){
+    const note = document.createElement("span");
+    note.className = "visual-note";
+    note.textContent = "Ligue a palavra em Nhandewa à sua tradução em português.";
+    box.append(note);
+  }
 }
 
 function answers(q){
   const box = $("answers");
-  box.innerHTML = "";
-  box.style.gridTemplateColumns = "";
-  box.classList.toggle("two-cols", q.choices && q.choices.length === 2);
+  limparAnswers(box);
+  box.setAttribute("data-kind", q.type);
 
   if(q.type === "picture-sort" && q.items){
+    box.style.display = "grid";
+    box.style.gridTemplateColumns = "repeat(3, 1fr)";
+    box.style.gap = "10px";
     q.items.forEach(item => {
       const b = document.createElement("button");
       b.className = "answer";
       b.type = "button";
       b.dataset.value = item.word;
-      b.style.display = "flex";
       b.style.flexDirection = "column";
       b.style.alignItems = "center";
+      b.style.justifyContent = "center";
       b.style.gap = "6px";
+      b.style.textAlign = "center";
       b.append(createImage(item, ""));
       const lab = document.createElement("span");
       lab.style.fontSize = "12px";
       lab.style.color = "var(--muted)";
-      lab.textContent = "escolher esta";
+      lab.textContent = "escolher";
       b.append(lab);
       b.addEventListener("click", () => check(item.word, b));
       box.append(b);
     });
-    box.style.gridTemplateColumns = "1fr 1fr 1fr";
     return;
   }
 
   if(q.type === "order"){
     const pool = $("order-pool");
     const target = $("order-target");
+    if(!pool || !target){ box.style.display = "none"; return; }
 
     target.addEventListener("click", (e) => {
       const el = e.target.closest(".token");
@@ -1428,12 +1433,10 @@ function answers(q){
         if(!state.answered) verificar(q, true, target);
       }
     }
-
     box.style.display = "none";
     return;
   }
 
-  /* ATIVIDADE DE LIGAR AS PALAVRAS COM LINHAS TRACEJADAS E SETA */
   if(q.type === "match"){
     const stage = document.createElement("div");
     stage.className = "match-stage";
@@ -1453,13 +1456,11 @@ function answers(q){
 
     const grid = document.createElement("div");
     grid.className = "match-grid";
-
     const colL = document.createElement("div"); colL.className = "match-col left";
     const colR = document.createElement("div"); colR.className = "match-col right";
 
     const left = shuffle(q.pairs.map(p=>({t:p.a,k:p.b,side:"a"})));
     const right = shuffle(q.pairs.map(p=>({t:p.b,k:p.b,side:"b"})));
-
     let selL = null;
     let acertos = 0;
     const connectedLines = [];
@@ -1468,26 +1469,20 @@ function answers(q){
       const sRect = svg.getBoundingClientRect();
       const pinA = elA.querySelector(".match-pin");
       const pinB = elB.querySelector(".match-pin");
+      if(!pinA || !pinB) return null;
       const pRectA = pinA.getBoundingClientRect();
       const pRectB = pinB.getBoundingClientRect();
-
-      const x1 = (pRectA.left + pRectA.width / 2) - sRect.left;
-      const y1 = (pRectA.top + pRectA.height / 2) - sRect.top;
-      const x2 = (pRectB.left + pRectB.width / 2) - sRect.left;
-      const y2 = (pRectB.top + pRectB.height / 2) - sRect.top;
-
       const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", x1);
-      line.setAttribute("y1", y1);
-      line.setAttribute("x2", x2);
-      line.setAttribute("y2", y2);
+      line.setAttribute("x1", (pRectA.left + pRectA.width / 2) - sRect.left);
+      line.setAttribute("y1", (pRectA.top + pRectA.height / 2) - sRect.top);
+      line.setAttribute("x2", (pRectB.left + pRectB.width / 2) - sRect.left);
+      line.setAttribute("y2", (pRectB.top + pRectB.height / 2) - sRect.top);
       line.setAttribute("stroke", isOk ? "#7be495" : "#ff7a7a");
       line.setAttribute("stroke-width", "3");
       line.setAttribute("stroke-dasharray", "8,6");
       line.setAttribute("stroke-linecap", "round");
       line.setAttribute("marker-end", isOk ? "url(#match-arrow-ok)" : "url(#match-arrow-err)");
       svg.appendChild(line);
-
       return {line, elA, elB, isOk};
     }
 
@@ -1496,6 +1491,7 @@ function answers(q){
       connectedLines.forEach(item => {
         const pinA = item.elA.querySelector(".match-pin");
         const pinB = item.elB.querySelector(".match-pin");
+        if(!pinA || !pinB) return;
         const pRectA = pinA.getBoundingClientRect();
         const pRectB = pinB.getBoundingClientRect();
         item.line.setAttribute("x1", (pRectA.left + pRectA.width / 2) - sRect.left);
@@ -1513,14 +1509,12 @@ function answers(q){
         b.className = "match-item";
         b.textContent = item.t;
         b.dataset.key = item.k;
-
         const pin = document.createElement("span");
         pin.className = "match-pin";
         b.appendChild(pin);
 
         b.addEventListener("click", () => {
           if(state.answered || b.classList.contains("matched")) return;
-
           if(item.side === "a"){
             Array.from(colL.children).forEach(x=>x.classList.remove("selected"));
             b.classList.add("selected");
@@ -1528,18 +1522,14 @@ function answers(q){
             sfx.clique();
             return;
           }
-
           if(!selL) return;
-
           if(selL.dataset.key === item.k){
             selL.classList.add("matched");
             selL.classList.remove("selected");
             b.classList.add("matched");
             b.classList.remove("selected");
-
             const itemLine = drawArrowLine(selL, b, true);
-            connectedLines.push(itemLine);
-
+            if(itemLine) connectedLines.push(itemLine);
             acertos++;
             sfx.acerto();
             if(acertos === q.pairs.length){
@@ -1551,13 +1541,11 @@ function answers(q){
             selL.classList.add("wrong");
             const tempLine = drawArrowLine(selL, b, false);
             beep(220,.12,"sawtooth",.14);
-
             setTimeout(() => {
               b.classList.remove("wrong");
               if(selL) selL.classList.remove("wrong");
-              tempLine.line.remove();
+              if(tempLine && tempLine.line && tempLine.line.parentNode) tempLine.line.remove();
             }, 360);
-
             window.removeEventListener("resize", recalcularLinhas);
             verificar(q, false, stage);
           }
@@ -1566,14 +1554,10 @@ function answers(q){
         col.append(b);
       });
     };
-
     montar(colL, left);
     montar(colR, right);
-
     grid.append(colL, colR);
     stage.append(svg, grid);
-
-    box.style.display = "block";
     box.append(stage);
     return;
   }
@@ -1591,7 +1575,6 @@ function answers(q){
         inp.maxLength = 1;
         inp.inputMode = "text";
         inp.autocapitalize = "characters";
-        inp.dataset.r = r; inp.dataset.c = c;
         inp.className = "cell-input";
         if(!cell){
           inp.classList.add("block");
@@ -1607,7 +1590,6 @@ function answers(q){
         wrap.append(inp);
       }
     }
-    box.style.display = "block";
     box.append(wrap);
 
     function checarCross(){
@@ -1626,17 +1608,13 @@ function answers(q){
     const wrap = document.createElement("div");
     wrap.className = "search-grid";
     wrap.style.gridTemplateColumns = `repeat(${q.grid.size}, 1fr)`;
-
     let startCell = null;
     const found = [];
     q.grid.placed.forEach(p => {
       const set = new Set();
-      for(let i=0;i<p.len;i++){
-        set.add((p.r + p.dr*i) + ":" + (p.c + p.dc*i));
-      }
+      for(let i=0;i<p.len;i++) set.add((p.r + p.dr*i) + ":" + (p.c + p.dc*i));
       found.push({word:p.word, cells:set, ok:false});
     });
-
     const wordStrip = document.createElement("div");
     wordStrip.className = "search-words";
     q.words.forEach(w => {
@@ -1646,7 +1624,6 @@ function answers(q){
       s.textContent = w;
       wordStrip.append(s);
     });
-
     const cells = [];
     for(let r=0;r<q.grid.size;r++){
       for(let c=0;c<q.grid.size;c++){
@@ -1660,15 +1637,12 @@ function answers(q){
             startCell = cell;
             cell.classList.add("sel");
             sfx.clique();
-          } else {
-            marcar(startCell, cell);
-          }
+          } else marcar(startCell, cell);
         });
         cells.push(cell);
         wrap.append(cell);
       }
     }
-
     function marcar(a, b){
       const r1 = +a.dataset.r, c1 = +a.dataset.c;
       const r2 = +b.dataset.r, c2 = +b.dataset.c;
@@ -1678,7 +1652,6 @@ function answers(q){
       a.classList.remove("sel");
       startCell = null;
       if(!straight || len < 2) return;
-
       const picked = [];
       for(let i=0;i<len;i++){
         const r = r1 + dr*i, c = c1 + dc*i;
@@ -1696,13 +1669,8 @@ function answers(q){
         if(strip) strip.classList.add("done");
         sfx.acerto();
         if(found.every(f=>f.ok)) verificar(q, true, wrap);
-      } else {
-        beep(220,.1,"sawtooth",.12);
-      }
+      } else beep(220,.1,"sawtooth",.12);
     }
-
-    box.style.display = "block";
-    box.innerHTML = "";
     box.append(wordStrip, wrap);
     return;
   }
@@ -1798,28 +1766,24 @@ function scoreProfile(){
   const perfeito = erros === 0;
   let medal, title, sub, apoio, atencao;
   if(ratio >= 0.9){
-    medal = "🏆";
-    title = "Jornada excelente!";
+    medal = "🏆"; title = "Jornada excelente!";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
     apoio = "AGUYJEVETE! Você dominou quase tudo. Nhandé nhe'ẽ (nossa língua) floresce com você.";
     atencao = perfeito
       ? "Nenhuma distração detectada. Siga com a próxima fase no mesmo ritmo e mantenha a atenção plena."
       : `Apenas ${erros} tropeço(s) — ótimo sinal. Releia as questões erradas e confirme os detalhes que confundem.`;
   } else if(ratio >= 0.65){
-    medal = "🥇";
-    title = "Muito bem!";
+    medal = "🥇"; title = "Muito bem!";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
     apoio = "Você está aprendendo de verdade. O caminho se abre um passo por vez.";
     atencao = `Você acertou ${ok} de ${total}. Antes de seguir, volte aos termos que errou e leia a pronúncia pausadamente.`;
   } else if(ratio >= 0.4){
-    medal = "🌱";
-    title = "Você está crescendo";
+    medal = "🌱"; title = "Você está crescendo";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
     apoio = "Toda jornada tem seu tempo. Cada erro é uma palavra nova se fixando na memória.";
     atencao = `Atenção a ${erros} questão(ões). Faça esta fase de novo com calma — vai render mais na próxima.`;
   } else {
-    medal = "🌰";
-    title = "Não desanime!";
+    medal = "🌰"; title = "Não desanime!";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
     apoio = "Ninguém nasce sabendo — siga tentando, você está no caminho.";
     atencao = `Você acertou ${ok} de ${total}. Recomendo repetir a fase sem pressa antes de continuar. Você vai sentir a diferença.`;
@@ -1833,7 +1797,6 @@ function finish(){
   $("finish-bubble").style.animation = "none";
   void $("finish-bubble").offsetWidth;
   $("finish-bubble").style.animation = "";
-
   $("finish-medal").textContent = p.medal;
   $("finish-title").textContent = p.title;
   $("finish-sub").textContent = p.sub;
@@ -1841,18 +1804,14 @@ function finish(){
   $("stat-acertos").textContent = state.acertos;
   $("stat-erros").textContent = state.erros;
   $("stat-total").textContent = state.questions.length;
-
   $("support-msg").innerHTML = "<strong>Apoio</strong>" + p.apoio;
   $("attention-msg").innerHTML = "<strong>Atenção</strong>" + p.atencao;
-
   const btnNext = $("next-fase");
   const proxFase = state.fase + 1;
   if(state.fase < TOTAL_FASES){
     btnNext.style.display = "";
     btnNext.textContent = "CONTINUAR PARA A " + FASES_INFO[proxFase].nome.toUpperCase() + " →";
-  } else {
-    btnNext.style.display = "none";
-  }
+  } else btnNext.style.display = "none";
   $("time-chip").textContent = "FASE CONCLUÍDA";
   sfx.acerto();
   screen("finish");

@@ -1,33 +1,1129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="theme-color" content="#16a66a"><title>Tape Marangatu — Aventura dos 21 Caminhos</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="importmap">
-    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
-  </script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tape-rupi — Jornada Nhandewa</title>
+<style>
+:root{--bg-0:#0b1410;--bg-1:#122a20;--bg-2:#1d3d2c;--accent:#f3c969;--accent-2:#8fd6a4;--danger:#ff7a7a;--ok:#7be495;--glass:rgba(255,255,255,.08);--glass-strong:rgba(255,255,255,.14);--stroke:rgba(255,255,255,.18);--text:#f4f6f0;--muted:#b9c7bd;--radius:22px;--shadow:0 18px 60px rgba(0,0,0,.55);--font:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--text);background:radial-gradient(circle at 18% 8%,#1b4a34 0%,transparent 55%),radial-gradient(circle at 82% 92%,#2b2438 0%,transparent 55%),linear-gradient(180deg,var(--bg-0),var(--bg-1) 45%,var(--bg-2));min-height:100%;overflow-x:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body::before{content:"";position:fixed;inset:-30%;background:radial-gradient(circle at 30% 30%,rgba(243,201,105,.10),transparent 45%),radial-gradient(circle at 70% 70%,rgba(143,214,164,.10),transparent 45%);animation:float 18s ease-in-out infinite alternate;pointer-events:none;z-index:0}
+@keyframes float{to{transform:translate3d(4%,3%,0) rotate(2deg)}}
+.app{position:relative;z-index:1;max-width:520px;margin:0 auto;min-height:100dvh;padding:14px 16px 28px;display:flex;flex-direction:column;gap:14px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.chip-accent{color:var(--accent);border-color:rgba(243,201,105,.35)}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.icon-btn{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--glass);border:1px solid var(--stroke);color:var(--text);font-size:18px;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .15s ease,background .2s}
+.icon-btn:active{transform:scale(.93);background:var(--glass-strong)}
+.screen{display:none;flex:1;flex-direction:column;gap:16px;animation:fade .35s ease}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{position:relative;overflow:hidden;padding:26px 22px 24px;border-radius:28px;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);text-align:center}
+.hero::after{content:"";position:absolute;inset:auto -20% -60% -20%;height:70%;background:radial-gradient(circle,rgba(243,201,105,.35),transparent 65%);filter:blur(30px);pointer-events:none}
+.hero-icon{font-size:52px;line-height:1;filter:drop-shadow(0 6px 18px rgba(243,201,105,.45))}
+.hero-title{font-size:clamp(26px,7vw,34px);letter-spacing:.02em;margin:8px 0 4px;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-desc{color:var(--muted);font-size:14px;line-height:1.5;max-width:340px;margin:0 auto}
+.hero-tag{margin-top:14px;display:inline-block;padding:6px 12px;border-radius:999px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;background:rgba(0,0,0,.28);border:1px solid var(--stroke);color:var(--accent)}
+.primary-btn{width:100%;padding:17px 20px;border-radius:20px;border:none;cursor:pointer;font-size:15px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:#12210d;background:linear-gradient(135deg,#f8e19a,#f3c969 55%,#e0a83d);box-shadow:0 14px 34px rgba(243,201,105,.35),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .15s ease,box-shadow .2s}
+.primary-btn:active{transform:translateY(2px) scale(.99)}
+.ghost-btn{width:100%;padding:15px;border-radius:18px;cursor:pointer;background:var(--glass);border:1px solid var(--stroke);color:var(--text);font-weight:700;font-size:13px;letter-spacing:.10em;text-transform:uppercase;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.ghost-btn:active{background:var(--glass-strong)}
+#continue{font-size:11px;letter-spacing:.08em;line-height:1.4;text-transform:none}
+.section-title{font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.fase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fase-btn{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:14px 8px;border-radius:18px;cursor:pointer;text-align:center;background:var(--glass);border:1px solid var(--stroke);color:var(--text);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .15s ease,background .2s,border-color .2s}
+.fase-btn span{font-size:12px;font-weight:800;letter-spacing:.04em;line-height:1.25}
+.fase-btn small{font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:var(--muted)}
+.fase-btn:not([disabled]):active{transform:scale(.96);background:var(--glass-strong)}
+.fase-btn[disabled]{opacity:.35;cursor:not-allowed}
+.hud{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hud-left{display:flex;flex-direction:column;gap:4px}
+.hud-score{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:16px;background:var(--glass);border:1px solid var(--stroke);font-size:13px;font-weight:800;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.hud-score #stars{color:var(--accent);letter-spacing:2px;font-size:12px}
+#score{color:var(--accent)}
+.progress-wrap{height:10px;border-radius:999px;overflow:hidden;background:rgba(0,0,0,.35);border:1px solid var(--stroke);position:relative}
+.progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent));box-shadow:0 0 12px rgba(243,201,105,.7);transition:width .45s cubic-bezier(.2,.9,.3,1)}
+.card{padding:18px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;flex-direction:column;gap:12px;animation:cardIn .32s ease}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.kind-tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
+.listen-btn{width:38px;height:38px;border-radius:12px;cursor:pointer;display:grid;place-items:center;font-size:16px;background:rgba(243,201,105,.12);border:1px solid rgba(243,201,105,.35);color:var(--accent)}
+.listen-btn:disabled{opacity:.35;cursor:not-allowed}
+.listen-btn:not(:disabled){animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(243,201,105,.35)}50%{box-shadow:0 0 0 8px rgba(243,201,105,0)}}
+#prompt{font-size:clamp(17px,4.6vw,20px);line-height:1.35;font-weight:700}
+#hint{font-size:12.5px;color:var(--muted);line-height:1.5}
+.visual{display:flex;flex-direction:column;align-items:center;gap:8px;min-height:150px;justify-content:center}
+.visual-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px;border-radius:20px;width:100%;background:radial-gradient(circle at 50% 30%,rgba(243,201,105,.16),transparent 70%);border:1px solid rgba(255,255,255,.08)}
+.visual-image{width:100%;max-width:220px;height:140px;object-fit:contain;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55));animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.visual-label{font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:var(--muted)}
+.visual-note{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);padding:10px 18px;border-radius:14px;background:rgba(0,0,0,.3);border:1px dashed rgba(243,201,105,.4);text-align:center;line-height:1.4;text-transform:none;letter-spacing:.02em;font-weight:700}
+.number-visual{font-size:84px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 10px 24px rgba(243,201,105,.4))}
+.visual-count{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:280px}
+.count-animal-image{width:58px;height:58px;object-fit:contain;background:rgba(0,0,0,.22);border-radius:14px;padding:4px;border:1px solid rgba(255,255,255,.08);animation:pop .3s ease}
+.gap-sentence{font-size:clamp(16px,4vw,19px);font-weight:700;line-height:1.5;text-align:center;color:#f4f6f0;padding:14px;border-radius:16px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%}
+.gap-sentence .blank{color:var(--accent);font-weight:900;letter-spacing:.06em;padding:0 6px;border-bottom:2px solid var(--accent)}
+.interrog-box{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
+.interrog-sentence{font-size:clamp(15px,3.8vw,18px);font-weight:700;line-height:1.4;text-align:center;color:#f4f6f0;padding:14px;border-radius:16px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%}
+.sort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.sort-item{padding:10px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
+.sort-item img{width:100%;height:64px;object-fit:contain}
+.answers{display:grid;grid-template-columns:1fr;gap:10px}
+.answers.two-cols{grid-template-columns:1fr 1fr}
+.answer{padding:16px;border-radius:18px;cursor:pointer;text-align:left;font-size:15px;font-weight:800;letter-spacing:.05em;background:var(--glass);border:1px solid var(--stroke);color:var(--text);transition:transform .12s ease,background .2s,border-color .2s;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.answer:not(:disabled):active{transform:scale(.985)}
+.answer:disabled{cursor:default}
+.answer.correct{background:linear-gradient(135deg,rgba(123,228,149,.28),rgba(123,228,149,.12));border-color:rgba(123,228,149,.7);color:#e8ffe8;box-shadow:0 0 22px rgba(123,228,149,.35)}
+.answer.wrong{background:linear-gradient(135deg,rgba(255,122,122,.26),rgba(255,122,122,.10));border-color:rgba(255,122,122,.7);animation:shake .32s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.feedback{min-height:22px;font-size:13px;font-weight:700;line-height:1.4;color:var(--ok);text-align:center}
+.feedback.error{color:var(--danger)}
+.next-btn{padding:17px;border-radius:20px;border:1px solid rgba(243,201,105,.4);background:rgba(243,201,105,.14);color:var(--accent);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .12s}
+.next-btn:not(:disabled):active{transform:scale(.985)}
+.next-btn:disabled{opacity:.32;cursor:not-allowed}
+.next-btn:not(:disabled){background:rgba(243,201,105,.26)}
+.finish-card{text-align:center;padding:34px 22px;border-radius:28px;background:linear-gradient(160deg,rgba(243,201,105,.20),rgba(255,255,255,.04));border:1px solid rgba(243,201,105,.4);box-shadow:var(--shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.finish-icon{font-size:56px}
+.finish-title{font-size:22px;margin:10px 0 6px;color:var(--accent)}
+.finish-score{font-size:66px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.finish-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.finish-msg{font-size:14px;color:var(--muted);line-height:1.55;margin:14px 0 22px}
+#boot-error{display:none;padding:14px;border-radius:14px;background:rgba(255,122,122,.12);border:1px solid rgba(255,122,122,.5);color:#ffb8b8;font-size:12px;font-family:monospace;white-space:pre-wrap;line-height:1.4}
+@media (max-width:380px){.visual-image{max-width:180px;height:118px}.number-visual{font-size:68px}.fase-grid{grid-template-columns:repeat(2,1fr)}.sort-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
 <body>
-  <div id="game">
-    <canvas id="world"></canvas>
-    <header class="hud">
-      <div class="brand"><span class="brand-icon">🌿</span><span>TAPE <b>MARANGATU</b><small>AVENTURA DOS 21 CAMINHOS</small></span></div>
-      <div class="phase-pill"><span id="phase-number">FASE 01 / 21</span><b id="phase-name">AWATI 🌽</b></div>
-      <div class="stats"><span>❤️ <b id="lives">3</b></span><span>🏹 <b id="arrows">10</b></span><span>⭐ <b id="score">0</b></span></div>
-    </header>
-    <div class="mission"><span>🎯 MISSÃO</span><b id="mission-text">Explore o caminho e encontre o desafio!</b></div>
-    <div class="boss-panel" id="boss-panel"><div class="boss-title"><span id="boss-emoji">🐗</span><b id="boss-name">GUARDIÃO DA FASE</b><span id="boss-state">OBSERVANDO</span></div><div class="bar"><i id="boss-health"></i></div></div>
-    <div class="bottom-hint" id="hint">WASD mover · Espaço pular · Shift correr · Clique mirar/disparar</div>
-    <div class="controls-mobile" id="mobile-controls">
-      <div class="joystick" id="joystick"><div class="stick" id="stick"></div></div>
-      <div class="mobile-actions"><button id="jump-btn">⬆️<small>PULAR</small></button><button id="dodge-btn">💨<small>DESVIAR</small></button><button id="aim-btn">🎯<small>MIRAR</small></button><button id="fire-btn">🏹<small>ATIRAR</small></button></div>
+<div class="app">
+  <header>
+    <div class="hud-left"><span class="chip chip-accent" id="time-chip">JORNADA</span></div>
+    <button class="icon-btn" id="sound" aria-label="Desativar sons">♫</button>
+  </header>
+
+  <div id="boot-error"></div>
+
+  <section class="screen active" id="home">
+    <div class="hero">
+      <div class="hero-icon" id="period-icon">☀</div>
+      <h1 class="hero-title" id="greeting">Ko'ẽ Porã!</h1>
+      <p class="hero-desc" id="period-desc">Aprenda o vocabulário Nhandewa atravessando o caminho sagrado.</p>
+      <span class="hero-tag" id="period-label">FASE 1 · 30 DESAFIOS</span>
     </div>
-    <div class="overlay show" id="start-screen"><div class="panel start-panel"><div class="eyebrow">🌈 UM MUNDO DE DESCOBERTAS</div><h1>TAPE <span>MARANGATU</span></h1><h2>Aventura dos 21 Caminhos</h2><p>Explore a floresta, conheça palavras Nhandewa e proteja a natureza nesta aventura 3D!</p><div class="hero-figures"><span>🧒🏽</span><span>🧑🏽‍🦱</span><span>🦋</span><span>🌳</span></div><button class="primary" id="play-btn">▶ COMEÇAR A AVENTURA</button><button class="secondary" id="map-btn">🗺️ VER OS 21 CAMINHOS</button><small>Jogo educativo • Computador e celular</small></div></div>
-    <div class="overlay" id="map-screen"><div class="panel map-panel"><button class="close" id="close-map">✕</button><div class="eyebrow">🗺️ SUA JORNADA</div><h2>Os 21 caminhos</h2><div class="phase-grid" id="phase-grid"></div><p class="small-note">Conclua cada caminho para desbloquear o próximo.</p></div></div>
-    <div class="overlay" id="quiz-screen"><div class="panel quiz-panel"><div class="eyebrow">📖 DESAFIO DO CONHECIMENTO</div><div class="quiz-emoji" id="quiz-emoji">🌽</div><h2 id="quiz-question">O que significa AWATI?</h2><div class="answers" id="answers"></div><p id="quiz-feedback" class="feedback"></p></div></div>
-    <div class="overlay" id="message-screen"><div class="panel message-panel"><div class="eyebrow" id="message-eyebrow">🏅 CAMINHO CONCLUÍDO</div><div class="big-emoji" id="message-emoji">🌟</div><h2 id="message-title">AGUYJEVETE!</h2><p id="message-text">Você concluiu esta etapa!</p><button class="primary" id="next-btn">CONTINUAR ➜</button><button class="secondary" id="message-map-btn">VER MAPA</button></div></div>
-    <div class="toast" id="toast"></div>
-  </div>
-  <script type="module" src="game.js"></script>
-</body></html>
+    <button class="primary-btn" id="start">COMEÇAR A JORNADA</button>
+    <button class="ghost-btn" id="continue" style="display:none">Continuar</button>
+    <div>
+      <div class="section-title">Escolha a fase</div>
+      <div class="fase-grid" id="fase-botoes"></div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;padding:0 8px">Material de referência: <em>Lições de Gramática Nhandewa / Tupi-Guarani</em> — vol. 1 e 2 (FUNAI, 2016/2018).</p>
+  </section>
+
+  <section class="screen" id="game">
+    <div class="hud">
+      <div><span class="chip chip-accent" id="qnum">DESAFIO 01</span></div>
+      <div class="hud-score"><span id="stars">☆ ☆ ☆</span><span id="score">0</span><span style="font-size:10px;color:var(--muted)">PTS</span></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);letter-spacing:.08em">
+      <span id="period-message">A jornada começa com a luz do dia.</span>
+      <span id="progress-text">1 / 30</span>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <span class="kind-tag" id="qkind">VOCABULÁRIO</span>
+        <button class="listen-btn" id="listen" disabled aria-label="Ouvir pronúncia">🔊</button>
+      </div>
+      <h2 id="prompt">—</h2>
+      <p id="hint">—</p>
+      <div class="visual" id="visual"></div>
+    </div>
+    <div class="answers" id="answers"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next" disabled>PRÓXIMO DESAFIO →</button>
+    <button class="ghost-btn" id="home-button" style="font-size:11px">← Voltar ao início</button>
+  </section>
+
+  <section class="screen" id="finish">
+    <div class="finish-card">
+      <div class="finish-icon">🏵️</div>
+      <h2 class="finish-title">Fase concluída!</h2>
+      <div class="finish-score" id="final-score">0</div>
+      <div class="finish-label">pontos</div>
+      <div class="finish-msg" id="finish-message">Boa jornada!</div>
+      <button class="primary-btn" id="again" style="margin-bottom:10px">NOVA JORNADA</button>
+      <button class="ghost-btn" id="finish-home">Voltar ao início</button>
+    </div>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   TAPE-RUPI v6 — 9 FASES × 30 · 14 TIPOS
+   Correções de robustez:
+   - safeBind para todos os event listeners
+   - qPictureSort / qCategory / qOdd retornam null se faltar pool
+   - montarFase ignora null
+   - boot() protegido com try/catch e painel de erro visível
+   - bug do PIRÁ duplicado corrigido
+   ========================================================= */
+
+const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/tela-de-inicio/" };
+const QS_PER_FASE = 30;
+
+const NUMBER_VOCABULARY = [
+  {value:0,word:"DJERE",  audio:"numero-0.mp3"},
+  {value:1,word:"PETEĨ",  audio:"numero-1.mp3"},
+  {value:2,word:"MÕKÕI",  audio:"numero-2.mp3"},
+  {value:3,word:"MBOAPY", audio:"numero-3.mp3"},
+  {value:4,word:"IRUNDY", audio:"numero-4.mp3"},
+  {value:5,word:"NIRUI",  audio:"numero-5.mp3"},
+  {value:6,word:"YPÉ",    audio:"numero-6.mp3"},
+  {value:7,word:"TXA'I",  audio:"numero-7.mp3"}
+];
+
+const VOCABULARY = [
+  {word:"KUTXÁ",meaning:"colher",category:"OBJETOS",audio:"kutxa.mp3",file:"kutxa.png"},
+  {word:"KUTXÁ RAKWÁ",meaning:"garfo",category:"OBJETOS",audio:"kutxa_rakwa.mp3",file:"kutxa-rakwa.png"},
+  {word:"KARÓ",meaning:"copo",category:"OBJETOS",audio:"karo.mp3",file:"karo.png"},
+  {word:"DJAPEPÓ",meaning:"panela",category:"OBJETOS",audio:"djapepo.mp3",file:"djapepo.png"},
+  {word:"ADJAKÁ",meaning:"cesto",category:"OBJETOS",audio:"adjaka.mp3",file:"adjaka.png"},
+  {word:"IRYMPẼ",meaning:"peneira",category:"OBJETOS",audio:"irympe.mp3",file:"irympe.png"},
+  {word:"TIPITI",meaning:"espremedor",category:"OBJETOS",audio:"tipiti.mp3",file:"tipiti.png"},
+  {word:"ATXÁ",meaning:"machado",category:"OBJETOS",audio:"atxa.mp3",file:"atxa.png"},
+  {word:"ANGWAPÚ",meaning:"tambor",category:"OBJETOS",audio:"angwapu.mp3",file:"angwapu.png"},
+  {word:"GWYRAPÁ",meaning:"arco",category:"OBJETOS",audio:"gwyrapa.mp3",file:"gwyrapa.png"},
+  {word:"GWYRARAKWÁ",meaning:"lança",category:"OBJETOS",audio:"gwywarakwa.mp3",file:"gwywarakwa.png"},
+  {word:"KANGWAÁ",meaning:"cocar",category:"OBJETOS",audio:"kangwaa.mp3",file:"kangwaa.png"},
+  {word:"KYÁ",meaning:"rede",category:"OBJETOS",audio:"kya.mp3",file:"kya.png"},
+  {word:"MBARAKÁ",meaning:"maraca",category:"OBJETOS",audio:"mbaraka.mp3",file:"mbaraka.png"},
+  {word:"MBO'Y",meaning:"colar",category:"OBJETOS",audio:"mbo-y.mp3",file:"mbo-y.png"},
+  {word:"MIMBY",meaning:"flauta",category:"OBJETOS",audio:"mimby.mp3",file:"mimby.png"},
+  {word:"PETỸNGWÁ",meaning:"cachimbo",category:"OBJETOS",audio:"petyngwa.mp3",file:"petyngwa.png"},
+  {word:"TAMBEÓ",meaning:"roupa tradicional",category:"OBJETOS",audio:"tambeo.mp3",file:"tambeo.png"},
+  {word:"U'Y",meaning:"flecha",category:"OBJETOS",audio:"u-y.mp3",file:"u-y.png"},
+  {word:"AKADJU",meaning:"caju",category:"ALIMENTOS",audio:"akadju.mp3",file:"akadju.png"},
+  {word:"PAKOWÁ",meaning:"banana",category:"ALIMENTOS",audio:"pakowa.mp3",file:"pakowa.png"},
+  {word:"TSANDIÁ",meaning:"melancia",category:"ALIMENTOS",audio:"tsandia.mp3",file:"tsandia.png"},
+  {word:"AWATI",meaning:"milho",category:"ALIMENTOS",audio:"awati.mp3",file:"awati.png"},
+  {word:"MANDI'O",meaning:"mandioca",category:"ALIMENTOS",audio:"mandio.mp3",file:"mandio.png"},
+  {word:"KAMBY",meaning:"leite",category:"ALIMENTOS",audio:"kamby.mp3",file:"kamby.png"},
+  {word:"TSO'O",meaning:"carne",category:"ALIMENTOS",audio:"tsoo.mp3",file:"tsoo.png"},
+  {word:"ANDAÍ",meaning:"abóbora",category:"ALIMENTOS",audio:"andai.mp3",file:"andai.png"},
+  {word:"AROI",meaning:"arroz",category:"ALIMENTOS",audio:"aroi.mp3",file:"aroi.png"},
+  {word:"AREMÁ",meaning:"trigo",category:"ALIMENTOS",audio:"arema.mp3",file:"arema.png"},
+  {word:"AWATI-KU'I",meaning:"fubá",category:"ALIMENTOS",audio:"awati-kui.mp3",file:"awati-kui.png"},
+  {word:"DJETY",meaning:"batata-doce",category:"ALIMENTOS",audio:"djety.mp3",file:"djety.png"},
+  {word:"EÍ",meaning:"mel de abelhas",category:"ALIMENTOS",audio:"ei.mp3",file:"ei.png"},
+  {word:"KANÃ",meaning:"cana-de-açúcar",category:"ALIMENTOS",audio:"kana.mp3",file:"kana.png"},
+  {word:"KANÃ-KU'I",meaning:"açúcar",category:"ALIMENTOS",audio:"kana-kui.mp3",file:"kana-kui.png"},
+  {word:"KARÁ",meaning:"cará",category:"ALIMENTOS",audio:"kara.mp3",file:"kara.png"},
+  {word:"KUMANDÁ",meaning:"feijão",category:"ALIMENTOS",audio:"kumanda.mp3",file:"kumanda.png"},
+  {word:"MANDUWI",meaning:"amendoim",category:"ALIMENTOS",audio:"manduwi.mp3",file:"manduwi.png"},
+  {word:"MBA'E'Ũ",meaning:"café",category:"ALIMENTOS",audio:"mba-e-u.mp3",file:"mba-e-u.png"},
+  {word:"NHANDY",meaning:"óleo",category:"ALIMENTOS",audio:"nhandy.mp3",file:"nhandy.png"},
+  {word:"TADJÁ",meaning:"inhame",category:"ALIMENTOS",audio:"tadja.mp3",file:"tadja.png"},
+  {word:"TSAÁ",meaning:"sal",category:"ALIMENTOS",audio:"tsaa.mp3",file:"tsaa.png"},
+  {word:"YTSÓ",meaning:"larva do coqueiro",category:"ALIMENTOS",audio:"ytso.mp3",file:"ytso.png"},
+  {word:"YWYRÁ'Á",meaning:"fruta",category:"ALIMENTOS",audio:"ywyra-a.mp3",file:"ywyra-a.png"},
+  {word:"YY RE'Ẽ",meaning:"suco",category:"ALIMENTOS",audio:"yy-ree.mp3",file:"yy-ree.png"},
+  {word:"PIRÁ",meaning:"peixe",category:"ANIMAIS",audio:"pira.mp3",file:"pira.png"},
+  {word:"KATXURU",meaning:"cachorro",category:"ANIMAIS",audio:"katxuru.mp3",file:"katxuru.png"},
+  {word:"KA'I",meaning:"macaco",category:"ANIMAIS",audio:"kai.mp3",file:"kai.png"},
+  {word:"KAPI'I'UWÁ",meaning:"capivara",category:"ANIMAIS",audio:"kapiiuwa.mp3",file:"kapiiuwa.png"},
+  {word:"MBOÍ",meaning:"cobra",category:"ANIMAIS",audio:"mboi.mp3",file:"mboi.png"},
+  {word:"NHANDU",meaning:"aranha",category:"ANIMAIS",audio:"nhandu.mp3",file:"nhandu.png"},
+  {word:"TAY",meaning:"formiga",category:"ANIMAIS",audio:"tay.mp3",file:"tay.png"},
+  {word:"TXIWI",meaning:"gato",category:"ANIMAIS",audio:"txiwi.mp3",file:"txiwi.png"},
+  {word:"DJAKARÉ",meaning:"jacaré",category:"ANIMAIS",audio:"djakare.mp3",file:"djakare.png"},
+  {word:"TSUGWAI",meaning:"porco",category:"ANIMAIS",audio:"tsugwai.mp3",file:"tsugwai.png"},
+  {word:"POPO'I",meaning:"borboleta",category:"ANIMAIS",audio:"popoi.mp3",file:"popoi.png"},
+  {word:"KURURU",meaning:"sapo",category:"ANIMAIS",audio:"kururu.mp3",file:"kururu.png"},
+  {word:"AKUTI",meaning:"cutia",category:"ANIMAIS",audio:"akuti.mp3",file:"akuti.png"},
+  {word:"ANDIRÁ",meaning:"morcego frugívoro",category:"ANIMAIS",audio:"andira.mp3",file:"andira.png"},
+  {word:"ANGUDJÁ",meaning:"rato",category:"ANIMAIS",audio:"angudja.mp3",file:"angudja.png"},
+  {word:"DJAGWARETÉ",meaning:"onça",category:"ANIMAIS",audio:"djagwarete.mp3",file:"djagwarete.png"},
+  {word:"DJAGWATIRI",meaning:"jaguatirica",category:"ANIMAIS",audio:"djagwatiri.mp3",file:"djagwatiri.png"},
+  {word:"DJAITXÁ",meaning:"paca",category:"ANIMAIS",audio:"djaitxa.mp3",file:"djaitxa.png"},
+  {word:"GWAIRAKÁ",meaning:"lontra",category:"ANIMAIS",audio:"gwairaka.mp3",file:"gwairaka.png"},
+  {word:"GWATSU",meaning:"veado",category:"ANIMAIS",audio:"gwatsu.mp3",file:"gwatsu.png"},
+  {word:"IRARA",meaning:"papa-mel",category:"ANIMAIS",audio:"irara.mp3",file:"irara.png"},
+  {word:"KAGWARÉ",meaning:"tamanduá-mirim",category:"ANIMAIS",audio:"kagware.mp3",file:"kagware.png"},
+  {word:"KAITITU",meaning:"cateto",category:"ANIMAIS",audio:"kaititu.mp3",file:"kaititu.png"},
+  {word:"KARADJÁ",meaning:"bugio",category:"ANIMAIS",audio:"karadja.mp3",file:"karadja.png"},
+  {word:"MBARAKADJÁ",meaning:"gato do mato",category:"ANIMAIS",audio:"mbarakadja.mp3",file:"mbarakadja.png"},
+  {word:"MBORÉ",meaning:"anta",category:"ANIMAIS",audio:"mbore.mp3",file:"mbore.png"},
+  {word:"MBYKU",meaning:"gambá",category:"ANIMAIS",audio:"mbyku.mp3",file:"mbyku.png"},
+  {word:"PEREÁ",meaning:"preá",category:"ANIMAIS",audio:"perea.mp3",file:"perea.png"},
+  {word:"TADJATSU",meaning:"queixada",category:"ANIMAIS",audio:"tadjatsu.mp3",file:"tadjatsu.png"},
+  {word:"TAĨDJÁ",meaning:"preguiça",category:"ANIMAIS",audio:"taidja.mp3",file:"taidja.png"},
+  {word:"TAPITI",meaning:"lebre",category:"ANIMAIS",audio:"tapiti.mp3",file:"tapiti.png"},
+  {word:"TATU",meaning:"tatu",category:"ANIMAIS",audio:"tatu.mp3",file:"tatu.png"},
+  {word:"TSUTSUARÃ",meaning:"suçuarana",category:"ANIMAIS",audio:"tsutsuara.mp3",file:"tsutsuara.png"},
+  {word:"AMBERÉ",meaning:"lagartixa",category:"ANIMAIS",audio:"ambere.mp3",file:"ambere.png"},
+  {word:"JABUTI",meaning:"jabuti",category:"ANIMAIS",audio:"jabuti.mp3",file:"jabuti.png"},
+  {word:"KARUMBÉ",meaning:"cágado",category:"ANIMAIS",audio:"karumbe.mp3",file:"karumbe.png"},
+  {word:"KAWY",meaning:"vespa",category:"ANIMAIS",audio:"kawy.mp3",file:"kawy.png"},
+  {word:"KY",meaning:"piolho",category:"ANIMAIS",audio:"ky.mp3",file:"ky.png"},
+  {word:"KYDJU",meaning:"grilo",category:"ANIMAIS",audio:"kydju.mp3",file:"kydju.png"},
+  {word:"MBARIGWI",meaning:"mosquito",category:"ANIMAIS",audio:"mbarigwi.mp3",file:"mbarigwi.png"},
+  {word:"MBERU",meaning:"mosca",category:"ANIMAIS",audio:"mberu.mp3",file:"mberu.png"},
+  {word:"MUÃ",meaning:"vagalume",category:"ANIMAIS",audio:"mua.mp3",file:"mua.png"},
+  {word:"NHAKYRÃ",meaning:"cigarra",category:"ANIMAIS",audio:"nhakyra.mp3",file:"nhakyra.png"},
+  {word:"TARAWÉ",meaning:"barata",category:"ANIMAIS",audio:"tarawe.mp3",file:"tarawe.png"},
+  {word:"TUKU",meaning:"gafanhoto",category:"ANIMAIS",audio:"tuku.mp3",file:"tuku.png"},
+  {word:"PYNTÃ",meaning:"vermelho",category:"CORES",audio:"pynta.mp3",file:"pynta.png"},
+  {word:"IDJU",meaning:"azul",category:"CORES",audio:"idju.mp3",file:"idju.png"},
+  {word:"IKYRY",meaning:"verde",category:"CORES",audio:"ikyry.mp3",file:"ikyry.png"},
+  {word:"OWY",meaning:"flor",category:"CORES",audio:"owy.mp3",file:"owy.png"},
+  {word:"UŨ",meaning:"preto",category:"CORES",audio:"uu.mp3",file:"uu.png"},
+  {word:"MORÕTI",meaning:"branco",category:"CORES",audio:"moroti.mp3",file:"moroti.png"},
+  {word:"AKÃ",meaning:"cabeça",category:"CORPO",audio:"aka.mp3",file:"aka.png"},
+  {word:"AWY",meaning:"cabelo",category:"CORPO",audio:"awy.mp3",file:"awy.png"},
+  {word:"KUPÉ",meaning:"costas",category:"CORPO",audio:"kupe.mp3",file:"kupe.png"},
+  {word:"POAPY",meaning:"pulso",category:"CORPO",audio:"poapy.mp3",file:"poapy.png"},
+  {word:"NAMBI",meaning:"orelha",category:"CORPO",audio:"nambi.mp3",file:"nambi.png"},
+  {word:"APYTSÃ-KWÁ",meaning:"ouvido",category:"CORPO",audio:"apytsangwa.mp3",file:"apytsangwa.png"},
+  {word:"APYTÉ",meaning:"testa",category:"CORPO",audio:"apyte.mp3",file:"apyte.png"},
+  {word:"RETSÁ",meaning:"olho",category:"CORPO",audio:"retsa.mp3",file:"retsa.png"},
+  {word:"ROWÁ",meaning:"rosto",category:"CORPO",audio:"rowa.mp3",file:"rowa.png"},
+  {word:"APYINGWÁ",meaning:"nariz",category:"CORPO",audio:"apyingwa.mp3",file:"apyingwa.png"},
+  {word:"DJURU",meaning:"boca",category:"CORPO",audio:"djuru.mp3",file:"djuru.png"},
+  {word:"RAĨ",meaning:"dente",category:"CORPO",audio:"rai.mp3",file:"rai.png"},
+  {word:"APENKŨ",meaning:"língua",category:"CORPO",audio:"apenku.mp3",file:"apenku.png"},
+  {word:"ATI'Y",meaning:"ombro",category:"CORPO",audio:"atiy.mp3",file:"atiy.png"},
+  {word:"POTI'Á",meaning:"peito",category:"CORPO",audio:"potia.mp3",file:"potia.png"},
+  {word:"PÓ",meaning:"mão",category:"CORPO",audio:"po.mp3",file:"po.png"},
+  {word:"KWÃ",meaning:"dedo da mão",category:"CORPO",audio:"kwa.mp3",file:"kwa.png"},
+  {word:"RYÉ",meaning:"barriga",category:"CORPO",audio:"rye.mp3",file:"rye.png"},
+  {word:"PURU'Ã",meaning:"umbigo",category:"CORPO",audio:"purua.mp3",file:"purua.png"},
+  {word:"TYMÃ",meaning:"perna",category:"CORPO",audio:"tyma.mp3",file:"tyma.png"},
+  {word:"TÃKÃ",meaning:"joelho",category:"CORPO",audio:"taka.mp3",file:"taka.png"},
+  {word:"ADJU'Y",meaning:"pescoço",category:"CORPO",audio:"adjuy.mp3",file:"adjuy.png"},
+  {word:"DJYWÁ",meaning:"braço",category:"CORPO",audio:"djywa.mp3",file:"djywa.png"},
+  {word:"PY",meaning:"pé",category:"CORPO",audio:"py.mp3",file:"py.png"},
+  {word:"PYTSÃ",meaning:"dedo do pé",category:"CORPO",audio:"pytsa.mp3",file:"pytsa.png"},
+  {word:"NHE'Ẽ",meaning:"espírito",category:"CORPO",audio:"nhe-e.mp3",file:"nhe-e.png"},
+  {word:"REMBÉ",meaning:"lábio",category:"CORPO",audio:"rembe.mp3",file:"rembe.png"},
+  {word:"REMBIYTÁ",meaning:"queixo",category:"CORPO",audio:"rembiyta.mp3",file:"rembiyta.png"},
+  {word:"KANGWÉ",meaning:"osso",category:"CORPO",audio:"kangwe.mp3",file:"kangwe.png"},
+  {word:"RAGWÉ",meaning:"pelo",category:"CORPO",audio:"ragwe.mp3",file:"ragwe.png"},
+  {word:"POAPẼ",meaning:"unha da mão",category:"CORPO",audio:"poape.mp3",file:"poape.png"},
+  {word:"PYSÃPẼ",meaning:"unha do pé",category:"CORPO",audio:"pysape.mp3",file:"pysape.png"},
+  {word:"PYTU'Ũ",meaning:"cérebro",category:"CORPO",audio:"pytu-u.mp3",file:"pytu-u.png"},
+  {word:"TXETSY",meaning:"minha mãe",category:"PARENTESCO",audio:"txetsy.mp3",file:"txetsy.png"},
+  {word:"TXERU",meaning:"meu pai",category:"PARENTESCO",audio:"txeru.mp3",file:"txeru.png"},
+  {word:"NHANERAMÕI",meaning:"nosso avô",category:"PARENTESCO",audio:"nhaneramoi.mp3",file:"nhaneramoi.png"},
+  {word:"TXERA'Y",meaning:"meu filho (pai)",category:"PARENTESCO",audio:"txeray.mp3",file:"txeray.png"},
+  {word:"TXEMEMBY",meaning:"meu filho (mãe)",category:"PARENTESCO",audio:"txememby.mp3",file:"txememby.png"},
+  {word:"TXERADJY",meaning:"minha filha (pai)",category:"PARENTESCO",audio:"txeradjy.mp3",file:"txeradjy.png"},
+  {word:"TXERYWY",meaning:"irmão mais novo",category:"PARENTESCO",audio:"txerywy.mp3",file:"txerywy.png"},
+  {word:"TXERYKE'Y",meaning:"irmão mais velho",category:"PARENTESCO",audio:"txerykey.mp3",file:"txerykey.png"},
+  {word:"TXINDY",meaning:"irmã mais nova",category:"PARENTESCO",audio:"txindy.mp3",file:"txindy.png"},
+  {word:"TXEKYPY'Y",meaning:"irmã mais velha",category:"PARENTESCO",audio:"txekypy.mp3",file:"txekypy.png"},
+  {word:"TXETUTY",meaning:"meu tio",category:"PARENTESCO",audio:"txetuty.mp3",file:"txetuty.png"},
+  {word:"TXETSY'Y",meaning:"minha tia",category:"PARENTESCO",audio:"txetsyy.mp3",file:"txetsyy.png"},
+  {word:"TXERAPITXÁ",meaning:"meu amigo",category:"PARENTESCO",audio:"txerapitxa.mp3",file:"txerapitxa.png"},
+  {word:"TXEIRŨ",meaning:"meu colega",category:"PARENTESCO",audio:"txeiru.mp3",file:"txeiru.png"},
+  {word:"TXEMẼ",meaning:"meu marido",category:"PARENTESCO",audio:"txeme.mp3",file:"txeme.png"},
+  {word:"TXEREMBIREKÓ",meaning:"minha esposa",category:"PARENTESCO",audio:"txerembireko.mp3",file:"txerembireko.png"},
+  {word:"TXETXAÍ",meaning:"minha avó",category:"PARENTESCO",audio:"txetxai.mp3",file:"txetxai.png"},
+  {word:"TXERAMAMINÓ",meaning:"meu neto",category:"PARENTESCO",audio:"txeramamino.mp3",file:"txeramamino.png"},
+  {word:"TXERATYWY",meaning:"meu sogro",category:"PARENTESCO",audio:"txeratywy.mp3",file:"txeratywy.png"},
+  {word:"TXERA'YTXÓ",meaning:"minha sogra",category:"PARENTESCO",audio:"txeraytxo.mp3",file:"txeraytxo.png"},
+  {word:"TOWADJÁ",meaning:"cunhado",category:"PARENTESCO",audio:"towadja.mp3",file:"towadja.png"},
+  {word:"TSANGÁ",meaning:"madrinha",category:"PARENTESCO",audio:"tsanga.mp3",file:"tsanga.png"},
+  {word:"KWARAY",meaning:"sol",category:"NATUREZA",audio:"kwaray.mp3",file:"kwaray.png"},
+  {word:"JASY",meaning:"lua",category:"NATUREZA",audio:"jasy.mp3",file:"jasy.png"},
+  {word:"TATÁ",meaning:"fogo",category:"NATUREZA",audio:"tata.mp3",file:"tata.png"},
+  {word:"YY",meaning:"água",category:"NATUREZA",audio:"yy.mp3",file:"yy.png"},
+  {word:"YBY",meaning:"terra",category:"NATUREZA",audio:"yby.mp3",file:"yby.png"},
+  {word:"OKY",meaning:"chuva",category:"NATUREZA",audio:"oky.mp3",file:"oky.png"},
+  {word:"YWYRÁ",meaning:"árvore",category:"NATUREZA",audio:"ywyra.mp3",file:"ywyra.png"},
+  {word:"YYWYRU",meaning:"vento",category:"NATUREZA",audio:"yywyru.mp3",file:"yywyru.png"},
+  {word:"YWYTY",meaning:"serra",category:"NATUREZA",audio:"ywyty.mp3",file:"ywyty.png"},
+  {word:"PARANÁ",meaning:"rio",category:"GEOGRAFIA",audio:"parana.mp3",file:"parana.png"},
+  {word:"PARAGWATSU",meaning:"mar",category:"GEOGRAFIA",audio:"paragwatsu.mp3",file:"paragwatsu.png"},
+  {word:"YY KWÁ",meaning:"lago",category:"GEOGRAFIA",audio:"yy-kwa.mp3",file:"yy-kwa.png"},
+  {word:"YY KWÁTY",meaning:"lagoa",category:"GEOGRAFIA",audio:"yy-kwaty.mp3",file:"yy-kwaty.png"},
+  {word:"YY AKÃ",meaning:"cachoeira",category:"GEOGRAFIA",audio:"yy-aka.mp3",file:"yy-aka.png"},
+  {word:"KA'AGWY",meaning:"mata",category:"GEOGRAFIA",audio:"ka-agwy.mp3",file:"ka-agwy.png"},
+  {word:"TAPÉ",meaning:"estrada",category:"GEOGRAFIA",audio:"tape.mp3",file:"tape.png"},
+  {word:"OKÁ RUTSU",meaning:"campo",category:"GEOGRAFIA",audio:"oka-rutsu.mp3",file:"oka-rutsu.png"},
+  {word:"ARY PORÃ",meaning:"bom dia",category:"SAUDAÇÕES",audio:"ary-pora.mp3",file:"ary-pora.png"},
+  {word:"KA'ARU PORÃ",meaning:"boa tarde",category:"SAUDAÇÕES",audio:"kaaru-pora.mp3",file:"kaaru-pora.png"},
+  {word:"PYNTŨ PORÃ",meaning:"boa noite",category:"SAUDAÇÕES",audio:"pyntu-pora.mp3",file:"pyntu-pora.png"},
+  {word:"ADJIWYMA",meaning:"tchau",category:"SAUDAÇÕES",audio:"adjiwyma.mp3",file:"adjiwyma.png"},
+  {word:"NDERA'EWÉ",meaning:"tudo bem?",category:"SAUDAÇÕES",audio:"nderaewe.mp3",file:"nderaewe.png"},
+  {word:"PEMAẼ PORÃ",meaning:"bem-vindos",category:"SAUDAÇÕES",audio:"pemae-pora.mp3",file:"pemae-pora.png"},
+  {word:"WEI",meaning:"bem, bastante",category:"ADVÉRBIOS",audio:"wei.mp3"},
+  {word:"ARIENTÉ",meaning:"bastante",category:"ADVÉRBIOS",audio:"ariente.mp3"},
+  {word:"ETÉ",meaning:"muito",category:"ADVÉRBIOS",audio:"ete.mp3"},
+  {word:"MBARIÍ",meaning:"pouco",category:"ADVÉRBIOS",audio:"mbarii.mp3"},
+  {word:"MBENGWÉ",meaning:"devagar",category:"ADVÉRBIOS",audio:"mbengwe.mp3"},
+  {word:"MBENGWE'I",meaning:"lentamente",category:"ADVÉRBIOS",audio:"mbengwei.mp3"},
+  {word:"PETEREMÉ",meaning:"rápido",category:"ADVÉRBIOS",audio:"petereme.mp3"},
+  {word:"WOÍ",meaning:"rapidamente",category:"ADVÉRBIOS",audio:"woi.mp3"},
+  {word:"PÁ",meaning:"completamente",category:"ADVÉRBIOS",audio:"pa.mp3"},
+  {word:"TENGWÁ",meaning:"certamente",category:"ADVÉRBIOS",audio:"tengwa.mp3"},
+  {word:"RAMĨ",meaning:"talvez",category:"ADVÉRBIOS",audio:"rami.mp3"},
+  {word:"DJIWY",meaning:"novamente",category:"ADVÉRBIOS",audio:"djiwy.mp3"},
+  {word:"YMÃ",meaning:"antigamente",category:"ADVÉRBIOS",audio:"yma.mp3"},
+  {word:"KWEÉ",meaning:"ontem",category:"ADVÉRBIOS",audio:"kwee.mp3"},
+  {word:"KO'AỸ",meaning:"hoje",category:"ADVÉRBIOS",audio:"ko-ay.mp3"},
+  {word:"KO'ẼRO",meaning:"amanhã",category:"ADVÉRBIOS",audio:"ko-ero.mp3"},
+  {word:"KO'Ẽ",meaning:"cedo, manhã",category:"ADVÉRBIOS",audio:"ko-e.mp3"},
+  {word:"RIRÉ",meaning:"depois de",category:"ADVÉRBIOS",audio:"rire.mp3"},
+  {word:"MBOWÉ",meaning:"antes de",category:"ADVÉRBIOS",audio:"mbowe.mp3"},
+  {word:"TERI",meaning:"ainda",category:"ADVÉRBIOS",audio:"teri.mp3"},
+  {word:"MOMBYRY",meaning:"longe",category:"ADVÉRBIOS",audio:"mombyry.mp3"},
+  {word:"DJAWÉ",meaning:"perto",category:"ADVÉRBIOS",audio:"djawe.mp3"},
+  {word:"OKÁ-PY",meaning:"fora",category:"ADVÉRBIOS",audio:"oka-py.mp3"},
+  {word:"PY-PY",meaning:"dentro",category:"ADVÉRBIOS",audio:"py-py.mp3"},
+  {word:"UPÉ-PY",meaning:"ali, lá",category:"ADVÉRBIOS",audio:"upe-py.mp3"},
+  {word:"APY",meaning:"aqui",category:"ADVÉRBIOS",audio:"apy.mp3"},
+  {word:"IDJYPYE'YWA",meaning:"sempre",category:"ADVÉRBIOS",audio:"idjypyeywa.mp3"},
+  {word:"E'ỸWA",meaning:"nunca",category:"ADVÉRBIOS",audio:"eywa.mp3"},
+  {word:"RYAÉ",meaning:"frequentemente",category:"ADVÉRBIOS",audio:"ryae.mp3"}
+];
+
+const CARDINAIS = [
+  {word:"NHANDÉ ROWAI-REGWÁ", meaning:"Leste (onde o sol nasce)"},
+  {word:"NHANDÉ KUPÉ-REGWÁ",  meaning:"Oeste (onde o sol se põe)"},
+  {word:"NHANDÉ YKÉ-REGWÁ",   meaning:"Norte"},
+  {word:"NHANDÉ DJODJÁ-REGWÁ",meaning:"Sul"}
+];
+const MESES = [
+  {word:"DJATSYTEĨ",meaning:"Janeiro"},{word:"DJATSYKÕE",meaning:"Fevereiro"},
+  {word:"DJATSYAPY",meaning:"Março"},{word:"DJATSYRUNDY",meaning:"Abril"},
+  {word:"DJATSYPÓ",meaning:"Maio"},{word:"DJATSYPOTEĨ",meaning:"Junho"},
+  {word:"DJATSYPOKÕE",meaning:"Julho"},{word:"DJATSYPOAPY",meaning:"Agosto"},
+  {word:"DJATSYPO RUNDY",meaning:"Setembro"},{word:"DJATSYPÁ",meaning:"Outubro"},
+  {word:"DJATSYPATEĨ",meaning:"Novembro"},{word:"DJATSYPАKÕE",meaning:"Dezembro"}
+];
+const DIAS = [
+  {word:"ARYTEĨ",meaning:"Domingo"},{word:"ARYKÕE",meaning:"Segunda-feira"},
+  {word:"ARYAPY",meaning:"Terça-feira"},{word:"ARYNDY",meaning:"Quarta-feira"},
+  {word:"ARYNŨI",meaning:"Quinta-feira"},{word:"ARYPÁ",meaning:"Sexta-feira"},
+  {word:"ARYNE'Õ",meaning:"Sábado"}
+];
+const FRASES_COTIDIANO = [
+  {word:"Ndera'eweiry?",meaning:"Tudo bem?"},
+  {word:"Reikó porã?",meaning:"Você está bem?"},
+  {word:"Pemaẽ porã!",meaning:"Bem-vindos!"},
+  {word:"Adjiwyma",meaning:"Tchau"},
+  {word:"Pedjapytsaká porã!",meaning:"Prestem atenção!"},
+  {word:"Pendu!",meaning:"Ouçam!"},
+  {word:"Pedju woí!",meaning:"Venham logo!"},
+  {word:"Ma'erã ndouwui?",meaning:"Por que não veio?"},
+  {word:"Peporaí!",meaning:"Cantem!"},
+  {word:"Pedjapó porã!",meaning:"Façam direitinho!"},
+  {word:"Pekarú porã!",meaning:"Comam direitinho!"},
+  {word:"Txe'uí",meaning:"Estou com sede"},
+  {word:"Txenhimbyayi",meaning:"Estou com fome"},
+  {word:"Txerypeyi",meaning:"Estou com sono"},
+  {word:"Tereó porã Nhanderú rewé!",meaning:"Vai com Deus!"}
+];
+const FRASES_POSPOSICAO = [
+  {frase:"Txerendá opytá Pakovaty__.",resp:"-py",distratores:["-gwi","-rupi","-arõ"]},
+  {frase:"Kweé txetsy oú Mirakatu__.",resp:"-gwi",distratores:["-py","-rupi","-arõ"]},
+  {frase:"Kowá tudjá ndodjaywuweiry Português__.",resp:"-rupi",distratores:["-py","-arõ","-mbyté-py"]},
+  {frase:"Amono'õ awati ryru ywyra__.",resp:"-arõ",distratores:["-gwi","-py","-mbyté-py"]},
+  {frase:"Ndekytsé oĩ angu'a__.",resp:"-arõ",distratores:["-gwi","-py","-mbyté-py"]},
+  {frase:"Mitãngwé onhimangá ywyrá__.",resp:"-gwypy",distratores:["-arõ","-py","-gwi"]},
+  {frase:"Tuwitxá oikó nhandetekoá__.",resp:"-mbyté-py",distratores:["-arõ","-py","-rupi"]},
+  {frase:"Txera'y Piaçaguera__ oikó.",resp:"-py",distratores:["-arõ","-rupi","-gwi"]},
+  {frase:"Kweé txetuty oú Bauru__.",resp:"-gwi",distratores:["-py","-arõ","-rupi"]},
+  {frase:"Tapeó põrã tá__.",resp:"-rupi",distratores:["-py","-gwi","-arõ"]}
+];
+const VERBOS_IRREGULARES = [
+  {base:"ir",conjugacoes:["aá","reó","oó","djaá","roó","peó"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]},
+  {base:"vir",conjugacoes:["adju","redju","oú","djadju","rodju","pedju"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]},
+  {base:"dizer",conjugacoes:["a'e","ere","e'i","dja'e","ro'e","pedje"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]},
+  {base:"ter",conjugacoes:["arekó","rerekó","ogwerekó","djarekó","rogwerekó","perekó"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]},
+  {base:"trazer",conjugacoes:["aru","reru","ogweru","djagweru","rogweru","pegweru"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]}
+];
+const VERBOS_REGULARES = [
+  {base:"gwatá",classe:"1ª",conjug:["agwatá","regwatá","ogwatá","djagwatá","rogwatá","pegwatá"]},
+  {base:"karu",classe:"1ª",conjug:["akaru","rekaru","okaru","djakaru","rokaru","pekaru"]},
+  {base:"kwaá",classe:"1ª",conjug:["aikwaá","reikwaá","oikwaá","djaikwaá","roikwaá","peikwaá"]}
+];
+const CLASSES_ADV = [
+  {classe:"intensidade",exemplos:["WEI","ARIENTÉ","ETÉ","MBARIÍ"]},
+  {classe:"modo",exemplos:["MBENGWÉ","MBENGWE'I","PETEREMÉ","WOÍ","PÁ","TENGWÁ","RAMĨ","DJIWY"]},
+  {classe:"tempo",exemplos:["YMÃ","KWEÉ","KO'AỸ","KO'ẼRO","KO'Ẽ","MBOWÉ","RIRÉ","TERI"]},
+  {classe:"lugar",exemplos:["MOMBYRY","DJAWÉ","OKÁ-PY","PY-PY","UPÉ-PY","APY"]},
+  {classe:"frequência",exemplos:["RYAÉ","IDJYPYE'YWA","E'ẸWA"]}
+];
+const INTERROGATIVAS = [
+  {palavra:"Mawã?", significado:"Quem?"},
+  {palavra:"Mba'ewa?", significado:"O que?"},
+  {palavra:"Marũ?", significado:"Quando?"},
+  {palavra:"Ma'erã?", significado:"Por quê?"},
+  {palavra:"Mamõ?", significado:"Onde?"},
+  {palavra:"Maraingwá / Marãi?", significado:"Qual ou como?"},
+  {palavra:"Mbowy?", significado:"Quanto?"},
+  {palavra:"Maã?", significado:"Cadê?"}
+];
+
+/* =========================================================
+   ESTADO / SAVE
+   ========================================================= */
+const state = { index:0, score:0, fase:1, answered:false, sound:true, time:null, questions:[], salvar:true };
+const $ = id => document.getElementById(id);
+
+const SAVE_KEY = "tape-rupi-progresso";
+const SAVE_VERSION = 6;
+const FASES_INFO = {
+  1:{nome:"Fase 1",nivel:"Fácil",    icone:"🌱", bonus:0},
+  2:{nome:"Fase 2",nivel:"Médio",    icone:"🌿", bonus:2},
+  3:{nome:"Fase 3",nivel:"Difícil",  icone:"🌳", bonus:4},
+  4:{nome:"Fase 4",nivel:"Avançado", icone:"⭐", bonus:6},
+  5:{nome:"Fase 5",nivel:"Desafio",  icone:"🔥", bonus:8},
+  6:{nome:"Fase 6",nivel:"Mestre",   icone:"🦅", bonus:10},
+  7:{nome:"Fase 7",nivel:"Xamã",     icone:"🐆", bonus:12},
+  8:{nome:"Fase 8",nivel:"Sagrado",  icone:"🌌", bonus:14},
+  9:{nome:"Fase 9",nivel:"Nhanderu", icone:"☀️", bonus:16}
+};
+const TOTAL_FASES = 9;
+
+function lerProgresso(){
+  try{
+    const bruto = localStorage.getItem(SAVE_KEY);
+    if(!bruto) return null;
+    const d = JSON.parse(bruto);
+    if(!d || d.v !== SAVE_VERSION) return null;
+    if(typeof d.fase !== "number" || typeof d.index !== "number" || typeof d.score !== "number") return null;
+    if(typeof d.concluidas !== "number") d.concluidas = 0;
+    return d;
+  }catch(e){ return null; }
+}
+function salvarProgresso(){
+  if(!state.salvar) return;
+  try{
+    const atual = lerProgresso();
+    const concluidas = Math.max(atual ? atual.concluidas : 0, state.fase > 1 ? state.fase - 1 : 0);
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v:SAVE_VERSION, fase:state.fase, index:state.index, score:state.score, concluidas, data:new Date().toISOString()
+    }));
+  }catch(e){}
+}
+function apagarProgresso(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+function faseDesbloqueada(n){
+  if(n === 1) return true;
+  const p = lerProgresso();
+  if(!p) return false;
+  return n <= (p.concluidas || 0) + 1;
+}
+function registrarConclusao(fase){
+  const p = lerProgresso() || {v:SAVE_VERSION,concluidas:0,index:0,score:0,fase:1};
+  p.concluidas = Math.max(p.concluidas || 0, fase);
+  p.v = SAVE_VERSION;
+  p.fase = Math.min(fase + 1, TOTAL_FASES);
+  p.index = 0; p.score = 0;
+  p.data = new Date().toISOString();
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify(p)); }catch(e){}
+}
+
+function periodNow(){
+  const h = new Date().getHours();
+  if(h >= 5 && h < 12) return {name:"manhã",icon:"☀",title:"Ko'ẽ Porã!",desc:"A luz da manhã abre o caminho para novas descobertas.",msg:"A jornada começa com a luz do dia."};
+  if(h >= 12 && h < 18) return {name:"tarde",icon:"◉",title:"Ka'aru Porã!",desc:"O caminho continua. Observe cada detalhe e descubra.",msg:"A tarde convida a explorar."};
+  return {name:"noite",icon:"☾",title:"Pyntũ Porã!",desc:"Quando a noite chega, a atenção ilumina o caminho.",msg:"A noite também guarda descobertas."};
+}
+function screen(id){
+  ["home","game","finish"].forEach(x => {
+    const el = $(x);
+    if(el) el.classList.toggle("active", x === id);
+  });
+  if(id === "home"){ atualizarSeletorFase(); atualizarBotaoContinuar(); }
+}
+function safeBind(id, event, handler){
+  const el = $(id);
+  if(!el){ console.warn("[safeBind] elemento ausente:", id); return; }
+  el.addEventListener(event, handler);
+}
+
+let audioCtx = null;
+function beep(freq, dur, type="sine", vol=.18){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = vol;
+    o.connect(g).connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + dur);
+    o.stop(audioCtx.currentTime + dur);
+  }catch(e){}
+}
+function audio(file){
+  if(!state.sound || !file) return;
+  const a = new Audio(ASSET.audio + file);
+  a.volume = .85;
+  a.play().catch(() => {});
+}
+const sfx = {
+  acerto(){ if(!state.sound) return; beep(660,.10,"triangle"); setTimeout(()=>beep(880,.14,"triangle"),90); },
+  erro(){ if(!state.sound) return; beep(220,.12,"sawtooth",.14); },
+  clique(){ if(!state.sound) return; beep(520,.05,"sine",.10); }
+};
+
+function shuffle(a){ return [...a].sort(() => Math.random() - .5); }
+function pickN(item, list, n){
+  const seen = new Set([item.word]);
+  const others = shuffle(list.filter(x => !seen.has(x.word))).slice(0, n - 1);
+  return shuffle([item, ...others]);
+}
+function pickMeanings(item, list, n){
+  const seen = new Set([item.meaning]);
+  const outros = shuffle(list.filter(x => !seen.has(x.meaning)));
+  const out = [item.meaning];
+  for(const o of outros){ if(out.length >= n) break; seen.add(o.meaning); out.push(o.meaning); }
+  return shuffle(out);
+}
+function word(w){ return VOCABULARY.find(v => v.word === w); }
+function numberWord(n){ return NUMBER_VOCABULARY.find(v => v.value === n); }
+
+/* =========================================================
+   GERADORES
+   ========================================================= */
+const FACIL = VOCABULARY.filter(v => v.file);
+const COM_AUDIO = FACIL.filter(v => v.audio);
+const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
+const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
+
+function qWord(f){
+  const item = shuffle(FACIL)[0];
+  return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Nhandewa?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,f>=5?4:3).map(x=>x.word)};
+}
+function qMeaning(f){
+  const item = shuffle(FACIL)[0];
+  return {type:"meaning",kind:"TRADUÇÃO",prompt:`O que significa «${item.word}»?`,hint:"Escolha o significado em português.",target:item.meaning,targetWord:item.word,audioItem:item,choices:pickMeanings(item,FACIL,f>=5?4:3)};
+}
+function qReverse(f){
+  const item = shuffle(FACIL)[0];
+  return {type:"reverse",kind:"PALAVRA EM NHANDEWA",prompt:`Como se diz «${item.meaning}» em Nhandewa?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,f>=5?4:3).map(x=>x.word)};
+}
+function qAudio(f){
+  const item = shuffle(COM_AUDIO)[0];
+  return {type:"audio",kind:"ESCUTE E ESCOLHA",prompt:"Ouça a pronúncia e escolha a palavra certa.",hint:"Toque no alto-falante para ouvir.",target:item.word,audioItem:item,choices:pickN(item,COM_AUDIO,f>=5?4:3).map(x=>x.word)};
+}
+function qCount(f){
+  const n = 1 + Math.floor(Math.random()*7);
+  const animal = shuffle(ANIMAIS_COUNT)[0];
+  return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Conte cada figura e escolha a palavra do número.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(f>=5?4:3)+1))).map(x=>x.value)};
+}
+function qNumber(){
+  const n = shuffle(NUMBER_VOCABULARY)[0];
+  return {type:"number",kind:"NÚMEROS",prompt:"Qual é a palavra Nhandewa para este número?",hint:"Observe o algarismo.",target:n.value,choices:shuffle(pickN(n,NUMBER_VOCABULARY,3)).map(x=>x.value)};
+}
+function qCategory(){
+  const cats = CATS_BASE.filter(c => VOCABULARY.some(v => v.category === c));
+  if(cats.length < 3) return null;
+  const cat = shuffle(cats)[0];
+  const item = shuffle(VOCABULARY.filter(v => v.category === cat))[0];
+  if(!item) return null;
+  return {type:"category",kind:"CATEGORIA",prompt:`A palavra «${item.word}» pertence a qual categoria?`,hint:"Escolha entre as categorias.",target:cat,choices:shuffle([cat,...shuffle(cats.filter(c=>c!==cat)).slice(0,3)])};
+}
+function qOdd(){
+  const cats = CATS_BASE.filter(c => VOCABULARY.filter(v=>v.category===c).length >= 4);
+  if(cats.length < 2) return null;
+  const [catA, catB] = shuffle(cats);
+  const intru = shuffle(VOCABULARY.filter(v => v.category === catB))[0];
+  const grupo = shuffle(VOCABULARY.filter(v => v.category === catA)).slice(0,3);
+  if(!intru || grupo.length < 3) return null;
+  return {type:"odd",kind:"INTRUSO",prompt:`Três palavras são de «${catA.toLowerCase()}». Qual NÃO pertence?`,hint:"Escolha a que é de outra categoria.",target:intru.word,choices:shuffle([...grupo.map(x=>x.word),intru.word])};
+}
+function qGap(){
+  const item = shuffle(FRASES_POSPOSICAO)[0];
+  return {type:"gap",kind:"POSPOSIÇÃO",prompt:"Complete a frase com a posposição correta:",hint:"As posposições vêm depois da palavra.",sentence:item.frase,target:item.resp,choices:shuffle([item.resp,...item.distratores])};
+}
+function qVerb(){
+  const v = shuffle(VERBOS_IRREGULARES)[0];
+  const i = Math.floor(Math.random()*v.conjugacoes.length);
+  const certa = v.conjugacoes[i];
+  const erradas = shuffle(VERBOS_IRREGULARES.filter(x=>x.base!==v.base).map(x=>x.conjugacoes[Math.floor(Math.random()*x.conjugacoes.length)])).slice(0,3);
+  return {type:"verb",kind:"VERBO IRREGULAR",prompt:`Como se conjuga «${v.pessoa[i]}» do verbo ${v.base.toUpperCase()}?`,hint:"Verbos irregulares (vol. 1, p.30).",target:certa,targetBase:v.base,choices:shuffle([certa,...erradas])};
+}
+function qChooseVerb(){
+  const v = shuffle(VERBOS_REGULARES)[0];
+  const i = Math.floor(Math.random()*v.conjug.length);
+  const certa = v.conjug[i];
+  const opcoes = [certa, ...VERBOS_REGULARES.filter(x=>x.base!==v.base).map(x=>x.conjug[Math.floor(Math.random()*x.conjug.length)])];
+  return {type:"choose-verb",kind:"CONJUGAÇÃO",prompt:`Qual é a forma correta em «${["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"][i]}» para o verbo ${v.base.toUpperCase()}?`,hint:"Verbos da 1ª conjugação (vol. 1, p.39).",target:certa,targetBase:v.base,choices:shuffle(opcoes).slice(0,4)};
+}
+function qAdv(){
+  const grupo = shuffle(CLASSES_ADV)[0];
+  const p = shuffle(grupo.exemplos)[0];
+  return {type:"adv",kind:"ADVÉRBIO",prompt:`O advérbio «${p}» pertence a qual classe?`,hint:"Classes de advérbios (vol. 2, p.10).",target:grupo.classe,targetWord:p,choices:shuffle(CLASSES_ADV.map(c=>c.classe))};
+}
+function qInterrog(){
+  const item = shuffle(INTERROGATIVAS)[0];
+  const distr = shuffle(INTERROGATIVAS.filter(x=>x.palavra!==item.palavra)).slice(0,2).map(x=>x.significado);
+  return {type:"interrog",kind:"PALAVRA INTERROGATIVA",prompt:"Qual significado corresponde a esta palavra interrogativa?",hint:"Fazendo Perguntas (vol. 2, p.43).",target:item.significado,targetWord:item.palavra,choices:shuffle([item.significado,...distr])};
+}
+function qPictureSort(){
+  const cats = CATS_BASE.filter(c => VOCABULARY.filter(v=>v.category===c && v.file).length >= 1);
+  if(cats.length < 3) return null;
+  const [cA, cB, cC] = shuffle(cats).slice(0,3);
+  const iA = shuffle(VOCABULARY.filter(v=>v.category===cA && v.file))[0];
+  const iB = shuffle(VOCABULARY.filter(v=>v.category===cB && v.file))[0];
+  const iC = shuffle(VOCABULARY.filter(v=>v.category===cC && v.file))[0];
+  if(!iA || !iB || !iC) return null;
+  const alvo = shuffle([iA,iB,iC])[0];
+  return {type:"picture-sort",kind:"QUAL É ESTA PALAVRA?",prompt:`Qual figura corresponde a «${alvo.word}»?`,hint:"Três imagens — escolha a da palavra.",target:alvo.word,targetItem:alvo,items:[iA,iB,iC]};
+}
+function qGreeting(){
+  const item = shuffle(FRASES_COTIDIANO)[0];
+  return {type:"greeting",kind:"FRASE DO COTIDIANO",prompt:`O que significa «${item.word}»?`,hint:"Frases do dia a dia (vol. 2, p.7).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,FRASES_COTIDIANO,4)};
+}
+function qCardinal(){
+  const item = shuffle(CARDINAIS)[0];
+  return {type:"cardinal",kind:"PONTO CARDEAL",prompt:"Este ponto cardeal corresponde a qual direção?",hint:"Vol. 2, p.17.",target:item.meaning,targetWord:item.word,choices:shuffle(CARDINAIS.map(c=>c.meaning))};
+}
+function qMonthDay(){
+  const isMes = Math.random() < 0.5;
+  const arr = isMes ? MESES : DIAS;
+  const item = shuffle(arr)[0];
+  return {type:isMes ? "month" : "day",kind:isMes ? "MÊS" : "DIA DA SEMANA",prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,hint:"Calendário Nhandewa (vol. 2, p.46).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,arr,4)};
+}
+
+const GERADORES = {
+  word:qWord, meaning:qMeaning, reverse:qReverse, audio:qAudio,
+  count:qCount, number:qNumber, category:qCategory, odd:qOdd,
+  gap:qGap, verb:qVerb, "choose-verb":qChooseVerb, adv:qAdv,
+  interrog:qInterrog, "picture-sort":qPictureSort, greeting:qGreeting,
+  cardinal:qCardinal, "month-day":qMonthDay
+};
+
+const FASES_DISTRIBUICAO = {
+  1:{word:20,number:4,count:6},
+  2:{word:8,meaning:8,audio:6,count:5,number:3},
+  3:{meaning:6,reverse:6,category:4,odd:4,count:4,number:3,word:3},
+  4:{meaning:5,reverse:5,gap:5,cardinal:3,count:4,word:4,odd:4},
+  5:{meaning:5,reverse:5,odd:4,gap:4,"picture-sort":4,count:4,audio:2,category:2},
+  6:{meaning:4,reverse:4,audio:3,gap:4,verb:5,greeting:3,adv:4,"picture-sort":3},
+  7:{meaning:4,reverse:4,audio:3,adv:4,gap:3,interrog:4,"month-day":4,"picture-sort":4},
+  8:{meaning:4,reverse:4,adv:4,gap:4,"month-day":3,greeting:3,verb:4,"choose-verb":4},
+  9:{meaning:3,reverse:3,audio:3,adv:4,gap:4,interrog:3,verb:3,"choose-verb":4,cardinal:3}
+};
+
+function montarFase(fase){
+  const dist = FASES_DISTRIBUICAO[fase];
+  const pool = [];
+  for(const [tipo, qtd] of Object.entries(dist)){
+    for(let i = 0; i < qtd; i++){
+      const q = GERADORES[tipo] ? GERADORES[tipo](fase) : null;
+      if(q) pool.push(q);
+    }
+  }
+  const vistos = new Set();
+  const unicos = [];
+  for(const q of pool){
+    const chave = q.type + "::" + q.prompt + "::" + q.target;
+    if(vistos.has(chave)) continue;
+    vistos.add(chave); unicos.push(q);
+  }
+  let guard = 0;
+  const tipos = Object.keys(dist);
+  while(unicos.length < QS_PER_FASE && guard++ < 200){
+    const t = tipos[Math.floor(Math.random() * tipos.length)];
+    const q = GERADORES[t] ? GERADORES[t](fase) : null;
+    if(!q) continue;
+    const chave = q.type + "::" + q.prompt + "::" + q.target;
+    if(vistos.has(chave)) continue;
+    vistos.add(chave); unicos.push(q);
+  }
+  if(unicos.length === 0){
+    throw new Error("Nenhum gerador produziu questão para a fase " + fase);
+  }
+  const fila = shuffle(unicos).slice(0, QS_PER_FASE);
+
+  if(fase === 1){
+    const adjaka = word("ADJAKÁ");
+    const obj = VOCABULARY.filter(v => v.category === "OBJETOS");
+    const primeira = {
+      type:"word",kind:"VOCABULÁRIO",
+      prompt:"Como se diz «cesto» na língua Nhandewa?",
+      hint:"Observe a imagem e escolha a palavra correta.",
+      target:"ADJAKÁ",imageItem:adjaka,
+      choices:pickN(adjaka,obj,3).map(x=>x.word)
+    };
+    return [primeira, ...fila.filter(q => q.target !== "ADJAKÁ").slice(0, QS_PER_FASE - 1)];
+  }
+  return fila;
+}
+
+function start(fase){
+  const alvo = fase || 1;
+  if(!faseDesbloqueada(alvo)) return;
+  state.index = 0; state.score = 0; state.fase = alvo;
+  state.time = periodNow();
+  state.questions = montarFase(alvo);
+  atualizarHUDInicio();
+  screen("game");
+  salvarProgresso();
+  render();
+}
+function continuarSalvo(){
+  const p = lerProgresso();
+  if(!p){ start(1); return; }
+  const fase = Math.min(Math.max(p.fase || 1, 1), TOTAL_FASES);
+  state.fase = fase;
+  state.score = Math.max(0, p.score | 0);
+  state.time = periodNow();
+  state.questions = montarFase(fase);
+  state.index = Math.min(Math.max(0, p.index | 0), state.questions.length - 1);
+  atualizarHUDInicio();
+  screen("game");
+  render();
+}
+function atualizarHUDInicio(){
+  const chip = $("time-chip"); if(chip) chip.textContent = "FASE " + state.fase + " · " + (state.time ? state.time.name.toUpperCase() : "");
+  const pl = $("period-label"); if(pl) pl.textContent = FASES_INFO[state.fase].nome + " · 30 DESAFIOS";
+  const g = $("greeting"); if(g && state.time) g.textContent = state.time.title;
+  const d = $("period-desc"); if(d && state.time) d.textContent = state.time.desc;
+  const i = $("period-icon"); if(i && state.time) i.textContent = state.time.icon;
+  const m = $("period-message"); if(m && state.time) m.textContent = state.time.msg;
+}
+
+function createImage(item, className){
+  const img = document.createElement("img");
+  img.className = className || "visual-image";
+  img.alt = item.meaning || "Imagem Nhandewa";
+  img.onerror = function(){
+    const wrap = document.createElement("div");
+    wrap.className = "visual-card";
+    const w = document.createElement("span");
+    w.className = "number-visual";
+    w.style.fontSize = "34px";
+    w.textContent = item.word || "?";
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = "PALAVRA NHANDEWA";
+    wrap.append(w, lab);
+    this.replaceWith(wrap);
+  };
+  img.src = ASSET.images + item.file;
+  return img;
+}
+
+function render(){
+  try{
+    const q = state.questions[state.index];
+    if(!q){ finish(); return; }
+    state.answered = false;
+    $("qnum").textContent = "DESAFIO " + String(state.index + 1).padStart(2,"0");
+    $("qkind").textContent = q.kind;
+    $("prompt").textContent = q.prompt;
+    $("hint").textContent = q.hint || "";
+    $("progress-text").textContent = `${state.index + 1} / ${state.questions.length}`;
+    $("progress-fill").style.width = (state.index / state.questions.length * 100) + "%";
+    $("score").textContent = state.score;
+    atualizarEstrelas();
+    $("feedback").textContent = "";
+    $("feedback").className = "feedback";
+    $("next").disabled = true;
+    $("next").textContent = state.index === state.questions.length - 1 ? "VER RESULTADO →" : "PRÓXIMO DESAFIO →";
+    visual(q);
+    answers(q);
+  }catch(e){
+    console.error("[render]", e);
+    showBootError("Erro ao renderizar: " + e.message);
+  }
+}
+function atualizarEstrelas(){
+  const totalPts = QS_PER_FASE * (10 + FASES_INFO[state.fase].bonus);
+  const ratio = state.score / totalPts;
+  $("stars").textContent = ratio >= .85 ? "★ ★ ★" : ratio >= .6 ? "★ ★ ☆" : ratio >= .35 ? "★ ☆ ☆" : "☆ ☆ ☆";
+}
+
+function visual(q){
+  const box = $("visual");
+  box.innerHTML = "";
+  $("listen").disabled = true;
+  $("listen").onclick = null;
+  const enableAudio = (item) => {
+    if(!item || !item.audio) return;
+    $("listen").disabled = false;
+    $("listen").onclick = () => audio(item.audio);
+  };
+
+  if(q.type === "word" && q.imageItem){
+    const card = document.createElement("div");
+    card.className = "visual-card";
+    card.append(createImage(q.imageItem, "visual-image"));
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = "OBSERVE A IMAGEM";
+    card.append(lab);
+    box.append(card);
+    enableAudio(q.imageItem);
+  }
+  else if(q.type === "audio" && q.audioItem){
+    const card = document.createElement("div");
+    card.className = "visual-card";
+    const big = document.createElement("span");
+    big.className = "number-visual";
+    big.style.fontSize = "64px";
+    big.textContent = "🔊";
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = "OUÇA E ESCOLHA";
+    card.append(big, lab);
+    box.append(card);
+    enableAudio(q.audioItem);
+  }
+  else if(q.type === "number"){
+    const card = document.createElement("div");
+    card.className = "visual-card";
+    const n = document.createElement("span");
+    n.className = "number-visual";
+    n.textContent = String(q.target);
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = "NÚMERO";
+    card.append(n, lab);
+    box.append(card);
+    enableAudio(numberWord(q.target));
+  }
+  else if(q.type === "count"){
+    const wrap = document.createElement("div");
+    wrap.className = "visual-count";
+    for(let i = 0; i < q.target; i++){
+      const img = createImage(q.countItem, "count-animal-image");
+      img.alt = "Animal " + (i + 1);
+      wrap.append(img);
+    }
+    box.append(wrap);
+    const note = document.createElement("span");
+    note.className = "visual-note";
+    note.textContent = "CONTE AS FIGURAS";
+    box.append(note);
+  }
+  else if(q.type === "gap"){
+    const s = document.createElement("div");
+    s.className = "gap-sentence";
+    s.innerHTML = q.sentence.replace("_", "<span class='blank'>___</span>");
+    box.append(s);
+  }
+  else if(q.type === "interrog"){
+    const s = document.createElement("div");
+    s.className = "interrog-sentence";
+    s.textContent = q.targetWord;
+    box.append(s);
+  }
+  else if(q.type === "picture-sort"){
+    const grid = document.createElement("div");
+    grid.className = "sort-grid";
+    q.items.forEach(item => {
+      const box2 = document.createElement("div");
+      box2.className = "sort-item";
+      box2.append(createImage(item, ""));
+      const n = document.createElement("span");
+      n.textContent = "?";
+      box2.append(n);
+      grid.append(box2);
+    });
+    box.append(grid);
+  }
+  else if(q.type === "verb" || q.type === "choose-verb"){
+    const card = document.createElement("div");
+    card.className = "visual-card";
+    const w = document.createElement("span");
+    w.className = "number-visual";
+    w.style.fontSize = "44px";
+    w.textContent = q.targetBase ? q.targetBase.toUpperCase() : "";
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = "VERBO";
+    card.append(w, lab);
+    box.append(card);
+  }
+  else if(["meaning","reverse","category","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
+    const card = document.createElement("div");
+    card.className = "visual-card";
+    const w = document.createElement("span");
+    w.className = "visual-note";
+    if(q.type === "meaning") w.textContent = q.targetWord || q.target;
+    else if(q.type === "reverse") w.textContent = q.targetMeaning || q.target;
+    else if(q.type === "adv") w.textContent = q.targetWord || "";
+    else if(q.type === "greeting" || q.type === "cardinal" || q.type === "month" || q.type === "day") w.textContent = q.targetWord || "";
+    else if(q.type === "odd") w.textContent = "🤔";
+    else if(q.type === "category") w.textContent = "📂";
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = q.kind;
+    card.append(w, lab);
+    box.append(card);
+    if(q.audioItem) enableAudio(q.audioItem);
+  }
+}
+
+function answers(q){
+  const box = $("answers");
+  box.innerHTML = "";
+  box.style.gridTemplateColumns = "";
+  box.classList.toggle("two-cols", q.choices && q.choices.length === 2);
+
+  if(q.type === "picture-sort" && q.items){
+    q.items.forEach(item => {
+      const b = document.createElement("button");
+      b.className = "answer";
+      b.type = "button";
+      b.dataset.value = item.word;
+      b.style.display = "flex";
+      b.style.flexDirection = "column";
+      b.style.alignItems = "center";
+      b.style.gap = "6px";
+      b.append(createImage(item, ""));
+      const lab = document.createElement("span");
+      lab.style.fontSize = "12px";
+      lab.style.color = "var(--muted)";
+      lab.textContent = "escolher esta";
+      b.append(lab);
+      b.addEventListener("click", () => check(item.word, b));
+      box.append(b);
+    });
+    box.style.gridTemplateColumns = "1fr 1fr 1fr";
+    return;
+  }
+
+  (q.choices || []).forEach(v => {
+    const b = document.createElement("button");
+    b.className = "answer";
+    b.type = "button";
+    b.dataset.value = String(v);
+    if(q.type === "number" || q.type === "count"){
+      const n = numberWord(Number(v));
+      b.textContent = n ? n.word : String(v);
+    } else {
+      b.textContent = String(v);
+    }
+    b.addEventListener("click", () => check(v, b));
+    box.append(b);
+  });
+}
+
+function check(value, button){
+  if(state.answered) return;
+  const q = state.questions[state.index];
+  const ok = String(value) === String(q.target);
+  state.answered = true;
+  document.querySelectorAll(".answer").forEach(b => b.disabled = true);
+  const pontos = 10 + FASES_INFO[state.fase].bonus;
+  if(ok){
+    state.score += pontos;
+    button.classList.add("correct");
+    $("feedback").textContent = "AGUYJEVETE! Você acertou.";
+    $("feedback").className = "feedback";
+    sfx.acerto();
+    if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);
+    else if(q.imageItem && q.imageItem.audio) audio(q.imageItem.audio);
+  } else {
+    button.classList.add("wrong");
+    const right = [...document.querySelectorAll(".answer")].find(b => b.dataset.value === String(q.target));
+    if(right) right.classList.add("correct");
+    $("feedback").textContent = "Ainda não! A resposta certa está destacada.";
+    $("feedback").className = "feedback error";
+    sfx.erro();
+  }
+  $("score").textContent = state.score;
+  atualizarEstrelas();
+  $("next").disabled = false;
+  salvarProgresso();
+}
+
+function next(){
+  if(!state.answered) return;
+  sfx.clique();
+  if(state.index < state.questions.length - 1){
+    state.index++; salvarProgresso(); render(); return;
+  }
+  const proxima = state.fase + 1;
+  registrarConclusao(state.fase);
+  if(proxima <= TOTAL_FASES && state.fase < TOTAL_FASES){ start(proxima); return; }
+  finish();
+}
+function finish(){
+  $("progress-fill").style.width = "100%";
+  $("final-score").textContent = state.score;
+  $("finish-message").textContent = state.time.title + " Você completou a fase " + state.fase +
+    " com " + state.score + " pontos em " + state.questions.length + " desafios.";
+  $("time-chip").textContent = "FASE CONCLUÍDA";
+  sfx.acerto();
+  registrarConclusao(state.fase);
+  apagarProgresso();
+  screen("finish");
+}
+
+function atualizarSeletorFase(){
+  const box = $("fase-botoes");
+  if(!box) return;
+  box.innerHTML = "";
+  for(let n = 1; n <= TOTAL_FASES; n++){
+    const info = FASES_INFO[n];
+    const liberada = faseDesbloqueada(n);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "fase-btn";
+    btn.dataset.fase = String(n);
+    if(!liberada){ btn.disabled = true; btn.title = "Conclua a fase anterior"; }
+    btn.innerHTML = `<span>${info.icone} ${info.nome}</span><small>${info.nivel}</small>`;
+    btn.addEventListener("click", () => { if(!btn.disabled) start(n); });
+    box.append(btn);
+  }
+}
+function atualizarBotaoContinuar(){
+  const botao = $("continue");
+  if(!botao) return;
+  const p = lerProgresso();
+  if(!p || (p.score === 0 && p.index === 0)){ botao.style.display = "none"; return; }
+  botao.style.display = "";
+  const info = FASES_INFO[p.fase];
+  botao.textContent = `CONTINUAR · ${info.icone} ${info.nome} · DESAFIO ${p.index + 1} · ${p.score} PTS`;
+}
+
+function showBootError(msg){
+  const box = $("boot-error");
+  if(!box) return;
+  box.style.display = "block";
+  box.textContent = "⚠ " + msg + "\n\nRecarregue a página (Ctrl+F5). Se persistir, abra o console (F12) e copie a primeira linha vermelha.";
+}
+
+/* =========================================================
+   BOOT SEGURO
+   ========================================================= */
+function bindEvents(){
+  safeBind("start", "click", () => { state.salvar = true; apagarProgresso(); start(1); });
+  safeBind("again", "click", () => { apagarProgresso(); start(1); });
+  safeBind("next", "click", next);
+  safeBind("home-button", "click", () => { if(state.time) $("time-chip").textContent = "JORNADA DA " + state.time.name.toUpperCase(); screen("home"); });
+  safeBind("finish-home", "click", () => { if(state.time) $("time-chip").textContent = "JORNADA DA " + state.time.name.toUpperCase(); screen("home"); });
+  safeBind("sound", "click", () => {
+    state.sound = !state.sound;
+    const s = $("sound");
+    if(s){ s.textContent = state.sound ? "♫" : "♪̸"; s.setAttribute("aria-label", state.sound ? "Desativar sons" : "Ativar sons"); }
+  });
+  safeBind("continue", "click", continuarSalvo);
+}
+
+(function boot(){
+  try{
+    const p = periodNow();
+    const chip = $("time-chip");
+    if(chip) chip.textContent = "JORNADA DA " + p.name.toUpperCase();
+    bindEvents();
+    atualizarSeletorFase();
+    atualizarBotaoContinuar();
+  }catch(e){
+    console.error("[boot]", e);
+    showBootError("Falha ao iniciar: " + e.message);
+  }
+})();
+</script>
+</body>
+</html>

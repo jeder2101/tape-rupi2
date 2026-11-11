@@ -95,6 +95,38 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
 
+/* NOVOS TIPOS — ORDENAR, LIGAR, CRUZADINHA, CAÇA-PALAVRAS */
+.tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;padding:12px;border-radius:18px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%;transition:border-color .2s,background .2s}
+.tokens.target{border-color:rgba(123,228,149,.7);background:rgba(123,228,149,.08)}
+.token{padding:10px 14px;border-radius:12px;background:linear-gradient(160deg,rgba(243,201,105,.22),rgba(243,201,105,.08));border:1px solid rgba(243,201,105,.45);color:#f4f6f0;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s,background .2s;letter-spacing:.03em;user-select:none;text-transform:none}
+.token:active{transform:scale(.94)}
+.token.pool{background:var(--glass);border-color:var(--stroke)}
+.tokens.label-wrap{position:relative;padding-top:26px}
+.tokens.label-wrap::before{content:attr(data-label);position:absolute;top:6px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.tokens.target.label-wrap::before{color:var(--accent-2)}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-item{padding:12px 10px;border-radius:14px;border:1px solid var(--stroke);background:var(--glass);color:var(--text);font-weight:700;font-size:13px;cursor:pointer;text-align:center;transition:transform .15s,background .2s,border-color .2s;letter-spacing:.02em;line-height:1.3;min-height:44px;display:flex;align-items:center;justify-content:center}
+.match-item.selected{border-color:var(--accent);background:rgba(243,201,105,.18);box-shadow:0 0 0 3px rgba(243,201,105,.25)}
+.match-item.matched{border-color:rgba(123,228,149,.7);background:rgba(123,228,149,.14);color:#d8f5df;cursor:default;opacity:.85}
+.match-item.wrong{animation:shake .3s ease;border-color:var(--danger)}
+.cross-grid{display:grid;gap:2px;margin:0 auto;max-width:340px;width:100%}
+.cell-input{aspect-ratio:1;width:100%;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text);font-weight:800;font-size:14px;text-align:center;text-transform:uppercase;padding:0;outline:none;font-family:var(--font);transition:background .2s,border-color .2s}
+.cell-input:focus{border-color:var(--accent);background:rgba(243,201,105,.15)}
+.cell-input.block{background:#1a1a1a;border-color:#000;pointer-events:none;color:transparent}
+.cell-input.solved{border-color:rgba(123,228,149,.55);background:rgba(123,228,149,.12);color:#d8f5df}
+.clue-list{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;padding:0}
+.clue-list li{color:var(--muted)}
+.clue-list strong{color:var(--accent);font-weight:800;margin-right:4px}
+.search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke)}
+.search-cell{aspect-ratio:1;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:rgba(255,255,255,.03);border-radius:4px;cursor:pointer;user-select:none;transition:background .15s,color .15s;font-family:var(--font)}
+.search-cell:hover{background:rgba(243,201,105,.10)}
+.search-cell.sel{background:rgba(243,201,105,.32);color:#fff}
+.search-cell.found{background:rgba(123,228,149,.28);color:#d8f5df}
+.search-words{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.search-word{padding:5px 10px;border-radius:10px;font-size:11px;font-weight:800;letter-spacing:.06em;background:rgba(243,201,105,.10);border:1px solid rgba(243,201,105,.25);color:var(--accent);text-transform:uppercase}
+.search-word.done{background:rgba(123,228,149,.18);border-color:rgba(123,228,149,.55);color:#d8f5df;text-decoration:line-through;opacity:.7}
+
 /* BALÃO DE RESULTADO */
 .finish-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding-top:10px;animation:fade .4s ease}
 .finish-bubble{position:relative;width:100%;padding:28px 22px 34px;border-radius:32px;background:linear-gradient(165deg,rgba(243,201,105,.22),rgba(255,255,255,.05) 60%,rgba(30,50,38,.85));border:1px solid rgba(243,201,105,.55);box-shadow:0 22px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);text-align:center;animation:bubbleIn .45s cubic-bezier(.2,1.3,.4,1)}
@@ -126,6 +158,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .count-bubble{width:90px;height:90px;padding:12px}
   .sort-item img{height:96px}
   .finish-score-big{font-size:76px}
+  .cross-grid{max-width:380px}
+  .search-cell{font-size:14px}
 }
 @media (max-width:380px){
   .visual-image{max-width:240px;height:160px}
@@ -138,6 +172,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .finish-bubble{padding:22px 16px 28px}
   .finish-score-big{font-size:54px}
   .finish-medal{font-size:54px}
+  .token{font-size:12px;padding:8px 10px}
+  .match-item{font-size:11px;padding:10px 6px;min-height:40px}
+  .search-cell{font-size:10px}
 }
 </style>
 </head>
@@ -522,6 +559,112 @@ const INTERROGATIVAS = [
   {palavra:"Maã?", significado:"Cadê?"}
 ];
 
+/* NOVOS BANCOS — frases para ordenar, pares para ligar, palavras para caça */
+const FRASES_ORDENAR = [
+  {tokens:["Txeé","Pakowaty-py","aikó"], pt:"Eu moro em Bananal."},
+  {tokens:["Kweé","txetuty","oú","Bauru-gwi"], pt:"Ontem meu tio veio de Bauru."},
+  {tokens:["Nhaneramõi","oké","oendá-py"], pt:"Nosso avô dormiu em casa."},
+  {tokens:["Petsy","oóta","Iperu-py"], pt:"Tua mãe vai para Iperu."},
+  {tokens:["Txekywy","oó","ka'agwy-py","odjaya","djedjy"], pt:"Meu irmão foi à mata colher mel."},
+  {tokens:["Oré","roetxá","nderu","oporaei"], pt:"Nós vimos teu pai cantar."},
+  {tokens:["Tuwitxá","oikó","nhandetekoá-mbyté-py"], pt:"O chefe mora no meio da nossa aldeia."},
+  {tokens:["Mitãngwé","onhimangá","ywyrá-gwypy"], pt:"As crianças brincam debaixo da árvore."},
+  {tokens:["Yy","opytá","tapé","koty","rowai-py"], pt:"A água fica ao lado da estrada."},
+  {tokens:["Katxuru","rendá","oká-py","oikó"], pt:"O cachorro mora fora."},
+  {tokens:["Txeru","tatá","omoendy"], pt:"Meu pai acendeu o fogo."},
+  {tokens:["Nhandé","Nhanderu-upé","nhaporandu"], pt:"Nós falamos com Nhanderu."},
+  {tokens:["Ko'ẽ","py'i","eté","owy"], pt:"Cedo da manhã ela veio."},
+  {tokens:["Txedjaryi","omombe'u","txewy"], pt:"Minha avó me contou."},
+  {tokens:["Aipyý","manduwi","adjoká","ãwã"], pt:"Peguei amendoim para assar."}
+];
+
+const PARES_LIGAR = [
+  {a:"WEI",b:"bastante"},
+  {a:"PETEREMÉ",b:"rápido"},
+  {a:"MBENGWE'I",b:"lentamente"},
+  {a:"KWEÉ",b:"ontem"},
+  {a:"KO'ẼRO",b:"amanhã"},
+  {a:"MOMBYRY",b:"longe"},
+  {a:"DJAWÉ",b:"perto"},
+  {a:"APY",b:"aqui"},
+  {a:"PY-PY",b:"dentro"},
+  {a:"OKÁ-PY",b:"fora"},
+  {a:"DJIWY",b:"novamente"},
+  {a:"YMÃ",b:"antigamente"},
+  {a:"RYAÉ",b:"frequentemente"},
+  {a:"E'ỸWA",b:"nunca"},
+  {a:"IDJYPYE'YWA",b:"sempre"},
+  {a:"MBOWÉ",b:"antes de"},
+  {a:"RIRÉ",b:"depois de"},
+  {a:"TERI",b:"ainda"},
+  {a:"ETÉ",b:"muito"},
+  {a:"MBARIÍ",b:"pouco"},
+  {a:"-py",b:"em, para"},
+  {a:"-rupi",b:"por, pelo"},
+  {a:"-arõ",b:"em cima, sobre"},
+  {a:"-gwypy",b:"embaixo, debaixo"},
+  {a:"-mbyté-py",b:"entre, no meio"},
+  {a:"-gwi",b:"de (origem)"},
+  {a:"Mawã?",b:"Quem?"},
+  {a:"Mba'ewa?",b:"O que?"},
+  {a:"Marũ?",b:"Quando?"},
+  {a:"Ma'erã?",b:"Por quê?"},
+  {a:"Mamõ?",b:"Onde?"},
+  {a:"Mbowy?",b:"Quanto?"},
+  {a:"Maã?",b:"Cadê?"}
+];
+
+/* CRUZADINHA — palavras curtas sem acento (mesmo assim, compara-se normalizado) */
+const CROSSWORDS = [
+  {
+    words:[
+      {word:"AWATI",clue:"Milho (alimento sagrado)",row:0,col:0,dir:"H"},
+      {word:"ATXA",clue:"Machado",row:0,col:0,dir:"V"},
+      {word:"TATU",clue:"Animal de casco",row:2,col:0,dir:"H"},
+      {word:"TAY",clue:"Formiga",row:2,col:0,dir:"V"},
+      {word:"TXIWI",clue:"Gato",row:4,col:0,dir:"H"}
+    ]
+  },
+  {
+    words:[
+      {word:"DJETY",clue:"Batata-doce",row:0,col:0,dir:"H"},
+      {word:"DJAPE",clue:"Panela (início)",row:0,col:0,dir:"V"},
+      {word:"PIRA",clue:"Peixe",row:3,col:0,dir:"H"},
+      {word:"PYKA",clue:"(Ave) — use apenas como referência",row:3,col:0,dir:"V"}
+    ]
+  }
+].map(buildCrossword);
+
+function buildCrossword(def){
+  let maxR=0,maxC=0;
+  const cells = [];
+  def.words.forEach((w,idx)=>{
+    w.index = idx;
+    for(let i=0;i<w.word.length;i++){
+      const r = w.row + (w.dir==="V"?i:0);
+      const c = w.col + (w.dir==="H"?i:0);
+      maxR = Math.max(maxR,r); maxC = Math.max(maxC,c);
+    }
+  });
+  const grid = Array.from({length:maxR+1},()=>Array.from({length:maxC+1},()=>null));
+  def.words.forEach(w=>{
+    for(let i=0;i<w.word.length;i++){
+      const r = w.row + (w.dir==="V"?i:0);
+      const c = w.col + (w.dir==="H"?i:0);
+      if(!grid[r][c]) grid[r][c] = {letter:w.word[i],words:new Set()};
+      grid[r][c].words.add(w.index);
+    }
+  });
+  return {grid, words:def.words, rows:maxR+1, cols:maxC+1};
+}
+
+const SEARCH_SETS = [
+  {words:["KWARAY","JASY","TATA","YY","OKY","YWYRA","PARANA","KAAGWY"], size:10},
+  {words:["PIRA","KAI","MBORE","TATU","TXIWI","MBOI","AKUTI","JABUTI"], size:10},
+  {words:["KUTXA","KARO","PAKOWA","AWATI","MANDIO","DJETY","KAMBY","TSOO"], size:10},
+  {words:["TATU","TATA","TUKU","TAY","KY","KAWY","MBERU","KYDJU"], size:9}
+];
+
 const state = {
   index:0, score:0, fase:1, answered:false, sound:true, time:null,
   questions:[], salvar:true, acertos:0, erros:0
@@ -639,6 +782,13 @@ function pickMeanings(item, list, n){
 }
 function word(w){ return VOCABULARY.find(v => v.word === w); }
 function numberWord(n){ return NUMBER_VOCABULARY.find(v => v.value === n); }
+function normalizar(s){
+  return String(s).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[´`^~¨]/g,"")
+    .replace(/[’']/g,"")
+    .replace(/[^a-z]/g,"");
+}
 
 const FACIL = VOCABULARY.filter(v => v.file);
 const COM_AUDIO = VOCABULARY.filter(v => v.audio);
@@ -757,24 +907,110 @@ function qParentesco(f){
   };
 }
 
+/* ---------- NOVOS GERADORES ---------- */
+function qOrder(){
+  const base = shuffle(FRASES_ORDENAR)[0];
+  return {
+    type:"order",
+    kind:"ORDENE A FRASE",
+    prompt:"Ordene as palavras para formar a frase correta:",
+    hint:"Toque nas palavras na ordem certa. Sujeito + complemento + verbo.",
+    target: base.tokens.join("|"),
+    tokens: shuffle(base.tokens),
+    translation: base.pt
+  };
+}
+function qMatch(){
+  const selecionados = shuffle(PARES_LIGAR).slice(0, 4);
+  return {
+    type:"match",
+    kind:"LIGUE AS COLUNAS",
+    prompt:"Ligue cada palavra Nhandewa ao seu significado:",
+    hint:"Toque numa palavra e depois no significado correspondente.",
+    pairs: selecionados,
+    target: selecionados.map(p=>p.a+"="+p.b).join("|")
+  };
+}
+function qCross(){
+  const puzzle = shuffle(CROSSWORDS)[0];
+  return {
+    type:"cross",
+    kind:"CRUZADINHA",
+    prompt:"Complete a cruzadinha com as palavras Nhandewa:",
+    hint:"Digite apenas as letras — sem acento nem espaço.",
+    puzzle,
+    target: puzzle.words.map(w=>w.word).join("|")
+  };
+}
+function qSearch(){
+  const set = shuffle(SEARCH_SETS)[0];
+  const grid = buildSearchGrid(set.words, set.size);
+  return {
+    type:"search",
+    kind:"CAÇA-PALAVRAS",
+    prompt:"Encontre as palavras Nhandewa escondidas:",
+    hint:"Arraste (ou toque no início e no fim) para marcar cada palavra.",
+    grid, words: set.words,
+    target: set.words.join("|")
+  };
+}
+
+function buildSearchGrid(words, size){
+  const G = Array.from({length:size},()=>Array.from({length:size},()=>"" ));
+  const dirs = [[0,1],[1,0],[0,-1],[-1,0]];
+  const placed = [];
+  for(const w of words){
+    const W = w.replace(/'/g,"");
+    let ok = false;
+    let tries = 0;
+    while(!ok && tries++ < 300){
+      const dir = dirs[Math.floor(Math.random()*dirs.length)];
+      const r = Math.floor(Math.random()*size);
+      const c = Math.floor(Math.random()*size);
+      const endR = r + dir[0]*(W.length-1);
+      const endC = c + dir[1]*(W.length-1);
+      if(endR<0||endR>=size||endC<0||endC>=size) continue;
+      let colide = false;
+      for(let i=0;i<W.length;i++){
+        const rr = r + dir[0]*i, cc = c + dir[1]*i;
+        if(G[rr][cc] && G[rr][cc] !== W[i]){ colide = true; break; }
+      }
+      if(colide) continue;
+      for(let i=0;i<W.length;i++){
+        G[r+dir[0]*i][c+dir[1]*i] = W[i];
+      }
+      placed.push({word:W, r, c, dr:dir[0], dc:dir[1], len:W.length});
+      ok = true;
+    }
+  }
+  const alfab = "ABCDEGIKMNOPRSTUWY";
+  for(let i=0;i<size;i++){
+    for(let j=0;j<size;j++){
+      if(!G[i][j]) G[i][j] = alfab[Math.floor(Math.random()*alfab.length)];
+    }
+  }
+  return {G, placed, size};
+}
+
 const GERADORES = {
   word:qWord, meaning:qMeaning, reverse:qReverse, audio:qAudio,
   count:qCount, number:qNumber, category:qCategory, odd:qOdd,
   gap:qGap, verb:qVerb, "choose-verb":qChooseVerb, adv:qAdv,
   interrog:qInterrog, "picture-sort":qPictureSort, greeting:qGreeting,
-  cardinal:qCardinal, "month-day":qMonthDay, parentesco:qParentesco
+  cardinal:qCardinal, "month-day":qMonthDay, parentesco:qParentesco,
+  order:qOrder, match:qMatch, cross:qCross, search:qSearch
 };
 
 const FASES_DISTRIBUICAO = {
-  1:{word:20,number:4,count:6},
-  2:{word:8,meaning:8,audio:6,count:5,number:3},
-  3:{meaning:6,reverse:6,category:4,odd:4,count:4,number:3,word:3},
-  4:{meaning:5,reverse:5,gap:5,cardinal:3,count:4,word:4,odd:4,parentesco:3},
-  5:{meaning:5,reverse:5,odd:4,gap:4,"picture-sort":4,count:4,audio:2,category:2,parentesco:4},
-  6:{meaning:4,reverse:4,audio:3,gap:4,verb:5,greeting:3,adv:4,"picture-sort":3},
-  7:{meaning:4,reverse:4,audio:3,adv:4,gap:3,interrog:4,"month-day":4,"picture-sort":4,parentesco:3},
-  8:{meaning:4,reverse:4,adv:4,gap:4,"month-day":3,greeting:3,verb:4,"choose-verb":4,parentesco:2},
-  9:{meaning:3,reverse:3,audio:3,adv:4,gap:4,interrog:3,verb:3,"choose-verb":4,cardinal:3}
+  1:{word:16,number:4,count:5,order:3,match:2},
+  2:{word:6,meaning:6,audio:4,count:4,number:2,order:3,match:3,cross:1,search:1},
+  3:{meaning:4,reverse:4,category:3,odd:3,count:3,number:2,word:2,order:3,match:2,cross:2,search:2},
+  4:{meaning:4,reverse:4,gap:4,cardinal:2,count:3,word:3,odd:3,parentesco:2,order:3,cross:1,search:1},
+  5:{meaning:4,reverse:4,odd:3,gap:4,"picture-sort":3,count:3,audio:2,category:2,parentesco:2,order:1,match:1,search:1},
+  6:{meaning:3,reverse:3,audio:3,gap:4,verb:4,greeting:2,adv:3,"picture-sort":3,order:2,match:2,cross:1},
+  7:{meaning:3,reverse:3,audio:2,adv:3,gap:3,interrog:3,"month-day":3,"picture-sort":3,parentesco:2,order:2,match:1,search:2},
+  8:{meaning:3,reverse:3,adv:3,gap:3,"month-day":3,greeting:3,verb:3,"choose-verb":3,parentesco:2,order:2,cross:2,search:2},
+  9:{meaning:2,reverse:2,audio:2,adv:3,gap:3,interrog:3,verb:3,"choose-verb":3,cardinal:2,"month-day":2,order:2,match:2,cross:1,search:2}
 };
 
 function montarFase(fase){
@@ -1057,6 +1293,26 @@ function visual(q){
     box.append(lab);
     enableAudio(q.audioItem);
   }
+  else if(q.type === "order"){
+    const target = document.createElement("div");
+    target.className = "tokens label-wrap target";
+    target.dataset.label = "SUA FRASE";
+    target.id = "order-target";
+    box.append(target);
+    const pool = document.createElement("div");
+    pool.className = "tokens label-wrap";
+    pool.dataset.label = "TOQUE PARA MONTAR";
+    pool.id = "order-pool";
+    q.tokens.forEach(t => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "token pool";
+      b.textContent = t;
+      b.dataset.word = t;
+      pool.append(b);
+    });
+    box.append(pool);
+  }
   else if(["meaning","reverse","category","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1074,6 +1330,18 @@ function visual(q){
     card.append(w, lab);
     box.append(card);
     if(q.audioItem) enableAudio(q.audioItem);
+  }
+  else if(q.type === "cross"){
+    const clue = document.createElement("ul");
+    clue.className = "clue-list";
+    q.puzzle.words.forEach((w, i) => {
+      const li = document.createElement("li");
+      const n = document.createElement("strong");
+      n.textContent = (i+1) + ".";
+      li.append(n, document.createTextNode(w.clue));
+      clue.append(li);
+    });
+    box.append(clue);
   }
 }
 
@@ -1106,6 +1374,250 @@ function answers(q){
     return;
   }
 
+  if(q.type === "order"){
+    const pool = $("order-pool");
+    const target = $("order-target");
+
+    const refresh = () => {
+      Array.from(target.children).forEach((el, idx) => {
+        if(el.dataset.word !== q.tokens.filter(()=>true)[0]){}
+      });
+      const montada = Array.from(target.children).map(el=>el.dataset.word);
+      const certa = q.target.split("|");
+      const iguais = montada.length === certa.length && montada.every((v,i)=>v === certa[i]);
+      $("next").disabled = !iguais || !state.answered;
+      if(!state.answered) return;
+    };
+
+    target.addEventListener("click", (e) => {
+      const el = e.target.closest(".token");
+      if(!el || state.answered) return;
+      el.remove();
+      const clone = document.createElement("button");
+      clone.type = "button";
+      clone.className = "token pool";
+      clone.textContent = el.textContent;
+      clone.dataset.word = el.dataset.word;
+      clone.addEventListener("click", onPool);
+      pool.append(clone);
+      sfx.clique();
+      checarOrdem();
+    });
+    pool.addEventListener("click", (e) => {
+      const el = e.target.closest(".token");
+      if(!el || state.answered) return;
+      el.remove();
+      const mv = document.createElement("button");
+      mv.type = "button";
+      mv.className = "token";
+      mv.textContent = el.textContent;
+      mv.dataset.word = el.dataset.word;
+      target.append(mv);
+      sfx.clique();
+      checarOrdem();
+    });
+
+    function onPool(){}
+
+    function checarOrdem(){
+      const montada = Array.from(target.children).map(el=>el.dataset.word);
+      const certa = q.target.split("|");
+      if(montada.length !== certa.length) return;
+      if(montada.every((v,i)=>v === certa[i])){
+        if(!state.answered) verificar(q, true, target);
+      }
+    }
+
+    box.style.display = "none";
+    return;
+  }
+
+  if(q.type === "match"){
+    const left = shuffle(q.pairs.map(p=>({t:p.a,k:p.b,side:"a"})));
+    const right = shuffle(q.pairs.map(p=>({t:p.b,k:p.b,side:"b"})));
+    const wrap = document.createElement("div");
+    wrap.className = "match-grid";
+    const colL = document.createElement("div"); colL.className = "match-col";
+    const colR = document.createElement("div"); colR.className = "match-col";
+    let selL = null;
+    let acertos = 0;
+    const montar = (col, arr) => {
+      arr.forEach(item => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "match-item";
+        b.textContent = item.t;
+        b.dataset.key = item.k;
+        b.addEventListener("click", () => {
+          if(state.answered || b.classList.contains("matched")) return;
+          if(item.side === "a"){
+            Array.from(colL.children).forEach(x=>x.classList.remove("selected"));
+            b.classList.add("selected");
+            selL = b;
+            sfx.clique();
+            return;
+          }
+          if(!selL) return;
+          if(selL.dataset.key === item.k){
+            selL.classList.add("matched");
+            selL.classList.remove("selected");
+            b.classList.add("matched");
+            b.classList.remove("selected");
+            acertos++;
+            sfx.acerto();
+            if(acertos === q.pairs.length) verificar(q, true, wrap);
+          } else {
+            b.classList.add("wrong");
+            beep(220,.12,"sawtooth",.14);
+            setTimeout(()=>b.classList.remove("wrong"), 340);
+            verificar(q, false, wrap);
+          }
+          selL = null;
+        });
+        col.append(b);
+      });
+    };
+    montar(colL, left);
+    montar(colR, right);
+    wrap.append(colL, colR);
+    box.style.display = "block";
+    box.append(wrap);
+    return;
+  }
+
+  if(q.type === "cross"){
+    const wrap = document.createElement("div");
+    wrap.className = "cross-grid";
+    wrap.style.gridTemplateColumns = `repeat(${q.puzzle.cols}, 1fr)`;
+    const grid = q.puzzle.grid;
+    for(let r=0;r<q.puzzle.rows;r++){
+      for(let c=0;c<q.puzzle.cols;c++){
+        const cell = grid[r][c];
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.maxLength = 1;
+        inp.inputMode = "text";
+        inp.autocapitalize = "characters";
+        inp.dataset.r = r; inp.dataset.c = c;
+        inp.className = "cell-input";
+        if(!cell){
+          inp.classList.add("block");
+          inp.disabled = true;
+        } else {
+          inp.dataset.sol = normalizar(cell.letter);
+          inp.addEventListener("input", () => {
+            inp.value = inp.value.replace(/[^A-Za-zÀ-ÿ]/g,"").slice(0,1).toUpperCase();
+            if(inp.value) inp.classList.add("solved"); else inp.classList.remove("solved");
+            checarCross();
+          });
+        }
+        wrap.append(inp);
+      }
+    }
+    box.style.display = "block";
+    box.append(wrap);
+
+    function checarCross(){
+      if(state.answered) return;
+      const inputs = wrap.querySelectorAll("input.cell-input:not(.block)");
+      let ok = true;
+      inputs.forEach(inp => {
+        if(normalizar(inp.value) !== inp.dataset.sol) ok = false;
+      });
+      if(ok) verificar(q, true, wrap);
+    }
+    return;
+  }
+
+  if(q.type === "search"){
+    const wrap = document.createElement("div");
+    wrap.className = "search-grid";
+    wrap.style.gridTemplateColumns = `repeat(${q.grid.size}, 1fr)`;
+
+    let startCell = null;
+    const found = [];
+    q.grid.placed.forEach(p => {
+      const set = new Set();
+      for(let i=0;i<p.len;i++){
+        set.add((p.r + p.dr*i) + ":" + (p.c + p.dc*i));
+      }
+      found.push({word:p.word, cells:set, ok:false});
+    });
+
+    const wordStrip = document.createElement("div");
+    wordStrip.className = "search-words";
+    q.words.forEach(w => {
+      const s = document.createElement("span");
+      s.className = "search-word";
+      s.dataset.w = w.replace(/'/g,"");
+      s.textContent = w;
+      wordStrip.append(s);
+    });
+
+    const cells = [];
+    for(let r=0;r<q.grid.size;r++){
+      for(let c=0;c<q.grid.size;c++){
+        const cell = document.createElement("div");
+        cell.className = "search-cell";
+        cell.textContent = q.grid.G[r][c];
+        cell.dataset.r = r; cell.dataset.c = c;
+        cell.addEventListener("click", () => {
+          if(state.answered) return;
+          if(!startCell){
+            startCell = cell;
+            cell.classList.add("sel");
+            sfx.clique();
+          } else {
+            marcar(startCell, cell);
+          }
+        });
+        cells.push(cell);
+        wrap.append(cell);
+      }
+    }
+
+    function marcar(a, b){
+      const r1 = +a.dataset.r, c1 = +a.dataset.c;
+      const r2 = +b.dataset.r, c2 = +b.dataset.c;
+      const dr = Math.sign(r2 - r1), dc = Math.sign(c2 - c1);
+      const len = Math.abs(r2-r1) + Math.abs(c2-c1) + 1;
+      const straight = (r1===r2) || (c1===c2);
+      a.classList.remove("sel");
+      startCell = null;
+      if(!straight || len < 2) return;
+
+      const picked = [];
+      for(let i=0;i<len;i++){
+        const r = r1 + dr*i, c = c1 + dc*i;
+        if(r<0||r>=q.grid.size||c<0||c>=q.grid.size) return;
+        picked.push(r+":"+c);
+      }
+      const palavra = picked.map(k => {
+        const [r,c] = k.split(":").map(Number);
+        return q.grid.G[r][c];
+      }).join("");
+      const alvo = found.find(f => !f.ok && (f.cells.size === picked.length && picked.every(k=>f.cells.has(k))));
+      if(alvo){
+        alvo.ok = true;
+        picked.forEach(k => {
+          const [r,c] = k.split(":").map(Number);
+          cells[r*q.grid.size + c].classList.add("found");
+        });
+        const strip = wordStrip.querySelector(`[data-w="${alvo.word}"]`);
+        if(strip) strip.classList.add("done");
+        sfx.acerto();
+        if(found.every(f=>f.ok)) verificar(q, true, wrap);
+      } else {
+        beep(220,.1,"sawtooth",.12);
+      }
+    }
+
+    box.style.display = "block";
+    box.innerHTML = "";
+    box.append(wordStrip, wrap);
+    return;
+  }
+
   (q.choices || []).forEach(v => {
     const b = document.createElement("button");
     b.className = "answer";
@@ -1120,6 +1632,32 @@ function answers(q){
     b.addEventListener("click", () => check(v, b));
     box.append(b);
   });
+}
+
+function verificar(q, ok, anchor){
+  if(state.answered) return;
+  state.answered = true;
+  document.querySelectorAll(".answer").forEach(b => b.disabled = true);
+  const pontos = 10 + FASES_INFO[state.fase].bonus;
+  if(ok){
+    state.score += pontos;
+    state.acertos += 1;
+    if(anchor) anchor.classList.add("target");
+    $("feedback").textContent = "AGUYJEVETE! Você acertou.";
+    $("feedback").className = "feedback";
+    sfx.acerto();
+    if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);
+    else if(q.imageItem && q.imageItem.audio) audio(q.imageItem.audio);
+  } else {
+    state.erros += 1;
+    $("feedback").textContent = "Ainda não! Veja a resposta correta.";
+    $("feedback").className = "feedback error";
+    sfx.erro();
+  }
+  $("score").textContent = state.score;
+  atualizarEstrelas();
+  $("next").disabled = false;
+  salvarProgresso();
 }
 
 function check(value, button){
@@ -1195,7 +1733,7 @@ function scoreProfile(){
     title = "Não desanime!";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
     apoio = "Ninguém nasce sabendo — siga tentando, você está no caminho.";
-    atencao = `Você acertou ${ok} de ${total}. Recomendo repetir a fase sem pressa antes de continuar. Voçê vai sentir a diferença.`;
+    atencao = `Você acertou ${ok} de ${total}. Recomendo repetir a fase sem pressa antes de continuar. Você vai sentir a diferença.`;
   }
   return {medal, title, sub, apoio, atencao};
 }

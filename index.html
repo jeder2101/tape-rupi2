@@ -94,17 +94,38 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .next-btn:not(:disabled):active{transform:scale(.985)}
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
-.finish-card{text-align:center;padding:34px 22px;border-radius:28px;background:linear-gradient(160deg,rgba(243,201,105,.20),rgba(255,255,255,.04));border:1px solid rgba(243,201,105,.4);box-shadow:var(--shadow);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.finish-icon{font-size:56px}
-.finish-title{font-size:22px;margin:10px 0 6px;color:var(--accent)}
-.finish-score{font-size:66px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
-.finish-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.finish-msg{font-size:14px;color:var(--muted);line-height:1.55;margin:14px 0 22px}
+
+/* BALÃO DE RESULTADO */
+.finish-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding-top:10px;animation:fade .4s ease}
+.finish-bubble{position:relative;width:100%;padding:28px 22px 34px;border-radius:32px;background:linear-gradient(165deg,rgba(243,201,105,.22),rgba(255,255,255,.05) 60%,rgba(30,50,38,.85));border:1px solid rgba(243,201,105,.55);box-shadow:0 22px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);text-align:center;animation:bubbleIn .45s cubic-bezier(.2,1.3,.4,1)}
+@keyframes bubbleIn{from{opacity:0;transform:scale(.88) translateY(14px)}to{opacity:1;transform:none}}
+.finish-bubble::after{content:"";position:absolute;bottom:-14px;left:50%;transform:translateX(-50%) rotate(45deg);width:26px;height:26px;background:linear-gradient(135deg,rgba(30,50,38,.95),rgba(30,50,38,.85));border-right:1px solid rgba(243,201,105,.5);border-bottom:1px solid rgba(243,201,105,.5);border-radius:0 0 6px 0;box-shadow:6px 6px 14px rgba(0,0,0,.4)}
+.finish-medal{font-size:66px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 8px 20px rgba(243,201,105,.55));animation:medalIn .55s cubic-bezier(.2,1.6,.4,1)}
+@keyframes medalIn{0%{transform:scale(.3) rotate(-18deg);opacity:0}70%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.finish-title{font-size:22px;margin:6px 0 4px;color:var(--accent);letter-spacing:.02em}
+.finish-sub{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:16px}
+.score-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.score-cell{background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.score-cell .val{font-size:22px;font-weight:900;line-height:1.1;color:var(--accent)}
+.score-cell .val.ok{color:var(--ok)}
+.score-cell .val.bad{color:var(--danger)}
+.score-cell .lbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800;text-align:center;line-height:1.25}
+.finish-score-big{font-size:64px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:2px}
+.finish-score-label{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;font-weight:800}
+.support-msg,.attention-msg{font-size:13.5px;line-height:1.55;padding:12px 14px;border-radius:14px;margin-bottom:10px;text-align:left}
+.support-msg{color:#d8f5df;background:rgba(123,228,149,.12);border:1px solid rgba(123,228,149,.35)}
+.attention-msg{color:#ffe6c2;background:rgba(243,201,105,.12);border:1px solid rgba(243,201,105,.35)}
+.support-msg strong,.attention-msg strong{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;opacity:.85}
+.finish-actions{display:flex;flex-direction:column;gap:10px;margin-top:18px;width:100%}
+.finish-actions .primary-btn,.finish-actions .ghost-btn{width:100%}
+.finish-actions .next-fase{background:linear-gradient(135deg,#b8f0c6,#7be495 55%,#54c47a);color:#0b2114;box-shadow:0 14px 34px rgba(123,228,149,.35),inset 0 1px 0 rgba(255,255,255,.6)}
+.balloon-pole{width:3px;height:26px;background:linear-gradient(180deg,rgba(243,201,105,.7),rgba(243,201,105,0));margin:0 auto;border-radius:2px}
 #boot-error{display:none;padding:14px;border-radius:14px;background:rgba(255,122,122,.12);border:1px solid rgba(255,122,122,.5);color:#ffb8b8;font-size:12px;font-family:monospace;white-space:pre-wrap;line-height:1.4}
 @media (min-width:480px){
   .visual-image{max-width:340px;height:230px}
   .count-bubble{width:90px;height:90px;padding:12px}
   .sort-item img{height:96px}
+  .finish-score-big{font-size:76px}
 }
 @media (max-width:380px){
   .visual-image{max-width:240px;height:160px}
@@ -114,6 +135,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .visual-note{font-size:12px;padding:12px 16px}
   .count-bubble{width:68px;height:68px;padding:8px}
   .word-highlight{font-size:24px;padding:16px 20px}
+  .finish-bubble{padding:22px 16px 28px}
+  .finish-score-big{font-size:54px}
+  .finish-medal{font-size:54px}
 }
 </style>
 </head>
@@ -168,14 +192,31 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   </section>
 
   <section class="screen" id="finish">
-    <div class="finish-card">
-      <div class="finish-icon">🏵️</div>
-      <h2 class="finish-title">Fase concluída!</h2>
-      <div class="finish-score" id="final-score">0</div>
-      <div class="finish-label">pontos</div>
-      <div class="finish-msg" id="finish-message">Boa jornada!</div>
-      <button class="primary-btn" id="again" style="margin-bottom:10px">NOVA JORNADA</button>
-      <button class="ghost-btn" id="finish-home">Voltar ao início</button>
+    <div class="finish-wrap">
+      <div class="finish-bubble" id="finish-bubble">
+        <div class="finish-medal" id="finish-medal">🏵️</div>
+        <h2 class="finish-title" id="finish-title">Fase concluída!</h2>
+        <div class="finish-sub" id="finish-sub">FASE 1 · RESUMO</div>
+
+        <div class="finish-score-big" id="final-score">0</div>
+        <div class="finish-score-label">pontos</div>
+
+        <div class="score-breakdown">
+          <div class="score-cell"><span class="val ok" id="stat-acertos">0</span><span class="lbl">acertos</span></div>
+          <div class="score-cell"><span class="val bad" id="stat-erros">0</span><span class="lbl">erros</span></div>
+          <div class="score-cell"><span class="val" id="stat-total">0</span><span class="lbl">desafios</span></div>
+        </div>
+
+        <div class="support-msg" id="support-msg"><strong>Apoio</strong>Continue firme — cada palavra aprendida abre uma porta.</div>
+        <div class="attention-msg" id="attention-msg"><strong>Atenção</strong>Revise as questões que errou e tente de novo com calma.</div>
+
+        <div class="finish-actions">
+          <button class="primary-btn next-fase" id="next-fase">CONTINUAR PARA A FASE 2 →</button>
+          <button class="ghost-btn" id="again-fase">FAZER ESTA FASE NOVAMENTE</button>
+          <button class="ghost-btn" id="finish-home">Voltar ao início</button>
+        </div>
+      </div>
+      <div class="balloon-pole"></div>
     </div>
   </section>
 </div>
@@ -481,7 +522,10 @@ const INTERROGATIVAS = [
   {palavra:"Maã?", significado:"Cadê?"}
 ];
 
-const state = { index:0, score:0, fase:1, answered:false, sound:true, time:null, questions:[], salvar:true };
+const state = {
+  index:0, score:0, fase:1, answered:false, sound:true, time:null,
+  questions:[], salvar:true, acertos:0, erros:0
+};
 const $ = id => document.getElementById(id);
 
 const SAVE_KEY = "tape-rupi-progresso";
@@ -600,8 +644,6 @@ const FACIL = VOCABULARY.filter(v => v.file);
 const COM_AUDIO = VOCABULARY.filter(v => v.audio);
 const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
 const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
-
-/* Banco específico de PARENTESCO (sem imagens — só pergunta + alternativas em PT) */
 const PARENTESCO = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
 function qWord(f){
@@ -699,11 +741,10 @@ function qMonthDay(){
   const item = shuffle(arr)[0];
   return {type:isMes ? "month" : "day",kind:isMes ? "MÊS" : "DIA DA SEMANA",prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,hint:"Calendário Nhandewa (vol. 2, p.46).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,arr,4)};
 }
-/* NOVO: PARENTESCO — sem imagem. Pergunta direta do significado em português. */
 function qParentesco(f){
   if(PARENTESCO.length < 4) return null;
   const item = shuffle(PARENTESCO)[0];
-  const outros = shuffle(PARENTESCO.filter(x => x.meaning !== item.meaning)).slice(0, f >= 5 ? 3 : 3);
+  const outros = shuffle(PARENTESCO.filter(x => x.meaning !== item.meaning)).slice(0, 3);
   return {
     type:"parentesco",
     kind:"PARENTESCO",
@@ -785,9 +826,18 @@ function montarFase(fase){
 function start(fase){
   const alvo = fase || 1;
   if(!faseDesbloqueada(alvo)) return;
-  state.index = 0; state.score = 0; state.fase = alvo;
+  state.index = 0; state.score = 0; state.acertos = 0; state.erros = 0;
+  state.fase = alvo;
   state.time = periodNow();
   state.questions = montarFase(alvo);
+  atualizarHUDInicio();
+  screen("game");
+  salvarProgresso();
+  render();
+}
+function rejogarFase(){
+  state.index = 0; state.score = 0; state.acertos = 0; state.erros = 0;
+  state.questions = montarFase(state.fase);
   atualizarHUDInicio();
   screen("game");
   salvarProgresso();
@@ -799,6 +849,8 @@ function continuarSalvo(){
   const fase = Math.min(Math.max(p.fase || 1, 1), TOTAL_FASES);
   state.fase = fase;
   state.score = Math.max(0, p.score | 0);
+  state.acertos = Math.max(0, p.acertos | 0);
+  state.erros = Math.max(0, p.erros | 0);
   state.time = periodNow();
   state.questions = montarFase(fase);
   state.index = Math.min(Math.max(0, p.index | 0), state.questions.length - 1);
@@ -1079,6 +1131,7 @@ function check(value, button){
   const pontos = 10 + FASES_INFO[state.fase].bonus;
   if(ok){
     state.score += pontos;
+    state.acertos += 1;
     button.classList.add("correct");
     $("feedback").textContent = "AGUYJEVETE! Você acertou.";
     $("feedback").className = "feedback";
@@ -1086,6 +1139,7 @@ function check(value, button){
     if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);
     else if(q.imageItem && q.imageItem.audio) audio(q.imageItem.audio);
   } else {
+    state.erros += 1;
     button.classList.add("wrong");
     const right = [...document.querySelectorAll(".answer")].find(b => b.dataset.value === String(q.target));
     if(right) right.classList.add("correct");
@@ -1105,20 +1159,75 @@ function next(){
   if(state.index < state.questions.length - 1){
     state.index++; salvarProgresso(); render(); return;
   }
-  const proxima = state.fase + 1;
   registrarConclusao(state.fase);
-  if(proxima <= TOTAL_FASES && state.fase < TOTAL_FASES){ start(proxima); return; }
   finish();
 }
+
+function scoreProfile(){
+  const total = state.questions.length || QS_PER_FASE;
+  const ok = state.acertos;
+  const ratio = ok / total;
+  const erros = state.erros;
+  const perfeito = erros === 0;
+  let medal, title, sub, apoio, atencao;
+  if(ratio >= 0.9){
+    medal = "🏆";
+    title = "Jornada excelente!";
+    sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
+    apoio = "AGUYJEVETE! Você dominou quase tudo. Nhandé nhe'ẽ (nossa língua) floresce com você.";
+    atencao = perfeito
+      ? "Nenhuma distração detectada. Siga com a próxima fase no mesmo ritmo e mantenha a atenção plena."
+      : `Apenas ${erros} tropeço(s) — ótimo sinal. Releia as questões erradas e confirme os detalhes que confundem.`;
+  } else if(ratio >= 0.65){
+    medal = "🥇";
+    title = "Muito bem!";
+    sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
+    apoio = "Você está aprendendo de verdade. O caminho se abre um passo por vez.";
+    atencao = `Você acertou ${ok} de ${total}. Antes de seguir, volte aos termos que errou e leia a pronúncia pausadamente.`;
+  } else if(ratio >= 0.4){
+    medal = "🌱";
+    title = "Você está crescendo";
+    sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
+    apoio = "Toda jornada tem seu tempo. Cada erro é uma palavra nova se fixando na memória.";
+    atencao = `Atenção a ${erros} questão(ões). Faça esta fase de novo com calma — vai render mais na próxima.`;
+  } else {
+    medal = "🌰";
+    title = "Não desanime!";
+    sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
+    apoio = "Ninguém nasce sabendo — siga tentando, você está no caminho.";
+    atencao = `Você acertou ${ok} de ${total}. Recomendo repetir a fase sem pressa antes de continuar. Voçê vai sentir a diferença.`;
+  }
+  return {medal, title, sub, apoio, atencao};
+}
+
 function finish(){
   $("progress-fill").style.width = "100%";
+  const p = scoreProfile();
+  $("finish-bubble").style.animation = "none";
+  void $("finish-bubble").offsetWidth;
+  $("finish-bubble").style.animation = "";
+
+  $("finish-medal").textContent = p.medal;
+  $("finish-title").textContent = p.title;
+  $("finish-sub").textContent = p.sub;
   $("final-score").textContent = state.score;
-  $("finish-message").textContent = state.time.title + " Você completou a fase " + state.fase +
-    " com " + state.score + " pontos em " + state.questions.length + " desafios.";
+  $("stat-acertos").textContent = state.acertos;
+  $("stat-erros").textContent = state.erros;
+  $("stat-total").textContent = state.questions.length;
+
+  $("support-msg").innerHTML = "<strong>Apoio</strong>" + p.apoio;
+  $("attention-msg").innerHTML = "<strong>Atenção</strong>" + p.atencao;
+
+  const btnNext = $("next-fase");
+  const proxFase = state.fase + 1;
+  if(state.fase < TOTAL_FASES){
+    btnNext.style.display = "";
+    btnNext.textContent = "CONTINUAR PARA A " + FASES_INFO[proxFase].nome.toUpperCase() + " →";
+  } else {
+    btnNext.style.display = "none";
+  }
   $("time-chip").textContent = "FASE CONCLUÍDA";
   sfx.acerto();
-  registrarConclusao(state.fase);
-  apagarProgresso();
   screen("finish");
 }
 
@@ -1158,10 +1267,16 @@ function showBootError(msg){
 
 function bindEvents(){
   safeBind("start", "click", () => { state.salvar = true; apagarProgresso(); start(1); });
-  safeBind("again", "click", () => { apagarProgresso(); start(1); });
   safeBind("next", "click", next);
   safeBind("home-button", "click", () => { if(state.time) $("time-chip").textContent = "JORNADA DA " + state.time.name.toUpperCase(); screen("home"); });
   safeBind("finish-home", "click", () => { if(state.time) $("time-chip").textContent = "JORNADA DA " + state.time.name.toUpperCase(); screen("home"); });
+  safeBind("again-fase", "click", () => { apagarProgresso(); rejogarFase(); });
+  safeBind("next-fase", "click", () => {
+    const prox = state.fase + 1;
+    if(prox > TOTAL_FASES) return;
+    registrarConclusao(state.fase);
+    start(prox);
+  });
   safeBind("sound", "click", () => {
     state.sound = !state.sound;
     const s = $("sound");

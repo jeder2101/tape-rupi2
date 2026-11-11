@@ -62,8 +62,15 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .visual-label{font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:var(--muted)}
 .visual-note{font-size:13px;color:var(--accent);padding:14px 20px;border-radius:16px;background:rgba(0,0,0,.32);border:1px dashed rgba(243,201,105,.4);text-align:center;line-height:1.4;font-weight:700;max-width:340px}
 .number-visual{font-size:96px;font-weight:900;line-height:1;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 10px 24px rgba(243,201,105,.4))}
-.visual-count{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:340px}
-.count-animal-image{width:72px;height:72px;object-fit:contain;background:rgba(0,0,0,.22);border-radius:16px;padding:6px;border:1px solid rgba(255,255,255,.08);animation:pop .3s ease}
+.visual-count{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:340px}
+.count-animal{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform .15s ease}
+.count-animal:active{transform:scale(.94)}
+.count-animal-image{width:76px;height:76px;object-fit:contain;background:radial-gradient(circle at 50% 35%,rgba(243,201,105,.18),rgba(0,0,0,.22) 70%);border-radius:50%;padding:8px;border:2px solid rgba(255,255,255,.10);box-shadow:0 6px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.15);animation:pop .3s ease;transition:border-color .2s,box-shadow .2s,transform .18s}
+.count-animal.selected .count-animal-image{border-color:var(--accent);box-shadow:0 0 0 3px rgba(243,201,105,.35),0 8px 22px rgba(243,201,105,.45),inset 0 1px 0 rgba(255,255,255,.3);transform:scale(1.05)}
+.count-check{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;display:none;place-items:center;font-size:12px;font-weight:900;color:#0b1410;background:linear-gradient(180deg,#f8e19a,var(--accent));box-shadow:0 3px 10px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.4)}
+.count-animal.selected .count-check{display:grid}
+.count-badge{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.count-animal.selected .count-badge{color:var(--accent)}
 .gap-sentence{font-size:clamp(16px,4vw,19px);font-weight:700;line-height:1.5;text-align:center;color:#f4f6f0;padding:16px;border-radius:16px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%}
 .gap-sentence .blank{color:var(--accent);font-weight:900;letter-spacing:.06em;padding:0 6px;border-bottom:2px solid var(--accent)}
 .interrog-box{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
@@ -94,7 +101,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #boot-error{display:none;padding:14px;border-radius:14px;background:rgba(255,122,122,.12);border:1px solid rgba(255,122,122,.5);color:#ffb8b8;font-size:12px;font-family:monospace;white-space:pre-wrap;line-height:1.4}
 @media (min-width:480px){
   .visual-image{max-width:340px;height:230px}
-  .count-animal-image{width:80px;height:80px}
+  .count-animal-image{width:88px;height:88px}
   .sort-item img{height:96px}
 }
 @media (max-width:380px){
@@ -103,6 +110,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .fase-grid{grid-template-columns:repeat(2,1fr)}
   .sort-grid{grid-template-columns:repeat(2,1fr)}
   .visual-note{font-size:12px;padding:12px 16px}
+  .count-animal-image{width:64px;height:64px}
 }
 </style>
 </head>
@@ -609,7 +617,7 @@ function qAudio(f){
 function qCount(f){
   const n = 1 + Math.floor(Math.random()*7);
   const animal = shuffle(ANIMAIS_COUNT)[0];
-  return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Conte cada figura e escolha a palavra do número.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(f>=5?4:3)+1))).map(x=>x.value)};
+  return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Toque em cada figura para marcar que já contou.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(f>=5?4:3)+1))).map(x=>x.value)};
 }
 function qNumber(){
   const n = shuffle(NUMBER_VOCABULARY)[0];
@@ -889,14 +897,37 @@ function visual(q){
     const wrap = document.createElement("div");
     wrap.className = "visual-count";
     for(let i = 0; i < q.target; i++){
+      const figurinha = document.createElement("button");
+      figurinha.type = "button";
+      figurinha.className = "count-animal";
+      figurinha.setAttribute("aria-label", "Marcar figura " + (i + 1));
+      figurinha.dataset.counted = "0";
       const img = createImage(q.countItem, "count-animal-image");
       img.alt = "Animal " + (i + 1);
-      wrap.append(img);
+      const check = document.createElement("span");
+      check.className = "count-check";
+      check.textContent = "✓";
+      const badge = document.createElement("span");
+      badge.className = "count-badge";
+      badge.textContent = String(i + 1);
+      figurinha.append(img, check, badge);
+      figurinha.addEventListener("click", () => {
+        const marcado = figurinha.dataset.counted === "1";
+        figurinha.dataset.counted = marcado ? "0" : "1";
+        figurinha.classList.toggle("selected", !marcado);
+        if(!marcado){
+          const val = Number(badge.textContent);
+          beep(620 + val * 40, .07, "sine", .14);
+        } else {
+          beep(380, .05, "sine", .10);
+        }
+      });
+      wrap.append(figurinha);
     }
     box.append(wrap);
     const note = document.createElement("span");
     note.className = "visual-note";
-    note.textContent = "CONTE AS FIGURAS";
+    note.textContent = "TOQUE EM CADA FIGURA PARA MARCAR";
     box.append(note);
   }
   else if(q.type === "gap"){

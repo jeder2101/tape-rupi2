@@ -75,7 +75,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .count-animal.selected .count-badge{color:var(--accent)}
 .gap-sentence{font-size:clamp(16px,4vw,19px);font-weight:700;line-height:1.5;text-align:center;color:#f4f6f0;padding:16px;border-radius:16px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%}
 .gap-sentence .blank{color:var(--accent);font-weight:900;letter-spacing:.06em;padding:0 6px;border-bottom:2px solid var(--accent)}
-.interrog-box{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
 .interrog-sentence{font-size:clamp(15px,3.8vw,18px);font-weight:700;line-height:1.4;text-align:center;color:#f4f6f0;padding:16px;border-radius:16px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%}
 .sort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
 .sort-item{padding:10px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -95,7 +94,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
 
-/* NOVOS TIPOS — ORDENAR, LIGAR, CRUZADINHA, CAÇA-PALAVRAS */
+/* TOKENS - ORDENAR */
 .tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;padding:12px;border-radius:18px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%;transition:border-color .2s,background .2s}
 .tokens.target{border-color:rgba(123,228,149,.7);background:rgba(123,228,149,.08)}
 .token{padding:10px 14px;border-radius:12px;background:linear-gradient(160deg,rgba(243,201,105,.22),rgba(243,201,105,.08));border:1px solid rgba(243,201,105,.45);color:#f4f6f0;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s,background .2s;letter-spacing:.03em;user-select:none;text-transform:none}
@@ -104,20 +103,38 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tokens.label-wrap{position:relative;padding-top:26px}
 .tokens.label-wrap::before{content:attr(data-label);position:absolute;top:6px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .tokens.target.label-wrap::before{color:var(--accent-2)}
-.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.match-col{display:flex;flex-direction:column;gap:8px}
-.match-item{padding:12px 10px;border-radius:14px;border:1px solid var(--stroke);background:var(--glass);color:var(--text);font-weight:700;font-size:13px;cursor:pointer;text-align:center;transition:transform .15s,background .2s,border-color .2s;letter-spacing:.02em;line-height:1.3;min-height:44px;display:flex;align-items:center;justify-content:center}
-.match-item.selected{border-color:var(--accent);background:rgba(243,201,105,.18);box-shadow:0 0 0 3px rgba(243,201,105,.25)}
-.match-item.matched{border-color:rgba(123,228,149,.7);background:rgba(123,228,149,.14);color:#d8f5df;cursor:default;opacity:.85}
-.match-item.wrong{animation:shake .3s ease;border-color:var(--danger)}
-.cross-grid{display:grid;gap:2px;margin:0 auto;max-width:340px;width:100%}
+
+/* LIGAR AS PALAVRAS COM LINHAS PEDAGÓGICAS TRACEJADAS */
+.match-stage{position:relative;width:100%;padding:10px 4px;margin:4px 0}
+.match-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}
+.match-grid{position:relative;z-index:3;display:grid;grid-template-columns:1fr 1fr;column-gap:clamp(46px,14vw,84px);row-gap:0;width:100%}
+.match-col{display:flex;flex-direction:column;gap:18px}
+.match-col.left .match-item{text-align:left;padding-right:20px}
+.match-col.right .match-item{text-align:right;padding-left:20px}
+.match-item{position:relative;min-height:56px;padding:12px 14px;border-radius:16px;border:1.5px solid var(--stroke);background:rgba(20,38,28,.82);color:var(--text);font-weight:800;font-size:13.5px;letter-spacing:.03em;cursor:pointer;display:flex;align-items:center;line-height:1.3;box-shadow:0 8px 22px rgba(0,0,0,.35);transition:border-color .2s,background .2s,transform .15s,box-shadow .2s;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.match-col.left .match-item{justify-content:flex-start}
+.match-col.right .match-item{justify-content:flex-end}
+.match-item:not(.matched):active{transform:scale(.97)}
+.match-item.selected{border-color:var(--accent);background:rgba(243,201,105,.22);box-shadow:0 0 0 3px rgba(243,201,105,.35),0 10px 24px rgba(243,201,105,.25);transform:scale(1.02)}
+.match-item.matched{border-color:rgba(123,228,149,.85);background:rgba(123,228,149,.16);color:#eaffea;cursor:default;box-shadow:0 0 14px rgba(123,228,149,.3)}
+.match-item.wrong{animation:shake .34s ease;border-color:var(--danger);background:rgba(255,122,122,.18)}
+.match-pin{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--stroke);border:2px solid #0b1410;top:50%;transform:translateY(-50%);transition:background .2s,transform .2s}
+.match-col.left .match-pin{right:-6px}
+.match-col.right .match-pin{left:-6px}
+.match-item.selected .match-pin{background:var(--accent);transform:translateY(-50%) scale(1.35)}
+.match-item.matched .match-pin{background:var(--ok);transform:translateY(-50%) scale(1.2)}
+
+/* CRUZADINHA */
+.cross-grid{display:grid;gap:3px;margin:0 auto;max-width:340px;width:100%}
 .cell-input{aspect-ratio:1;width:100%;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text);font-weight:800;font-size:14px;text-align:center;text-transform:uppercase;padding:0;outline:none;font-family:var(--font);transition:background .2s,border-color .2s}
 .cell-input:focus{border-color:var(--accent);background:rgba(243,201,105,.15)}
-.cell-input.block{background:#1a1a1a;border-color:#000;pointer-events:none;color:transparent}
+.cell-input.block{background:#111813;border-color:transparent;pointer-events:none;color:transparent}
 .cell-input.solved{border-color:rgba(123,228,149,.55);background:rgba(123,228,149,.12);color:#d8f5df}
 .clue-list{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;padding:0}
 .clue-list li{color:var(--muted)}
 .clue-list strong{color:var(--accent);font-weight:800;margin-right:4px}
+
+/* CAÇA-PALAVRAS */
 .search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke)}
 .search-cell{aspect-ratio:1;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:rgba(255,255,255,.03);border-radius:4px;cursor:pointer;user-select:none;transition:background .15s,color .15s;font-family:var(--font)}
 .search-cell:hover{background:rgba(243,201,105,.10)}
@@ -160,6 +177,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .finish-score-big{font-size:76px}
   .cross-grid{max-width:380px}
   .search-cell{font-size:14px}
+  .match-item{min-height:62px;font-size:14.5px}
 }
 @media (max-width:380px){
   .visual-image{max-width:240px;height:160px}
@@ -173,7 +191,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .finish-score-big{font-size:54px}
   .finish-medal{font-size:54px}
   .token{font-size:12px;padding:8px 10px}
-  .match-item{font-size:11px;padding:10px 6px;min-height:40px}
+  .match-item{font-size:11.5px;padding:10px 8px;min-height:50px}
+  .match-grid{column-gap:32px}
   .search-cell{font-size:10px}
 }
 </style>
@@ -559,7 +578,6 @@ const INTERROGATIVAS = [
   {palavra:"Maã?", significado:"Cadê?"}
 ];
 
-/* NOVOS BANCOS — frases para ordenar, pares para ligar, palavras para caça */
 const FRASES_ORDENAR = [
   {tokens:["Txeé","Pakowaty-py","aikó"], pt:"Eu moro em Bananal."},
   {tokens:["Kweé","txetuty","oú","Bauru-gwi"], pt:"Ontem meu tio veio de Bauru."},
@@ -614,7 +632,6 @@ const PARES_LIGAR = [
   {a:"Maã?",b:"Cadê?"}
 ];
 
-/* CRUZADINHA — palavras curtas sem acento (mesmo assim, compara-se normalizado) */
 const CROSSWORDS = [
   {
     words:[
@@ -637,7 +654,6 @@ const CROSSWORDS = [
 
 function buildCrossword(def){
   let maxR=0,maxC=0;
-  const cells = [];
   def.words.forEach((w,idx)=>{
     w.index = idx;
     for(let i=0;i<w.word.length;i++){
@@ -907,7 +923,6 @@ function qParentesco(f){
   };
 }
 
-/* ---------- NOVOS GERADORES ---------- */
 function qOrder(){
   const base = shuffle(FRASES_ORDENAR)[0];
   return {
@@ -924,9 +939,9 @@ function qMatch(){
   const selecionados = shuffle(PARES_LIGAR).slice(0, 4);
   return {
     type:"match",
-    kind:"LIGUE AS COLUNAS",
+    kind:"LIGUE AS PALAVRAS",
     prompt:"Ligue cada palavra Nhandewa ao seu significado:",
-    hint:"Toque numa palavra e depois no significado correspondente.",
+    hint:"Toque num item da esquerda e depois no seu correspondente da direita.",
     pairs: selecionados,
     target: selecionados.map(p=>p.a+"="+p.b).join("|")
   };
@@ -1378,17 +1393,6 @@ function answers(q){
     const pool = $("order-pool");
     const target = $("order-target");
 
-    const refresh = () => {
-      Array.from(target.children).forEach((el, idx) => {
-        if(el.dataset.word !== q.tokens.filter(()=>true)[0]){}
-      });
-      const montada = Array.from(target.children).map(el=>el.dataset.word);
-      const certa = q.target.split("|");
-      const iguais = montada.length === certa.length && montada.every((v,i)=>v === certa[i]);
-      $("next").disabled = !iguais || !state.answered;
-      if(!state.answered) return;
-    };
-
     target.addEventListener("click", (e) => {
       const el = e.target.closest(".token");
       if(!el || state.answered) return;
@@ -1398,7 +1402,6 @@ function answers(q){
       clone.className = "token pool";
       clone.textContent = el.textContent;
       clone.dataset.word = el.dataset.word;
-      clone.addEventListener("click", onPool);
       pool.append(clone);
       sfx.clique();
       checarOrdem();
@@ -1417,8 +1420,6 @@ function answers(q){
       checarOrdem();
     });
 
-    function onPool(){}
-
     function checarOrdem(){
       const montada = Array.from(target.children).map(el=>el.dataset.word);
       const certa = q.target.split("|");
@@ -1432,15 +1433,79 @@ function answers(q){
     return;
   }
 
+  /* ATIVIDADE DE LIGAR AS PALAVRAS COM LINHAS TRACEJADAS E SETA */
   if(q.type === "match"){
+    const stage = document.createElement("div");
+    stage.className = "match-stage";
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "match-svg");
+    svg.innerHTML = `
+      <defs>
+        <marker id="match-arrow-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#7be495"/>
+        </marker>
+        <marker id="match-arrow-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#ff7a7a"/>
+        </marker>
+      </defs>
+    `;
+
+    const grid = document.createElement("div");
+    grid.className = "match-grid";
+
+    const colL = document.createElement("div"); colL.className = "match-col left";
+    const colR = document.createElement("div"); colR.className = "match-col right";
+
     const left = shuffle(q.pairs.map(p=>({t:p.a,k:p.b,side:"a"})));
     const right = shuffle(q.pairs.map(p=>({t:p.b,k:p.b,side:"b"})));
-    const wrap = document.createElement("div");
-    wrap.className = "match-grid";
-    const colL = document.createElement("div"); colL.className = "match-col";
-    const colR = document.createElement("div"); colR.className = "match-col";
+
     let selL = null;
     let acertos = 0;
+    const connectedLines = [];
+
+    function drawArrowLine(elA, elB, isOk){
+      const sRect = svg.getBoundingClientRect();
+      const pinA = elA.querySelector(".match-pin");
+      const pinB = elB.querySelector(".match-pin");
+      const pRectA = pinA.getBoundingClientRect();
+      const pRectB = pinB.getBoundingClientRect();
+
+      const x1 = (pRectA.left + pRectA.width / 2) - sRect.left;
+      const y1 = (pRectA.top + pRectA.height / 2) - sRect.top;
+      const x2 = (pRectB.left + pRectB.width / 2) - sRect.left;
+      const y2 = (pRectB.top + pRectB.height / 2) - sRect.top;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", x1);
+      line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2);
+      line.setAttribute("y2", y2);
+      line.setAttribute("stroke", isOk ? "#7be495" : "#ff7a7a");
+      line.setAttribute("stroke-width", "3");
+      line.setAttribute("stroke-dasharray", "8,6");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("marker-end", isOk ? "url(#match-arrow-ok)" : "url(#match-arrow-err)");
+      svg.appendChild(line);
+
+      return {line, elA, elB, isOk};
+    }
+
+    function recalcularLinhas(){
+      const sRect = svg.getBoundingClientRect();
+      connectedLines.forEach(item => {
+        const pinA = item.elA.querySelector(".match-pin");
+        const pinB = item.elB.querySelector(".match-pin");
+        const pRectA = pinA.getBoundingClientRect();
+        const pRectB = pinB.getBoundingClientRect();
+        item.line.setAttribute("x1", (pRectA.left + pRectA.width / 2) - sRect.left);
+        item.line.setAttribute("y1", (pRectA.top + pRectA.height / 2) - sRect.top);
+        item.line.setAttribute("x2", (pRectB.left + pRectB.width / 2) - sRect.left);
+        item.line.setAttribute("y2", (pRectB.top + pRectB.height / 2) - sRect.top);
+      });
+    }
+    window.addEventListener("resize", recalcularLinhas);
+
     const montar = (col, arr) => {
       arr.forEach(item => {
         const b = document.createElement("button");
@@ -1448,8 +1513,14 @@ function answers(q){
         b.className = "match-item";
         b.textContent = item.t;
         b.dataset.key = item.k;
+
+        const pin = document.createElement("span");
+        pin.className = "match-pin";
+        b.appendChild(pin);
+
         b.addEventListener("click", () => {
           if(state.answered || b.classList.contains("matched")) return;
+
           if(item.side === "a"){
             Array.from(colL.children).forEach(x=>x.classList.remove("selected"));
             b.classList.add("selected");
@@ -1457,31 +1528,53 @@ function answers(q){
             sfx.clique();
             return;
           }
+
           if(!selL) return;
+
           if(selL.dataset.key === item.k){
             selL.classList.add("matched");
             selL.classList.remove("selected");
             b.classList.add("matched");
             b.classList.remove("selected");
+
+            const itemLine = drawArrowLine(selL, b, true);
+            connectedLines.push(itemLine);
+
             acertos++;
             sfx.acerto();
-            if(acertos === q.pairs.length) verificar(q, true, wrap);
+            if(acertos === q.pairs.length){
+              window.removeEventListener("resize", recalcularLinhas);
+              verificar(q, true, stage);
+            }
           } else {
             b.classList.add("wrong");
+            selL.classList.add("wrong");
+            const tempLine = drawArrowLine(selL, b, false);
             beep(220,.12,"sawtooth",.14);
-            setTimeout(()=>b.classList.remove("wrong"), 340);
-            verificar(q, false, wrap);
+
+            setTimeout(() => {
+              b.classList.remove("wrong");
+              if(selL) selL.classList.remove("wrong");
+              tempLine.line.remove();
+            }, 360);
+
+            window.removeEventListener("resize", recalcularLinhas);
+            verificar(q, false, stage);
           }
           selL = null;
         });
         col.append(b);
       });
     };
+
     montar(colL, left);
     montar(colR, right);
-    wrap.append(colL, colR);
+
+    grid.append(colL, colR);
+    stage.append(svg, grid);
+
     box.style.display = "block";
-    box.append(wrap);
+    box.append(stage);
     return;
   }
 
@@ -1592,10 +1685,6 @@ function answers(q){
         if(r<0||r>=q.grid.size||c<0||c>=q.grid.size) return;
         picked.push(r+":"+c);
       }
-      const palavra = picked.map(k => {
-        const [r,c] = k.split(":").map(Number);
-        return q.grid.G[r][c];
-      }).join("");
       const alvo = found.find(f => !f.ok && (f.cells.size === picked.length && picked.every(k=>f.cells.has(k))));
       if(alvo){
         alvo.ok = true;

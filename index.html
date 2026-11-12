@@ -55,7 +55,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(243,201,105,.35)}50%{box-shadow:0 0 0 8px rgba(243,201,105,0)}}
 #prompt{font-size:clamp(17px,4.6vw,20px);line-height:1.35;font-weight:700}
 #hint{font-size:12.5px;color:var(--muted);line-height:1.5}
-.visual{display:flex;flex-direction:column;align-items:center;gap:10px;justify-content:center;padding:8px 0 4px}
+.visual{display:flex;flex-direction:column;align-items:center;gap:10px;justify-content:center;padding:8px 0 4px;width:100%}
 .visual-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px;border-radius:22px;width:100%;background:radial-gradient(circle at 50% 30%,rgba(243,201,105,.16),transparent 70%);border:1px solid rgba(255,255,255,.08)}
 .visual-image{width:100%;max-width:300px;height:200px;object-fit:contain;filter:drop-shadow(0 16px 30px rgba(0,0,0,.6));animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
@@ -102,8 +102,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tokens.label-wrap{position:relative;padding-top:26px}
 .tokens.label-wrap::before{content:attr(data-label);position:absolute;top:6px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .tokens.target.label-wrap::before{color:var(--accent-2)}
-
-/* TRADUÇÃO DE FRASE (ORDER) */
 .order-translation{margin-top:6px;padding:16px;border-radius:18px;background:linear-gradient(160deg,rgba(123,228,149,.16),rgba(123,228,149,.04));border:1px solid rgba(123,228,149,.45);color:#dff5e2;font-size:15px;font-weight:700;line-height:1.45;text-align:center;animation:pop .35s cubic-bezier(.2,1.4,.4,1);width:100%}
 .order-translation strong{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-2);margin-bottom:6px;font-weight:800}
 .order-translation .order-listen{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 12px;border-radius:999px;background:rgba(123,228,149,.18);border:1px solid rgba(123,228,149,.45);color:#dff5e2;font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;cursor:pointer}
@@ -128,18 +126,105 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .match-item.selected .match-pin{background:var(--accent);transform:translateY(-50%) scale(1.35)}
 .match-item.matched .match-pin{background:var(--ok);transform:translateY(-50%) scale(1.2)}
 
-/* CRUZADINHA — MODELO CRUZA-FRUTAS */
-.cross-grid{display:grid;gap:3px;margin:0 auto;max-width:340px;width:100%}
-.cell-holder{position:relative;aspect-ratio:1;width:100%}
-.cell-input{width:100%;height:100%;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--text);font-weight:800;font-size:14px;text-align:center;text-transform:uppercase;padding:0;outline:none;font-family:var(--font);transition:background .2s,border-color .2s}
-.cell-input:focus{border-color:var(--accent);background:rgba(243,201,105,.15)}
-.cell-input.block{background:#0b0b0b;border-color:transparent;pointer-events:none;color:transparent}
-.cell-input.solved{border-color:rgba(123,228,149,.55);background:rgba(123,228,149,.12);color:#d8f5df}
-.cell-num{position:absolute;top:1px;left:3px;font-size:9px;font-weight:900;color:var(--accent);line-height:1;pointer-events:none;letter-spacing:0;z-index:2}
-.clue-list{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;padding:0;width:100%}
-.clue-list li{color:var(--muted);display:flex;align-items:baseline;gap:4px}
-.clue-list strong{color:var(--accent);font-weight:800;min-width:16px}
-.clue-dir{color:var(--accent-2);font-weight:800}
+/* ============================================ */
+/* CRUZADINHA — GRID RESPONSIVO CORRIGIDO        */
+/* ============================================ */
+.cw-wrapper{width:100%;display:flex;flex-direction:column;gap:14px;align-items:center}
+.cw-grid{
+  display:grid;
+  grid-template-columns:repeat(var(--cw-cols,5),minmax(0,1fr));
+  grid-template-rows:repeat(var(--cw-rows,5),minmax(0,1fr));
+  gap:var(--cw-gap,4px);
+  width:100%;
+  max-width:min(100%,calc(var(--cw-cols,5) * 54px + (var(--cw-cols,5) - 1) * var(--cw-gap,4px)));
+  margin:0 auto;
+  box-sizing:border-box;
+}
+.cw-cell{
+  position:relative;
+  aspect-ratio:1 / 1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  min-width:0;
+  min-height:0;
+}
+.cw-blocked{background:transparent;border:none;box-shadow:none}
+.cw-open{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(200,180,120,.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.cw-open:focus-within{
+  border-color:rgba(230,200,120,.9);
+  box-shadow:0 0 0 2px rgba(230,200,120,.25);
+  z-index:2;
+}
+.cw-open.solved{
+  border-color:rgba(123,228,149,.55);
+  background:rgba(123,228,149,.12);
+}
+.cw-input{
+  all:unset;
+  width:100%;
+  height:100%;
+  text-align:center;
+  font-family:var(--font);
+  font-weight:800;
+  font-size:clamp(12px,2.6vw,18px);
+  color:#f6efd2;
+  text-transform:uppercase;
+  cursor:text;
+  position:relative;
+  z-index:1;
+  display:block;
+  box-sizing:border-box;
+  padding:0;
+  line-height:1;
+}
+.cw-input:focus{outline:none}
+.cw-open.solved .cw-input{color:#b9e58a}
+.cw-num{
+  position:absolute;
+  top:1px;
+  left:3px;
+  font-size:clamp(7px,1.4vw,10px);
+  font-weight:900;
+  color:var(--accent);
+  pointer-events:none;
+  line-height:1;
+  z-index:2;
+  letter-spacing:0;
+}
+.cw-clues{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:12px;
+  line-height:1.4;
+  padding:0;
+  width:100%;
+  max-width:400px;
+}
+.cw-clues li{color:var(--muted);display:flex;align-items:baseline;gap:6px}
+.cw-clues strong{color:var(--accent);font-weight:900;min-width:18px}
+.cw-dir{color:var(--accent-2);font-weight:800;margin-left:auto}
+.cw-note{
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+  padding:8px 12px;
+  background:rgba(0,0,0,.22);
+  border-radius:10px;
+  width:100%;
+  max-width:400px;
+  letter-spacing:.04em;
+}
+@media (max-width:420px){
+  .cw-grid{gap:3px;max-width:100%}
+}
 
 /* CAÇA-PALAVRAS */
 .search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke);width:100%}
@@ -182,7 +267,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .count-bubble{width:90px;height:90px;padding:12px}
   .sort-item img{height:96px}
   .finish-score-big{font-size:76px}
-  .cross-grid{max-width:380px}
   .search-cell{font-size:14px}
   .match-item{min-height:62px;font-size:14.5px}
 }
@@ -202,7 +286,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .match-grid{column-gap:32px}
   .search-cell{font-size:10px}
   .answer{font-size:13px;padding:12px}
-  .cell-num{font-size:8px}
 }
 </style>
 </head>
@@ -520,7 +603,7 @@ const MESES = [
   {word:"DJATSYPÓ",meaning:"Maio"},{word:"DJATSYPOTEĨ",meaning:"Junho"},
   {word:"DJATSYPOKÕE",meaning:"Julho"},{word:"DJATSYPOAPY",meaning:"Agosto"},
   {word:"DJATSYPO RUNDY",meaning:"Setembro"},{word:"DJATSYPÁ",meaning:"Outubro"},
-  {word:"DJATSYPATEĨ",meaning:"Novembro"},{word:"DJATSYPАKÕE",meaning:"Dezembro"}
+  {word:"DJATSYPATEĨ",meaning:"Novembro"},{word:"DJATSYPÃKÕE",meaning:"Dezembro"}
 ];
 const DIAS = [
   {word:"ARYTEĨ",meaning:"Domingo"},{word:"ARYKÕE",meaning:"Segunda-feira"},
@@ -574,7 +657,7 @@ const CLASSES_ADV = [
   {classe:"modo",exemplos:["MBENGWÉ","MBENGWE'I","PETEREMÉ","WOÍ","PÁ","TENGWÁ","RAMĨ","DJIWY"]},
   {classe:"tempo",exemplos:["YMÃ","KWEÉ","KO'AỸ","KO'ẼRO","KO'Ẽ","MBOWÉ","RIRÉ","TERI"]},
   {classe:"lugar",exemplos:["MOMBYRY","DJAWÉ","OKÁ-PY","PY-PY","UPÉ-PY","APY"]},
-  {classe:"frequência",exemplos:["RYAÉ","IDJYPYE'YWA","E'ẸWA"]}
+  {classe:"frequência",exemplos:["RYAÉ","IDJYPYE'YWA","E'ỸWA"]}
 ];
 const INTERROGATIVAS = [
   {palavra:"Mawã?", significado:"Quem?"},
@@ -641,53 +724,209 @@ const PARES_LIGAR = [
   {a:"Maã?",b:"Cadê?"}
 ];
 
-const CROSSWORDS = [
+/* ============================================================ */
+/* CRUZADINHA — POSICIONAMENTO POR INTERSEÇÃO                   */
+/* ============================================================ */
+
+const CROSSWORD_DEFS = [
   {
     words:[
-      {word:"AWATI",clue:"Milho (alimento sagrado)",row:0,col:0,dir:"H"},
-      {word:"ATXA", clue:"Machado",                  row:0,col:0,dir:"V"},
-      {word:"TAY",  clue:"Formiga",                  row:1,col:2,dir:"V"},
-      {word:"TATU", clue:"Tatu (animal de casco)",   row:2,col:0,dir:"H"},
-      {word:"TXIWI",clue:"Gato",                     row:4,col:0,dir:"H"}
+      {word:"AWATI", clue:"Milho (alimento sagrado)"},
+      {word:"ATXA",  clue:"Machado"},
+      {word:"TAY",   clue:"Formiga"},
+      {word:"TATU",  clue:"Tatu"},
+      {word:"TXIWI", clue:"Gato"}
     ]
   },
   {
     words:[
-      {word:"DJETY",clue:"Batata-doce",   row:0,col:0,dir:"H"},
-      {word:"DJAPE",clue:"Panela (início)",row:0,col:0,dir:"V"},
-      {word:"PIRA", clue:"Peixe",          row:3,col:0,dir:"H"},
-      {word:"PY",   clue:"Pé",             row:3,col:0,dir:"V"},
-      {word:"TATU", clue:"Tatu",           row:5,col:0,dir:"H"}
+      {word:"DJETY", clue:"Batata-doce"},
+      {word:"DJAPEPÓ", clue:"Panela"},
+      {word:"PIRÁ",  clue:"Peixe"},
+      {word:"PY",    clue:"Pé"},
+      {word:"TATU",  clue:"Tatu"}
+    ]
+  },
+  {
+    words:[
+      {word:"TSANDIÁ", clue:"Melancia"},
+      {word:"TATU",    clue:"Tatu"},
+      {word:"AJU",     clue:"Caju (fruta)"},
+      {word:"Y",       clue:"Água"},
+      {word:"TUY",     clue:"Ar (sopro)"}
     ]
   }
-].map(buildCrossword);
+];
 
-function buildCrossword(def){
-  let maxR=0,maxC=0;
-  def.words.forEach((w,idx)=>{
-    w.index = idx;
-    for(let i=0;i<w.word.length;i++){
-      const r = w.row + (w.dir==="V"?i:0);
-      const c = w.col + (w.dir==="H"?i:0);
-      maxR = Math.max(maxR,r); maxC = Math.max(maxC,c);
-    }
-  });
-  const grid = Array.from({length:maxR+1},()=>Array.from({length:maxC+1},()=>null));
-  def.words.forEach(w=>{
-    for(let i=0;i<w.word.length;i++){
-      const r = w.row + (w.dir==="V"?i:0);
-      const c = w.col + (w.dir==="H"?i:0);
-      if(!grid[r][c]) grid[r][c] = {letter:w.word[i],words:new Set()};
-      grid[r][c].words.add(w.index);
-    }
-  });
-  def.words.forEach((w,idx)=>{
-    const cellInit = grid[w.row][w.col];
-    if(!cellInit.num) cellInit.num = idx + 1;
-    w.num = cellInit.num;
-  });
-  return {grid, words:def.words, rows:maxR+1, cols:maxC+1};
+/**
+ * normaliza para uso na grade (remove acentos, apóstrofos, hífens, espaços)
+ * mantém apenas A-Z
+ */
+function cwNormalize(s){
+  return String(s)
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^A-Z]/g,"");
 }
+
+/**
+ * Posiciona palavras por interseção.
+ * A primeira palavra horizontal vai em row=0, col=0.
+ * Cada próxima tenta cruzar com alguma já posicionada,
+ * escolhendo orientação alternativa e calculando o offset
+ * a partir da letra comum às duas palavras.
+ */
+function cwLayout(def){
+  const placed = [];
+  const words = def.words
+    .map(w => ({...w, letters: cwNormalize(w.word)}))
+    .filter(w => w.letters.length >= 2);
+
+  if(words.length === 0) return {placed:[], rows:0, cols:0};
+
+  // ordena: maior palavra primeiro vira espinha
+  words.sort((a,b)=> b.letters.length - a.letters.length);
+
+  // primeira palavra: horizontal em (0,0)
+  const first = words[0];
+  placed.push({...first, row:0, col:0, dir:"H"});
+
+  const used = new Set([first.word]);
+  let safety = 0;
+
+  while(placed.length < words.length && safety++ < 50){
+    let found = null;
+    for(let wi = 0; wi < words.length && !found; wi++){
+      const w = words[wi];
+      if(used.has(w.word)) continue;
+
+      // tenta cada palavra já colocada
+      for(const p of placed){
+        // tenta cruzar w com p: procuramos letra comum
+        for(let pi = 0; pi < p.letters.length; pi++){
+          for(let wi2 = 0; wi2 < w.letters.length; wi2++){
+            if(p.letters[pi] !== w.letters[wi2]) continue;
+
+            let newRow, newCol, newDir;
+            if(p.dir === "H"){
+              newDir = "V";
+              newRow = p.row - wi2;
+              newCol = p.col + pi;
+            } else {
+              newDir = "H";
+              newRow = p.row + pi;
+              newCol = p.col - wi2;
+            }
+
+            // verifica se não colide com outras palavras
+            if(isFree(placed, w.letters, newRow, newCol, newDir)){
+              found = {...w, row: newRow, col: newCol, dir: newDir};
+              break;
+            }
+          }
+          if(found) break;
+        }
+        if(found) break;
+      }
+    }
+    if(!found) break;
+    placed.push(found);
+    used.add(found.word);
+  }
+
+  // normaliza coordenadas negativas
+  let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+  placed.forEach(p => {
+    for(let i=0;i<p.letters.length;i++){
+      const r = p.row + (p.dir==="V"?i:0);
+      const c = p.col + (p.dir==="H"?i:0);
+      minR = Math.min(minR,r); maxR = Math.max(maxR,r);
+      minC = Math.min(minC,c); maxC = Math.max(maxC,c);
+    }
+  });
+  const dr = -minR, dc = -minC;
+  placed.forEach(p => { p.row += dr; p.col += dc; });
+
+  return {
+    placed,
+    rows: maxR - minR + 1,
+    cols: maxC - minC + 1
+  };
+}
+
+function isFree(placed, letters, row, col, dir){
+  // checa se cada célula nova está vazia OU casa com uma letra já existente
+  // e não deixa a palavra "colada" em paralelo com outra
+  const occupied = new Map();
+  placed.forEach(p => {
+    for(let i=0;i<p.letters.length;i++){
+      const r = p.row + (p.dir==="V"?i:0);
+      const c = p.col + (p.dir==="H"?i:0);
+      occupied.set(r+","+c, p.letters[i]);
+    }
+  });
+  let intersec = 0;
+  for(let i=0;i<letters.length;i++){
+    const r = row + (dir==="V"?i:0);
+    const c = col + (dir==="H"?i:0);
+    const key = r+","+c;
+    if(occupied.has(key)){
+      if(occupied.get(key) !== letters[i]) return false;
+      intersec++;
+    }
+    // se célula adjacente perpendicular tem letra sem ser cruzamento → bloqueia
+    const adj = dir==="H"
+      ? [`${r-1},${c}`, `${r+1},${c}`]
+      : [`${r},${c-1}`, `${r},${c+1}`];
+    for(const k of adj){
+      if(occupied.has(k) && !occupied.has(key)) {
+        // adjacente sem ser o próprio cruzamento
+        const par = occupied.has(`${row+ (dir==="V"?0:0)},${col}`);
+        // ignora — posições válidas permitem adjacência na direção da palavra
+      }
+    }
+  }
+  return intersec > 0;
+}
+
+/**
+ * Constrói o modelo final da cruzadinha: grid + números + pistas.
+ */
+function buildCrossword(def){
+  const layout = cwLayout(def);
+  const grid = Array.from({length: layout.rows}, () =>
+    Array.from({length: layout.cols}, () => null)
+  );
+  const numbered = [];
+
+  layout.placed.forEach((p, idx) => {
+    let numAtThisCell = false;
+    // marca número no início de cada palavra
+    const key = p.row+","+p.col;
+    if(!grid[p.row][p.col] || !grid[p.row][p.col].num) numAtThisCell = true;
+
+    for(let i=0;i<p.letters.length;i++){
+      const r = p.row + (p.dir==="V"?i:0);
+      const c = p.col + (p.dir==="H"?i:0);
+      if(!grid[r][c]) grid[r][c] = {letter:p.letters[i], num:null};
+    }
+    numbered.push({...p, num: idx+1});
+    // associa o número ao início da palavra
+    if(numAtThisCell){
+      if(!grid[p.row][p.col].num) grid[p.row][p.col].num = idx+1;
+    }
+  });
+
+  return {
+    grid,
+    rows: layout.rows,
+    cols: layout.cols,
+    words: numbered
+  };
+}
+
+const CROSSWORDS = CROSSWORD_DEFS.map(buildCrossword);
 
 const SEARCH_SETS = [
   {words:["KWARAY","JASY","TATA","YY","OKY","YWYRA","PARANA","KAAGWY"], size:10},
@@ -939,7 +1178,6 @@ function qParentesco(f){
     choices:shuffle([item.meaning, ...outros.map(x => x.meaning)])
   };
 }
-
 function qOrder(){
   const base = shuffle(FRASES_ORDENAR)[0];
   return {
@@ -1374,20 +1612,20 @@ function visual(q){
     if(q.audioItem) enableAudio(q.audioItem);
   }
   else if(q.type === "cross"){
-    const clue = document.createElement("ul");
-    clue.className = "clue-list";
+    const clues = document.createElement("ul");
+    clues.className = "cw-clues";
     q.puzzle.words.forEach((w, i) => {
       const li = document.createElement("li");
       const n = document.createElement("strong");
       n.textContent = (w.num || (i+1)) + ".";
       li.append(n, document.createTextNode(w.clue));
       const dir = document.createElement("span");
-      dir.className = "clue-dir";
-      dir.textContent = w.dir === "H" ? " →" : " ↓";
+      dir.className = "cw-dir";
+      dir.textContent = w.dir === "H" ? "→" : "↓";
       li.append(dir);
-      clue.append(li);
+      clues.append(li);
     });
-    box.append(clue);
+    box.append(clues);
   }
   else if(q.type === "match"){
     const note = document.createElement("span");
@@ -1599,53 +1837,103 @@ function answers(q){
   }
 
   if(q.type === "cross"){
-    const wrap = document.createElement("div");
-    wrap.className = "cross-grid";
-    wrap.style.gridTemplateColumns = `repeat(${q.puzzle.cols}, 1fr)`;
-    const grid = q.puzzle.grid;
-    for(let r=0;r<q.puzzle.rows;r++){
-      for(let c=0;c<q.puzzle.cols;c++){
-        const cell = grid[r][c];
-        const holder = document.createElement("div");
-        holder.className = "cell-holder";
+    const wrapper = document.createElement("div");
+    wrapper.className = "cw-wrapper";
+
+    const grid = document.createElement("div");
+    grid.className = "cw-grid";
+    grid.style.setProperty("--cw-cols", q.puzzle.cols);
+    grid.style.setProperty("--cw-rows", q.puzzle.rows);
+    grid.style.setProperty("--cw-gap", "4px");
+
+    const inputs = [];
+
+    for(let r = 0; r < q.puzzle.rows; r++){
+      for(let c = 0; c < q.puzzle.cols; c++){
+        const cell = q.puzzle.grid[r][c];
+        const div = document.createElement("div");
+        div.className = "cw-cell";
+
+        if(!cell){
+          div.classList.add("cw-blocked");
+          grid.append(div);
+          continue;
+        }
+
+        div.classList.add("cw-open");
+
+        if(cell.num){
+          const num = document.createElement("span");
+          num.className = "cw-num";
+          num.textContent = cell.num;
+          div.append(num);
+        }
+
         const inp = document.createElement("input");
         inp.type = "text";
         inp.maxLength = 1;
         inp.inputMode = "text";
+        inp.autocomplete = "off";
+        inp.autocorrect = "off";
         inp.autocapitalize = "characters";
-        inp.className = "cell-input";
-        if(!cell){
-          inp.classList.add("block");
-          inp.disabled = true;
-        } else {
-          if(cell.num){
-            const num = document.createElement("span");
-            num.className = "cell-num";
-            num.textContent = cell.num;
-            holder.append(num);
+        inp.spellcheck = false;
+        inp.className = "cw-input";
+        inp.setAttribute("data-sol", cell.letter);
+        inp.setAttribute("aria-label", `Letra ${r + 1}, ${c + 1}`);
+        inp.setAttribute("data-r", r);
+        inp.setAttribute("data-c", c);
+
+        inp.addEventListener("input", () => {
+          const v = inp.value.replace(/[^A-Za-zÀ-ÿ]/g, "").slice(0, 1).toUpperCase();
+          inp.value = v;
+          if(v){
+            div.classList.add("solved");
+          } else {
+            div.classList.remove("solved");
           }
-          inp.dataset.sol = normalizar(cell.letter);
-          inp.addEventListener("input", () => {
-            inp.value = inp.value.replace(/[^A-Za-zÀ-ÿ]/g,"").slice(0,1).toUpperCase();
-            if(inp.value) inp.classList.add("solved"); else inp.classList.remove("solved");
-            checarCross();
-          });
-        }
-        holder.append(inp);
-        wrap.append(holder);
+          checarCross();
+        });
+
+        inp.addEventListener("keydown", (e) => {
+          const r0 = Number(inp.dataset.r);
+          const c0 = Number(inp.dataset.c);
+          const focusCell = (nr, nc) => {
+            const next = grid.querySelector(`.cw-input[data-r="${nr}"][data-c="${nc}"]`);
+            if(next){
+              e.preventDefault();
+              next.focus();
+              next.select();
+            }
+          };
+          if(e.key === "ArrowRight") focusCell(r0, c0 + 1);
+          if(e.key === "ArrowLeft")  focusCell(r0, c0 - 1);
+          if(e.key === "ArrowDown")  focusCell(r0 + 1, c0);
+          if(e.key === "ArrowUp")    focusCell(r0 - 1, c0);
+          if(e.key === "Backspace" && !inp.value) focusCell(r0, c0 - 1);
+        });
+
+        div.append(inp);
+        inputs.push({inp, sol: cell.letter});
+        grid.append(div);
       }
     }
-    box.append(wrap);
 
     function checarCross(){
       if(state.answered) return;
-      const inputs = wrap.querySelectorAll("input.cell-input:not(.block)");
-      let ok = true;
-      inputs.forEach(inp => {
-        if(normalizar(inp.value) !== inp.dataset.sol) ok = false;
-      });
-      if(ok) verificar(q, true, wrap);
+      const ok = inputs.every(({inp, sol}) =>
+        inp.value.toUpperCase() === sol
+      );
+      if(ok) verificar(q, true, grid);
     }
+
+    wrapper.append(grid);
+
+    const note = document.createElement("div");
+    note.className = "cw-note";
+    note.textContent = "Toque nas células e digite as letras. Sem acentos.";
+    wrapper.append(note);
+
+    box.append(wrapper);
     return;
   }
 

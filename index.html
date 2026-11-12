@@ -341,6 +341,11 @@ const NUMBER_VOCABULARY = [
   {value:5,word:"NIRUI",  audio:"numero-5.mp3"},
   {value:6,word:"YPÉ",    audio:"numero-6.mp3"},
   {value:7,word:"TXA'I",  audio:"numero-7.mp3"}
+  {value:8,word:"IPOKÁ",  audio:"numero-8.mp3"}
+  {value:9,word:"TSYTA",  audio:"numero-9.mp3"}
+  {value:10,word:"TEĨ-DJERE",  audio:"numero-10.mp3"}
+ 
+
 ];
 
 const VOCABULARY = [
@@ -434,11 +439,16 @@ const VOCABULARY = [
   {word:"TARAWÉ",meaning:"barata",category:"ANIMAIS",audio:"tarawe.mp3",file:"tarawe.png"},
   {word:"TUKU",meaning:"gafanhoto",category:"ANIMAIS",audio:"tuku.mp3",file:"tuku.png"},
   {word:"PYNTÃ",meaning:"vermelho",category:"CORES",audio:"pynta.mp3",file:"pynta.png"},
-  {word:"IDJU",meaning:"azul",category:"CORES",audio:"idju.mp3",file:"idju.png"},
-  {word:"IKYRY",meaning:"verde",category:"CORES",audio:"ikyry.mp3",file:"ikyry.png"},
-  {word:"OWY",meaning:"flor",category:"CORES",audio:"owy.mp3",file:"owy.png"},
+  {word:"IDJU",meaning:"amarelo",category:"CORES",audio:"idju.mp3",file:"idju.png"},
+  {word:"OWY",meaning:"verde",category:"CORES",audio:"owy.mp3",file:"owy.png"},
+  {word:"OWY-REI",meaning:"azul",category:"CORES",audio:"owy-rei.mp3",file:"owy-rei.png"},
   {word:"UŨ",meaning:"preto",category:"CORES",audio:"uu.mp3",file:"uu.png"},
   {word:"MORÕTI",meaning:"branco",category:"CORES",audio:"moroti.mp3",file:"moroti.png"},
+  {word:"OWY",meaning:"verde",category:"CORES",audio:"owy.mp3",file:"owy.png"},
+  {word:"POTYGWÁ",meaning:"rosa",category:"CORES",audio:"potygwa.mp3",file:"potygwa.png"},
+  {word:"PUNTÃ-REGWÁ",meaning:"roxo",category:"CORES",audio:"punta-regwa.mp3",file:"punta-regwa.png"},
+  {word:"YWY-RAMIGWÁ",meaning:"marrom",category:"CORES",audio:"ywy-ramigwa.mp3",file:"ywy-ramigwa.png"},
+  {word:"NARÃ",meaning:"laranja",category:"CORES",audio:"nara.mp3",file:"nara.png"},
   {word:"AKÃ",meaning:"cabeça",category:"CORPO",audio:"aka.mp3",file:"aka.png"},
   {word:"AWY",meaning:"cabelo",category:"CORPO",audio:"awy.mp3",file:"awy.png"},
   {word:"KUPÉ",meaning:"costas",category:"CORPO",audio:"kupe.mp3",file:"kupe.png"},
@@ -590,15 +600,15 @@ const FRASES_COTIDIANO = [
 ];
 
 const FRASES_POSPOSICAO = [
-  {frase:"Txerendá opytá Pakovaty__.",resp:"-py",distratores:["-gwi","-rupi","-arõ"]},
-  {frase:"Kweé txetsy oú Mirakatu__.",resp:"-gwi",distratores:["-py","-rupi","-arõ"]},
+  {frase:"Txerendá opytá karugwa__.",resp:"-py",distratores:["-gwi","-rupi","-arõ"]},
+  {frase:"Kweé txetsy oú tekoá narãi__.",resp:"-gwi",distratores:["-py","-rupi","-arõ"]},
   {frase:"Kowá tudjá ndodjaywuweiry Português__.",resp:"-rupi",distratores:["-py","-arõ","-mbyté-py"]},
   {frase:"Amono'õ awati ryru ywyra__.",resp:"-arõ",distratores:["-gwi","-py","-mbyté-py"]},
   {frase:"Ndekytsé oĩ angu'a__.",resp:"-arõ",distratores:["-gwi","-py","-mbyté-py"]},
   {frase:"Mitãngwé onhimangá ywyrá__.",resp:"-gwypy",distratores:["-arõ","-py","-gwi"]},
   {frase:"Tuwitxá oikó nhandetekoá__.",resp:"-mbyté-py",distratores:["-arõ","-py","-rupi"]},
   {frase:"Txera'y Piaçaguera__ oikó.",resp:"-py",distratores:["-arõ","-rupi","-gwi"]},
-  {frase:"Kweé txetuty oú Bauru__.",resp:"-gwi",distratores:["-py","-arõ","-rupi"]},
+  {frase:"Kweé txetuty oú narãi__.",resp:"-gwi",distratores:["-py","-arõ","-rupi"]},
   {frase:"Tapeó põrã tá__.",resp:"-rupi",distratores:["-py","-gwi","-arõ"]}
 ];
 
@@ -640,13 +650,13 @@ const INTERROGATIVAS = [
    nivel 4: 4 blocos com posposição
    nivel 6: 5+ blocos com posposições compostas */
 const FRASES_ORDENAR = [
-  {tokens:["Txeé","aikó","Pakowaty-py"], pt:"Eu moro em Bananal.", nivel:2},
+  {tokens:["Txeé","aikó","karugwá-py"], pt:"Eu moro em karugwá.", nivel:2},
   {tokens:["Katxuru","oikó","oká-py"], pt:"O cachorro mora fora.", nivel:2},
   {tokens:["Txeru","omoendy","tatá"], pt:"Meu pai acendeu o fogo.", nivel:2},
   {tokens:["Txedjaryi","omombe'u","txewy"], pt:"Minha avó me contou.", nivel:2},
   {tokens:["Nhaneramõi","oendá-py","oké"], pt:"Nosso avô dormiu em casa.", nivel:2},
-  {tokens:["Petsy","oóta","Iperu-py"], pt:"Tua mãe vai para Iperu.", nivel:4},
-  {tokens:["Kweé","txetuty","oú","Bauru-gwi"], pt:"Ontem meu tio veio de Bauru.", nivel:4},
+  {tokens:["Petsy","oóta","Barão-py"], pt:"Tua mãe vai para Barão.", nivel:4},
+  {tokens:["Kweé","txetuty","oú","São Paulo-gwi"], pt:"Ontem meu tio veio de São paulo.", nivel:4},
   {tokens:["Nhandé","nhaporandu","Nhanderu-upé"], pt:"Nós falamos com Nhanderu.", nivel:4},
   {tokens:["Yy","opytá","tapé","koty","rowai-py"], pt:"A água fica ao lado da estrada.", nivel:6},
   {tokens:["Mitãngwé","onhimangá","ywyrá-gwypy"], pt:"As crianças brincam debaixo da árvore.", nivel:4},

@@ -79,8 +79,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .sort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
 .sort-item{padding:10px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
 .sort-item img{width:100%;height:84px;object-fit:contain}
-
-/* RESET GLOBAL — sempre flex-coluna; qualquer override local é resetado no JS */
 .answers{display:flex;flex-direction:column;gap:10px;width:100%;margin:0;padding:0}
 .answer{width:100%;padding:16px;border-radius:18px;cursor:pointer;text-align:left;font-size:15px;font-weight:800;letter-spacing:.05em;background:var(--glass);border:1px solid var(--stroke);color:var(--text);transition:transform .12s ease,background .2s,border-color .2s;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);min-height:56px;display:flex;align-items:center;justify-content:flex-start}
 .answer:not(:disabled):active{transform:scale(.985)}
@@ -104,6 +102,11 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tokens.label-wrap{position:relative;padding-top:26px}
 .tokens.label-wrap::before{content:attr(data-label);position:absolute;top:6px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .tokens.target.label-wrap::before{color:var(--accent-2)}
+
+/* TRADUÇÃO DE FRASE (ORDER) */
+.order-translation{margin-top:6px;padding:16px;border-radius:18px;background:linear-gradient(160deg,rgba(123,228,149,.16),rgba(123,228,149,.04));border:1px solid rgba(123,228,149,.45);color:#dff5e2;font-size:15px;font-weight:700;line-height:1.45;text-align:center;animation:pop .35s cubic-bezier(.2,1.4,.4,1);width:100%}
+.order-translation strong{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-2);margin-bottom:6px;font-weight:800}
+.order-translation .order-listen{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 12px;border-radius:999px;background:rgba(123,228,149,.18);border:1px solid rgba(123,228,149,.45);color:#dff5e2;font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;cursor:pointer}
 
 /* LIGAR — SETAS PEDAGÓGICAS */
 .match-stage{position:relative;width:100%;padding:10px 4px;margin:4px 0}
@@ -131,12 +134,12 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .cell-input:focus{border-color:var(--accent);background:rgba(243,201,105,.15)}
 .cell-input.block{background:#111813;border-color:transparent;pointer-events:none;color:transparent}
 .cell-input.solved{border-color:rgba(123,228,149,.55);background:rgba(123,228,149,.12);color:#d8f5df}
-.clue-list{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;padding:0}
+.clue-list{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;padding:0;width:100%}
 .clue-list li{color:var(--muted)}
 .clue-list strong{color:var(--accent);font-weight:800;margin-right:4px}
 
 /* CAÇA-PALAVRAS */
-.search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke)}
+.search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke);width:100%}
 .search-cell{aspect-ratio:1;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:rgba(255,255,255,.03);border-radius:4px;cursor:pointer;user-select:none;transition:background .15s,color .15s;font-family:var(--font)}
 .search-cell:hover{background:rgba(243,201,105,.10)}
 .search-cell.sel{background:rgba(243,201,105,.32);color:#fff}
@@ -785,7 +788,11 @@ const sfx = {
   clique(){ if(!state.sound) return; beep(520,.05,"sine",.10); }
 };
 
-function shuffle(a){ return [...a].sort(() => Math.random() - .5); }
+function shuffle(a){
+  const out = [...a];
+  for(let i=out.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [out[i],out[j]]=[out[j],out[i]]; }
+  return out;
+}
 function pickN(item, list, n){
   const seen = new Set([item.word]);
   const others = shuffle(list.filter(x => !seen.has(x.word))).slice(0, n - 1);
@@ -795,7 +802,8 @@ function pickMeanings(item, list, n){
   const seen = new Set([item.meaning]);
   const outros = shuffle(list.filter(x => !seen.has(x.meaning)));
   const out = [item.meaning];
-  for(const o of outros){ if(out.length >= n) break; seen.add(o.meaning); out.push(o.meaning); }
+  for(const o of outros){ if(out.length >= n) break; if(seen.has(o.meaning)) continue; seen.add(o.meaning); out.push(o.meaning); }
+  while(out.length < n){ out.push("—"); }
   return shuffle(out);
 }
 function word(w){ return VOCABULARY.find(v => v.word === w); }
@@ -930,7 +938,8 @@ function qOrder(){
     hint:"Toque nas palavras na ordem certa. Sujeito + complemento + verbo.",
     target: base.tokens.join("|"),
     tokens: shuffle(base.tokens),
-    translation: base.pt
+    translation: base.pt,
+    audio: base.audio || null
   };
 }
 function qMatch(){
@@ -1120,11 +1129,6 @@ function createImage(item, className){
   return img;
 }
 
-/* ---------------------------------------------------------------
-   RESET CRÍTICO: sempre limpa o container de alternativas antes de
-   qualquer renderização, impedindo que estilos inline (display,
-   grid-template-columns) de uma questão vazem para outra.
-----------------------------------------------------------------*/
 function limparAnswers(box){
   box.innerHTML = "";
   box.style.display = "";
@@ -1165,6 +1169,18 @@ function atualizarEstrelas(){
   const totalPts = QS_PER_FASE * (10 + FASES_INFO[state.fase].bonus);
   const ratio = state.score / totalPts;
   $("stars").textContent = ratio >= .85 ? "★ ★ ★" : ratio >= .6 ? "★ ★ ☆" : ratio >= .35 ? "★ ☆ ☆" : "☆ ☆ ☆";
+}
+
+function mostrarTraducao(q){
+  const el = $("order-translation");
+  if(!el || !q.translation){ if(el) el.style.display="none"; return; }
+  el.innerHTML = "<strong>Tradução da frase</strong>" + q.translation +
+    (q.audio ? '<br><button type="button" class="order-listen">🔊 OUVIR</button>' : "");
+  el.style.display = "";
+  if(q.audio){
+    const btn = el.querySelector(".order-listen");
+    if(btn) btn.addEventListener("click", () => audio(q.audio));
+  }
 }
 
 function visual(q){
@@ -1323,6 +1339,11 @@ function visual(q){
       pool.append(b);
     });
     box.append(pool);
+    const trad = document.createElement("div");
+    trad.className = "order-translation";
+    trad.id = "order-translation";
+    trad.style.display = "none";
+    box.append(trad);
   }
   else if(["meaning","reverse","category","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
     const card = document.createElement("div");
@@ -1398,6 +1419,16 @@ function answers(q){
     const target = $("order-target");
     if(!pool || !target){ box.style.display = "none"; return; }
 
+    function checarOrdem(){
+      if(state.answered) return;
+      const montada = Array.from(target.children).map(el=>el.dataset.word);
+      const certa = q.target.split("|");
+      if(montada.length !== certa.length) return;
+      if(montada.every((v,i)=>v === certa[i])){
+        verificar(q, true, target);
+        mostrarTraducao(q);
+      }
+    }
     target.addEventListener("click", (e) => {
       const el = e.target.closest(".token");
       if(!el || state.answered) return;
@@ -1424,15 +1455,6 @@ function answers(q){
       sfx.clique();
       checarOrdem();
     });
-
-    function checarOrdem(){
-      const montada = Array.from(target.children).map(el=>el.dataset.word);
-      const certa = q.target.split("|");
-      if(montada.length !== certa.length) return;
-      if(montada.every((v,i)=>v === certa[i])){
-        if(!state.answered) verificar(q, true, target);
-      }
-    }
     box.style.display = "none";
     return;
   }
@@ -1540,7 +1562,7 @@ function answers(q){
             b.classList.add("wrong");
             selL.classList.add("wrong");
             const tempLine = drawArrowLine(selL, b, false);
-            beep(220,.12,"sawtooth",.14);
+            sfx.erro();
             setTimeout(() => {
               b.classList.remove("wrong");
               if(selL) selL.classList.remove("wrong");
@@ -1669,7 +1691,7 @@ function answers(q){
         if(strip) strip.classList.add("done");
         sfx.acerto();
         if(found.every(f=>f.ok)) verificar(q, true, wrap);
-      } else beep(220,.1,"sawtooth",.12);
+      } else sfx.erro();
     }
     box.append(wordStrip, wrap);
     return;

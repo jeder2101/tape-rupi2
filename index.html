@@ -8,16 +8,16 @@
 <!-- ============================================================
      ESTILOS
      §1  Variáveis e reset
-     §2  Layout base (app, header, chips, botões)
-     §3  Tela Home (hero e seletor de fases)
+     §2  Layout base
+     §3  Tela Home (hero e fases)
      §4  HUD do jogo
      §5  Card da questão e visuais
      §6  Alternativas e feedback
-     §7  Tipo "Ordenar Frase"
-     §8  Tipo "Ligar Palavras"
-     §9  Tipo "Cruzadinha"
-     §10 Tipo "Caça-Palavras"
-     §11 Tela de conclusão (balão)
+     §7  Ordenar Frase
+     §8  Ligar Palavras
+     §9  Cruzadinha (visual)
+     §10 Caça-palavras (visual)
+     §11 Tela de conclusão
      §12 Responsivos
      ============================================================ -->
 <style>
@@ -60,7 +60,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .fase-btn:not([disabled]):active{transform:scale(.96);background:var(--glass-strong)}
 .fase-btn[disabled]{opacity:.35;cursor:not-allowed}
 
-/* --- §4 HUD DO JOGO --- */
+/* --- §4 HUD --- */
 .hud{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .hud-left{display:flex;flex-direction:column;gap:4px}
 .hud-score{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:16px;background:var(--glass);border:1px solid var(--stroke);font-size:13px;font-weight:800;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
@@ -69,7 +69,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .progress-wrap{height:10px;border-radius:999px;overflow:hidden;background:rgba(0,0,0,.35);border:1px solid var(--stroke);position:relative}
 .progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent));box-shadow:0 0 12px rgba(243,201,105,.7);transition:width .45s cubic-bezier(.2,.9,.3,1)}
 
-/* --- §5 CARD DA QUESTÃO E VISUAIS --- */
+/* --- §5 CARD E VISUAIS --- */
 .card{padding:18px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;flex-direction:column;gap:14px;animation:cardIn .32s ease}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 .card-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -155,99 +155,21 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 
 /* --- §9 CRUZADINHA --- */
 .cw-wrapper{width:100%;display:flex;flex-direction:column;gap:14px;align-items:center}
-.cw-grid{
-  display:grid;
-  grid-template-columns:repeat(var(--cw-cols,5),minmax(0,1fr));
-  gap:5px;
-  width:100%;
-  max-width:min(100%,calc(var(--cw-cols,5) * 56px + (var(--cw-cols,5) - 1) * 5px));
-  margin:0 auto;
-}
-.cw-cell{
-  position:relative;
-  aspect-ratio:1 / 1;
-  min-width:0;
-  min-height:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-}
+.cw-grid{display:grid;grid-template-columns:repeat(var(--cw-cols,5),minmax(0,1fr));gap:5px;width:100%;max-width:min(100%,calc(var(--cw-cols,5) * 56px + (var(--cw-cols,5) - 1) * 5px));margin:0 auto}
+.cw-cell{position:relative;aspect-ratio:1 / 1;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:8px}
 .cw-blocked{background:transparent;border:none;pointer-events:none}
-.cw-open{
-  background:rgba(255,255,255,.08);
-  border:1.5px solid rgba(200,180,120,.40);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
-  cursor:text;
-  transition:border-color .15s,background .15s;
-}
-.cw-open:focus-within{
-  border-color:rgba(243,201,105,.95);
-  background:rgba(243,201,105,.16);
-  box-shadow:0 0 0 2px rgba(243,201,105,.30);
-  z-index:2;
-}
-.cw-open.solved{
-  border-color:rgba(123,228,149,.60);
-  background:rgba(123,228,149,.14);
-}
-.cw-input{
-  all:unset;
-  display:block;
-  width:100%;
-  height:100%;
-  padding:0;
-  margin:0;
-  text-align:center;
-  font-family:var(--font);
-  font-weight:900;
-  font-size:clamp(14px,3.2vw,22px);
-  color:#fff8dc;
-  text-transform:uppercase;
-  line-height:1;
-  cursor:text;
-  box-sizing:border-box;
-}
+.cw-open{background:rgba(255,255,255,.08);border:1.5px solid rgba(200,180,120,.40);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);cursor:text;transition:border-color .15s,background .15s}
+.cw-open:focus-within{border-color:rgba(243,201,105,.95);background:rgba(243,201,105,.16);box-shadow:0 0 0 2px rgba(243,201,105,.30);z-index:2}
+.cw-open.solved{border-color:rgba(123,228,149,.60);background:rgba(123,228,149,.14)}
+.cw-input{all:unset;display:block;width:100%;height:100%;padding:0;margin:0;text-align:center;font-family:var(--font);font-weight:900;font-size:clamp(14px,3.2vw,22px);color:#fff8dc;text-transform:uppercase;line-height:1;cursor:text;box-sizing:border-box}
 .cw-input:focus{outline:none}
 .cw-open.solved .cw-input{color:#b9e58a}
-.cw-num{
-  position:absolute;
-  top:1px;
-  left:3px;
-  font-size:clamp(8px,1.5vw,11px);
-  font-weight:900;
-  color:var(--accent);
-  pointer-events:none;
-  line-height:1;
-  z-index:3;
-  letter-spacing:0;
-  text-shadow:0 1px 2px rgba(0,0,0,.6);
-}
-.cw-clues{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:12px;
-  line-height:1.4;
-  padding:0;
-  width:100%;
-  max-width:400px;
-}
+.cw-num{position:absolute;top:1px;left:3px;font-size:clamp(8px,1.5vw,11px);font-weight:900;color:var(--accent);pointer-events:none;line-height:1;z-index:3;letter-spacing:0;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.cw-clues{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.4;padding:0;width:100%;max-width:400px}
 .cw-clues li{color:var(--muted);display:flex;align-items:baseline;gap:6px}
 .cw-clues strong{color:var(--accent);font-weight:900;min-width:18px}
 .cw-dir{color:var(--accent-2);font-weight:800;margin-left:auto}
-.cw-note{
-  font-size:11px;
-  color:var(--muted);
-  text-align:center;
-  padding:8px 12px;
-  background:rgba(0,0,0,.22);
-  border-radius:10px;
-  width:100%;
-  max-width:400px;
-  letter-spacing:.04em;
-}
+.cw-note{font-size:11px;color:var(--muted);text-align:center;padding:8px 12px;background:rgba(0,0,0,.22);border-radius:10px;width:100%;max-width:400px;letter-spacing:.04em}
 
 /* --- §10 CAÇA-PALAVRAS --- */
 .search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke);width:100%}
@@ -287,48 +209,13 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #boot-error{display:none;padding:14px;border-radius:14px;background:rgba(255,122,122,.12);border:1px solid rgba(255,122,122,.5);color:#ffb8b8;font-size:12px;font-family:monospace;white-space:pre-wrap;line-height:1.4}
 
 /* --- §12 RESPONSIVOS --- */
-@media (max-width:420px){
-  .cw-grid{gap:4px;max-width:100%}
-}
-@media (min-width:480px){
-  .visual-image{max-width:340px;height:230px}
-  .count-bubble{width:90px;height:90px;padding:12px}
-  .sort-item img{height:96px}
-  .finish-score-big{font-size:76px}
-  .search-cell{font-size:14px}
-  .match-item{min-height:62px;font-size:14.5px}
-}
-@media (max-width:380px){
-  .visual-image{max-width:240px;height:160px}
-  .number-visual{font-size:68px}
-  .fase-grid{grid-template-columns:repeat(2,1fr)}
-  .sort-grid{grid-template-columns:repeat(2,1fr)}
-  .visual-note{font-size:12px;padding:12px 16px}
-  .count-bubble{width:68px;height:68px;padding:8px}
-  .word-highlight{font-size:24px;padding:16px 20px}
-  .finish-bubble{padding:22px 16px 28px}
-  .finish-score-big{font-size:54px}
-  .finish-medal{font-size:54px}
-  .token{font-size:12px;padding:8px 10px}
-  .match-item{font-size:11.5px;padding:10px 8px;min-height:50px}
-  .match-grid{column-gap:32px}
-  .search-cell{font-size:10px}
-  .answer{font-size:13px;padding:12px}
-}
+@media (max-width:420px){.cw-grid{gap:4px;max-width:100%}}
+@media (min-width:480px){.visual-image{max-width:340px;height:230px}.count-bubble{width:90px;height:90px;padding:12px}.sort-item img{height:96px}.finish-score-big{font-size:76px}.search-cell{font-size:14px}.match-item{min-height:62px;font-size:14.5px}}
+@media (max-width:380px){.visual-image{max-width:240px;height:160px}.number-visual{font-size:68px}.fase-grid{grid-template-columns:repeat(2,1fr)}.sort-grid{grid-template-columns:repeat(2,1fr)}.visual-note{font-size:12px;padding:12px 16px}.count-bubble{width:68px;height:68px;padding:8px}.word-highlight{font-size:24px;padding:16px 20px}.finish-bubble{padding:22px 16px 28px}.finish-score-big{font-size:54px}.finish-medal{font-size:54px}.token{font-size:12px;padding:8px 10px}.match-item{font-size:11.5px;padding:10px 8px;min-height:50px}.match-grid{column-gap:32px}.search-cell{font-size:10px}.answer{font-size:13px;padding:12px}}
 </style>
 </head>
 <body>
-
-<!-- ============================================================
-     MARKUP
-     §A  Header fixo
-     §B  Tela Home
-     §C  Tela Jogo
-     §D  Tela Conclusão
-     ============================================================ -->
 <div class="app">
-
-  <!-- §A HEADER FIXO -->
   <header>
     <div class="hud-left"><span class="chip chip-accent" id="time-chip">JORNADA</span></div>
     <button class="icon-btn" id="sound" aria-label="Desativar sons">♫</button>
@@ -336,7 +223,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 
   <div id="boot-error"></div>
 
-  <!-- §B TELA HOME -->
   <section class="screen active" id="home">
     <div class="hero">
       <div class="hero-icon" id="period-icon">☀</div>
@@ -353,7 +239,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
     <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;padding:0 8px">Material de referência: <em>Lições de Gramática Nhandewa / Tupi-Guarani</em> — vol. 1 e 2 (FUNAI, 2016/2018).</p>
   </section>
 
-  <!-- §C TELA JOGO -->
   <section class="screen" id="game">
     <div class="hud">
       <div><span class="chip chip-accent" id="qnum">DESAFIO 01</span></div>
@@ -379,26 +264,21 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
     <button class="ghost-btn" id="home-button" style="font-size:11px">← Voltar ao início</button>
   </section>
 
-  <!-- §D TELA CONCLUSÃO -->
   <section class="screen" id="finish">
     <div class="finish-wrap">
       <div class="finish-bubble" id="finish-bubble">
         <div class="finish-medal" id="finish-medal">🏵️</div>
         <h2 class="finish-title" id="finish-title">Fase concluída!</h2>
         <div class="finish-sub" id="finish-sub">FASE 1 · RESUMO</div>
-
         <div class="finish-score-big" id="final-score">0</div>
         <div class="finish-score-label">pontos</div>
-
         <div class="score-breakdown">
           <div class="score-cell"><span class="val ok" id="stat-acertos">0</span><span class="lbl">acertos</span></div>
           <div class="score-cell"><span class="val bad" id="stat-erros">0</span><span class="lbl">erros</span></div>
           <div class="score-cell"><span class="val" id="stat-total">0</span><span class="lbl">desafios</span></div>
         </div>
-
         <div class="support-msg" id="support-msg"><strong>Apoio</strong>Continue firme — cada palavra aprendida abre uma porta.</div>
         <div class="attention-msg" id="attention-msg"><strong>Atenção</strong>Revise as questões que errou e tente de novo com calma.</div>
-
         <div class="finish-actions">
           <button class="primary-btn next-fase" id="next-fase">CONTINUAR PARA A FASE 2 →</button>
           <button class="ghost-btn" id="again-fase">FAZER ESTA FASE NOVAMENTE</button>
@@ -416,31 +296,28 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 /* ============================================================
    JAVASCRIPT
    §1   Constantes e configuração
-   §2   Listas de conteúdo (vocabulário, verbos, frases)
-   §3   Cruzadinha (motor)
-   §4   Caça-palavras (motor)
+   §2   Listas de conteúdo
+   §3   Cruzadinha — motor legado (reserva)
+   §4   Caça-palavras — motor adaptativo
    §5   Estado global e persistência
-   §6   Utilidades (shuffle, normalize, pickers)
-   §7   Áudio (Web Audio API + MP3)
+   §6   Utilidades
+   §7   Áudio
    §8   Geradores de questão
    §9   Montagem da fase
-   §10  Fluxo de telas (home / game / finish)
-   §11  Render da questão (visual + respostas)
-   §12  Verificação (check / verificar)
-   §13  Conclusão de fase (scoreProfile / finish)
-   §14  Seletor de fases e progresso
-   §15  Bind de eventos e boot
+   §10  Fluxo de telas
+   §11  Render
+   §12  Verificação
+   §13  Conclusão de fase
+   §14  Seletor e continuar
+   §15  Bind e boot
    ============================================================ */
 
-
-/* ------------------------------------------------------------
-   §1 CONSTANTES E CONFIGURAÇÃO
-   ------------------------------------------------------------ */
+/* ---------- §1 CONSTANTES ---------- */
 const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/tela-de-inicio/" };
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 6;
+const SAVE_VERSION = 7;
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"🌱", bonus:0},
@@ -454,12 +331,7 @@ const FASES_INFO = {
   9:{nome:"Fase 9",nivel:"Nhanderu", icone:"☀️", bonus:16}
 };
 
-
-/* ------------------------------------------------------------
-   §2 LISTAS DE CONTEÚDO
-   ------------------------------------------------------------ */
-
-/* 2.1 Números */
+/* ---------- §2 LISTAS DE CONTEÚDO ---------- */
 const NUMBER_VOCABULARY = [
   {value:0,word:"DJERE",  audio:"numero-0.mp3"},
   {value:1,word:"PETEĨ",  audio:"numero-1.mp3"},
@@ -471,7 +343,6 @@ const NUMBER_VOCABULARY = [
   {value:7,word:"TXA'I",  audio:"numero-7.mp3"}
 ];
 
-/* 2.2 Vocabulário principal */
 const VOCABULARY = [
   {word:"KUTXÁ",meaning:"colher",category:"OBJETOS",audio:"kutxa.mp3",file:"kutxa.png"},
   {word:"KUTXÁ RAKWÁ",meaning:"garfo",category:"OBJETOS",audio:"kutxa_rakwa.mp3",file:"kutxa-rakwa.png"},
@@ -677,7 +548,6 @@ const VOCABULARY = [
   {word:"RYAÉ",meaning:"frequentemente",category:"ADVÉRBIOS",audio:"ryae.mp3"}
 ];
 
-/* 2.3 Pontos cardeais */
 const CARDINAIS = [
   {word:"NHANDÉ ROWAI-REGWÁ", meaning:"Leste (onde o sol nasce)"},
   {word:"NHANDÉ KUPÉ-REGWÁ",  meaning:"Oeste (onde o sol se põe)"},
@@ -685,7 +555,6 @@ const CARDINAIS = [
   {word:"NHANDÉ DJODJÁ-REGWÁ",meaning:"Sul"}
 ];
 
-/* 2.4 Meses */
 const MESES = [
   {word:"DJATSYTEĨ",meaning:"Janeiro"},{word:"DJATSYKÕE",meaning:"Fevereiro"},
   {word:"DJATSYAPY",meaning:"Março"},{word:"DJATSYRUNDY",meaning:"Abril"},
@@ -695,7 +564,6 @@ const MESES = [
   {word:"DJATSYPATEĨ",meaning:"Novembro"},{word:"DJATSYPÃKÕE",meaning:"Dezembro"}
 ];
 
-/* 2.5 Dias da semana */
 const DIAS = [
   {word:"ARYTEĨ",meaning:"Domingo"},{word:"ARYKÕE",meaning:"Segunda-feira"},
   {word:"ARYAPY",meaning:"Terça-feira"},{word:"ARYNDY",meaning:"Quarta-feira"},
@@ -703,7 +571,6 @@ const DIAS = [
   {word:"ARYNE'Õ",meaning:"Sábado"}
 ];
 
-/* 2.6 Frases do cotidiano */
 const FRASES_COTIDIANO = [
   {word:"Ndera'eweiry?",meaning:"Tudo bem?"},
   {word:"Reikó porã?",meaning:"Você está bem?"},
@@ -722,7 +589,6 @@ const FRASES_COTIDIANO = [
   {word:"Tereó porã Nhanderú rewé!",meaning:"Vai com Deus!"}
 ];
 
-/* 2.7 Posposições em frase */
 const FRASES_POSPOSICAO = [
   {frase:"Txerendá opytá Pakovaty__.",resp:"-py",distratores:["-gwi","-rupi","-arõ"]},
   {frase:"Kweé txetsy oú Mirakatu__.",resp:"-gwi",distratores:["-py","-rupi","-arõ"]},
@@ -736,7 +602,6 @@ const FRASES_POSPOSICAO = [
   {frase:"Tapeó põrã tá__.",resp:"-rupi",distratores:["-py","-gwi","-arõ"]}
 ];
 
-/* 2.8 Verbos irregulares */
 const VERBOS_IRREGULARES = [
   {base:"ir",conjugacoes:["aá","reó","oó","djaá","roó","peó"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]},
   {base:"vir",conjugacoes:["adju","redju","oú","djadju","rodju","pedju"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]},
@@ -745,14 +610,12 @@ const VERBOS_IRREGULARES = [
   {base:"trazer",conjugacoes:["aru","reru","ogweru","djagweru","rogweru","pegweru"],pessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"]}
 ];
 
-/* 2.9 Verbos regulares (1ª conjugação) */
 const VERBOS_REGULARES = [
   {base:"gwatá",classe:"1ª",conjug:["agwatá","regwatá","ogwatá","djagwatá","rogwatá","pegwatá"]},
   {base:"karu",classe:"1ª",conjug:["akaru","rekaru","okaru","djakaru","rokaru","pekaru"]},
   {base:"kwaá",classe:"1ª",conjug:["aikwaá","reikwaá","oikwaá","djaikwaá","roikwaá","peikwaá"]}
 ];
 
-/* 2.10 Classes de advérbios */
 const CLASSES_ADV = [
   {classe:"intensidade",exemplos:["WEI","ARIENTÉ","ETÉ","MBARIÍ"]},
   {classe:"modo",exemplos:["MBENGWÉ","MBENGWE'I","PETEREMÉ","WOÍ","PÁ","TENGWÁ","RAMĨ","DJIWY"]},
@@ -761,7 +624,6 @@ const CLASSES_ADV = [
   {classe:"frequência",exemplos:["RYAÉ","IDJYPYE'YWA","E'ỸWA"]}
 ];
 
-/* 2.11 Palavras interrogativas */
 const INTERROGATIVAS = [
   {palavra:"Mawã?", significado:"Quem?"},
   {palavra:"Mba'ewa?", significado:"O que?"},
@@ -773,7 +635,6 @@ const INTERROGATIVAS = [
   {palavra:"Maã?", significado:"Cadê?"}
 ];
 
-/* 2.12 Frases para ordenar */
 const FRASES_ORDENAR = [
   {tokens:["Txeé","Pakowaty-py","aikó"], pt:"Eu moro em Bananal."},
   {tokens:["Kweé","txetuty","oú","Bauru-gwi"], pt:"Ontem meu tio veio de Bauru."},
@@ -792,7 +653,6 @@ const FRASES_ORDENAR = [
   {tokens:["Aipyý","manduwi","adjoká","ãwã"], pt:"Peguei amendoim para assar."}
 ];
 
-/* 2.13 Pares para "Ligar Palavras" */
 const PARES_LIGAR = [
   {a:"WEI",b:"bastante"},
   {a:"PETEREMÉ",b:"rápido"},
@@ -829,92 +689,61 @@ const PARES_LIGAR = [
   {a:"Maã?",b:"Cadê?"}
 ];
 
+/* ---------- §3 CRUZADINHA — MOTOR LEGADO (RESERVA) ---------- */
+/* Obsoleto: mantido apenas para recomputar CROSSWORDS caso necessário.
+   O fluxo principal usa §8.1 (qCrossDinamica + buildCrossGrid).        */
 
-/* ------------------------------------------------------------
-   §3 CRUZADINHA (MOTOR)
-   ------------------------------------------------------------ */
-
-/* 3.1 Definições dos puzzles */
 const CROSSWORD_DEFS = [
-  {
-    words:[
-      {word:"AWATI", clue:"Milho (alimento sagrado)"},
-      {word:"ATXA",  clue:"Machado"},
-      {word:"TAY",   clue:"Formiga"},
-      {word:"TATU",  clue:"Tatu"},
-      {word:"TXIWI", clue:"Gato"}
-    ]
-  },
-  {
-    words:[
-      {word:"DJETY",  clue:"Batata-doce"},
-      {word:"DJAPEPÓ",clue:"Panela"},
-      {word:"PIRÁ",   clue:"Peixe"},
-      {word:"PY",     clue:"Pé"},
-      {word:"TATU",   clue:"Tatu"}
-    ]
-  },
-  {
-    words:[
-      {word:"TSANDIÁ", clue:"Melancia"},
-      {word:"TATU",    clue:"Tatu"},
-      {word:"AJU",     clue:"Caju (fruta)"},
-      {word:"YY",      clue:"Água"}
-    ]
-  }
+  {words:[
+    {word:"AWATI", clue:"Milho (alimento sagrado)"},
+    {word:"ATXA",  clue:"Machado"},
+    {word:"TAY",   clue:"Formiga"},
+    {word:"TATU",  clue:"Tatu"},
+    {word:"TXIWI", clue:"Gato"}
+  ]},
+  {words:[
+    {word:"DJETY",  clue:"Batata-doce"},
+    {word:"DJAPEPÓ",clue:"Panela"},
+    {word:"PIRÁ",   clue:"Peixe"},
+    {word:"PY",     clue:"Pé"},
+    {word:"TATU",   clue:"Tatu"}
+  ]},
+  {words:[
+    {word:"TSANDIÁ", clue:"Melancia"},
+    {word:"TATU",    clue:"Tatu"},
+    {word:"AJU",     clue:"Caju (fruta)"},
+    {word:"YY",      clue:"Água"}
+  ]}
 ];
 
-/* 3.2 Normalização para grade */
 function cwNormalize(s){
-  return String(s)
-    .toUpperCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
+  return String(s).toUpperCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
     .replace(/[^A-Z]/g,"");
 }
-
-/* 3.3 Layout por interseção */
 function cwLayout(def){
   const placed = [];
-  const words = def.words
-    .map(w => ({...w, letters: cwNormalize(w.word)}))
-    .filter(w => w.letters.length >= 2);
-
+  const words = def.words.map(w => ({...w, letters: cwNormalize(w.word)})).filter(w => w.letters.length >= 2);
   if(words.length === 0) return {placed:[], rows:0, cols:0};
-
   words.sort((a,b)=> b.letters.length - a.letters.length);
-
   const first = words[0];
   placed.push({...first, row:0, col:0, dir:"H"});
-
   const used = new Set([first.word]);
   let safety = 0;
-
   while(placed.length < words.length && safety++ < 50){
     let found = null;
     for(let wi = 0; wi < words.length && !found; wi++){
       const w = words[wi];
       if(used.has(w.word)) continue;
-
       for(const p of placed){
         for(let pi = 0; pi < p.letters.length; pi++){
           for(let wi2 = 0; wi2 < w.letters.length; wi2++){
             if(p.letters[pi] !== w.letters[wi2]) continue;
-
             let newRow, newCol, newDir;
-            if(p.dir === "H"){
-              newDir = "V";
-              newRow = p.row - wi2;
-              newCol = p.col + pi;
-            } else {
-              newDir = "H";
-              newRow = p.row + pi;
-              newCol = p.col - wi2;
-            }
-
-            if(isFree(placed, w.letters, newRow, newCol, newDir)){
-              found = {...w, row: newRow, col: newCol, dir: newDir};
-              break;
+            if(p.dir === "H"){ newDir = "V"; newRow = p.row - wi2; newCol = p.col + pi; }
+            else { newDir = "H"; newRow = p.row + pi; newCol = p.col - wi2; }
+            if(cwIsFree(placed, w.letters, newRow, newCol, newDir)){
+              found = {...w, row: newRow, col: newCol, dir: newDir}; break;
             }
           }
           if(found) break;
@@ -926,7 +755,6 @@ function cwLayout(def){
     placed.push(found);
     used.add(found.word);
   }
-
   let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
   placed.forEach(p => {
     for(let i=0;i<p.letters.length;i++){
@@ -938,55 +766,33 @@ function cwLayout(def){
   });
   const dr = -minR, dc = -minC;
   placed.forEach(p => { p.row += dr; p.col += dc; });
-
-  return {
-    placed,
-    rows: maxR - minR + 1,
-    cols: maxC - minC + 1
-  };
+  return {placed, rows: maxR - minR + 1, cols: maxC - minC + 1};
 }
-
-/* 3.4 Checagem de colisão */
-function isFree(placed, letters, row, col, dir){
-  const occupied = new Map();
+function cwIsFree(placed, letters, row, col, dir){
+  const occ = new Map();
   placed.forEach(p => {
     for(let i=0;i<p.letters.length;i++){
       const r = p.row + (p.dir==="V"?i:0);
       const c = p.col + (p.dir==="H"?i:0);
-      occupied.set(r+","+c, p.letters[i]);
+      occ.set(r+","+c, p.letters[i]);
     }
   });
-  let intersec = 0;
+  let inter = 0;
   for(let i=0;i<letters.length;i++){
     const r = row + (dir==="V"?i:0);
     const c = col + (dir==="H"?i:0);
     const key = r+","+c;
-    if(occupied.has(key)){
-      if(occupied.get(key) !== letters[i]) return false;
-      intersec++;
+    if(occ.has(key)){
+      if(occ.get(key) !== letters[i]) return false;
+      inter++;
     }
   }
-  return intersec > 0;
+  return inter > 0;
 }
-
-/* 3.5 Construção final (compacta + numera por célula)
-       Etapas:
-       1) desenha letras
-       2) compacta linhas/colunas vazias
-       3) recoloca palavras nas coordenadas compactadas
-       4) numera por célula em ordem de leitura
-       5) grava número na célula inicial
-       6) palavras herdam esse número                               */
 function buildCrossword(def){
   const layout = cwLayout(def);
-  if(!layout.placed.length){
-    return {grid:[], rows:0, cols:0, words:[]};
-  }
-
-  /* (1) desenha letras */
-  const raw = Array.from({length: layout.rows}, () =>
-    Array.from({length: layout.cols}, () => null)
-  );
+  if(!layout.placed.length) return {grid:[], rows:0, cols:0, words:[]};
+  const raw = Array.from({length: layout.rows}, () => Array.from({length: layout.cols}, () => null));
   layout.placed.forEach(p => {
     for(let i = 0; i < p.letters.length; i++){
       const r = p.row + (p.dir === "V" ? i : 0);
@@ -994,114 +800,167 @@ function buildCrossword(def){
       if(!raw[r][c]) raw[r][c] = {letter: p.letters[i], num: null};
     }
   });
-
-  /* (2) compacta linhas/colunas vazias */
-  const rowHasLetter = raw.map(row => row.some(c => c !== null));
-  const colHasLetter = Array.from({length: raw[0].length}, (_, c) =>
-    raw.some(row => row[c] !== null)
-  );
-  const keepRows = rowHasLetter.reduce((a, h, i) => h ? [...a, i] : a, []);
-  const keepCols = colHasLetter.reduce((a, h, i) => h ? [...a, i] : a, []);
-  const rowMap = new Map(keepRows.map((orig, novo) => [orig, novo]));
-  const colMap = new Map(keepCols.map((orig, novo) => [orig, novo]));
-
-  const grid = keepRows.map(r =>
-    keepCols.map(c => raw[r][c] ? {letter: raw[r][c].letter, num: null} : null)
-  );
-
-  /* (3) recoloca palavras */
-  const placed = layout.placed.map(p => ({
-    ...p,
-    row: rowMap.get(p.row),
-    col: colMap.get(p.col)
-  }));
-
-  /* (4) numeração por célula */
+  const rowHas = raw.map(row => row.some(c => c !== null));
+  const colHas = Array.from({length: raw[0].length}, (_, c) => raw.some(row => row[c] !== null));
+  const keepRows = rowHas.reduce((a,h,i)=> h ? [...a,i] : a, []);
+  const keepCols = colHas.reduce((a,h,i)=> h ? [...a,i] : a, []);
+  const rowMap = new Map(keepRows.map((o,n)=>[o,n]));
+  const colMap = new Map(keepCols.map((o,n)=>[o,n]));
+  const grid = keepRows.map(r => keepCols.map(c => raw[r][c] ? {letter: raw[r][c].letter, num: null} : null));
+  const placed = layout.placed.map(p => ({...p, row: rowMap.get(p.row), col: colMap.get(p.col)}));
   const startsSet = new Map();
-  placed.forEach(p => startsSet.set(`${p.row},${p.col}`, { r: p.row, c: p.col }));
-  const cellsOrdenadas = [...startsSet.values()].sort((a, b) =>
-    a.r - b.r || a.c - b.c
-  );
+  placed.forEach(p => startsSet.set(`${p.row},${p.col}`, {r: p.row, c: p.col}));
+  const cellsOrd = [...startsSet.values()].sort((a,b)=> a.r - b.r || a.c - b.c);
   const numPorCelula = new Map();
-  cellsOrdenadas.forEach((s, i) => numPorCelula.set(`${s.r},${s.c}`, i + 1));
-
-  /* (5) grava número na célula inicial */
+  cellsOrd.forEach((s,i)=> numPorCelula.set(`${s.r},${s.c}`, i+1));
   placed.forEach(p => {
     const cell = grid[p.row][p.col];
-    if(cell && cell.num === null){
-      cell.num = numPorCelula.get(`${p.row},${p.col}`);
-    }
+    if(cell && cell.num === null) cell.num = numPorCelula.get(`${p.row},${p.col}`);
   });
-
-  /* (6) palavras herdam número */
-  const numbered = placed.map(p => ({
-    ...p,
-    num: numPorCelula.get(`${p.row},${p.col}`)
-  }));
-
-  return {
-    grid,
-    rows: keepRows.length,
-    cols: keepCols.length,
-    words: numbered
-  };
+  const numbered = placed.map(p => ({...p, num: numPorCelula.get(`${p.row},${p.col}`)}));
+  return {grid, rows: keepRows.length, cols: keepCols.length, words: numbered};
 }
-
-/* 3.6 Puzzles já calculados em tempo de carga */
 const CROSSWORDS = CROSSWORD_DEFS.map(buildCrossword);
 
+/* ---------- §4 CAÇA-PALAVRAS — MOTOR ADAPTATIVO ---------- */
 
-/* ------------------------------------------------------------
-   §4 CAÇA-PALAVRAS (MOTOR)
-   ------------------------------------------------------------ */
-const SEARCH_SETS = [
-  {words:["KWARAY","JASY","TATA","YY","OKY","YWYRA","PARANA","KAAGWY"], size:10},
-  {words:["PIRA","KAI","MBORE","TATU","TXIWI","MBOI","AKUTI","JABUTI"], size:10},
-  {words:["KUTXA","KARO","PAKOWA","AWATI","MANDIO","DJETY","KAMBY","TSOO"], size:10},
-  {words:["TATU","TATA","TUKU","TAY","KY","KAWY","MBERU","KYDJU"], size:9}
+/* 4.1 Dificuldade por fase: tamanho, direções e nº de palavras */
+const SEARCH_DIFICULDADE = {
+  1:{size:7, dirs:["H"],                       n:4},
+  2:{size:8, dirs:["H","V"],                   n:4},
+  3:{size:8, dirs:["H","V"],                   n:5},
+  4:{size:9, dirs:["H","V"],                   n:5},
+  5:{size:9, dirs:["H","V","D"],               n:6},
+  6:{size:10,dirs:["H","V","D"],               n:6},
+  7:{size:10,dirs:["H","V","D"],               n:7},
+  8:{size:11,dirs:["H","V","D"],               n:7},
+  9:{size:11,dirs:["H","V","D"],               n:8}
+};
+
+/* 4.2 Comprimento mínimo/máximo de palavra por fase */
+const SEARCH_LIMITE = {
+  1:{min:3, max:5},
+  2:{min:3, max:6},
+  3:{min:4, max:6},
+  4:{min:4, max:7},
+  5:{min:4, max:8},
+  6:{min:5, max:9},
+  7:{min:5, max:10},
+  8:{min:6, max:12},
+  9:{min:6, max:20}
+};
+
+/* 4.3 Extras curtos para as fases iniciais */
+const SEARCH_POOL_EXTRA = [
+  "YY","TAY","KY","PY","MUA","TATA","TATU","TUKU","KAI","OWY","MBOI",
+  "PIRA","OKY","JASY","YBY","UU","AWY","PO","KYA","UY","EIA"
 ];
 
-function buildSearchGrid(words, size){
-  const G = Array.from({length:size},()=>Array.from({length:size},()=>"" ));
-  const dirs = [[0,1],[1,0],[0,-1],[-1,0]];
-  const placed = [];
-  for(const w of words){
-    const W = w.replace(/'/g,"");
-    let ok = false;
-    let tries = 0;
-    while(!ok && tries++ < 300){
-      const dir = dirs[Math.floor(Math.random()*dirs.length)];
-      const r = Math.floor(Math.random()*size);
-      const c = Math.floor(Math.random()*size);
-      const endR = r + dir[0]*(W.length-1);
-      const endC = c + dir[1]*(W.length-1);
-      if(endR<0||endR>=size||endC<0||endC>=size) continue;
-      let colide = false;
-      for(let i=0;i<W.length;i++){
-        const rr = r + dir[0]*i, cc = c + dir[1]*i;
-        if(G[rr][cc] && G[rr][cc] !== W[i]){ colide = true; break; }
-      }
-      if(colide) continue;
-      for(let i=0;i<W.length;i++){
-        G[r+dir[0]*i][c+dir[1]*i] = W[i];
-      }
-      placed.push({word:W, r, c, dr:dir[0], dc:dir[1], len:W.length});
-      ok = true;
-    }
-  }
-  const alfab = "ABCDEGIKMNOPRSTUWY";
-  for(let i=0;i<size;i++){
-    for(let j=0;j<size;j++){
-      if(!G[i][j]) G[i][j] = alfab[Math.floor(Math.random()*alfab.length)];
-    }
-  }
-  return {G, placed, size};
+/* 4.4 Normalização de palavra (só A-Z) */
+function searchClean(s){
+  return String(s).toUpperCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^A-Z]/g,"");
 }
 
+/* 4.5 Pool total normalizado */
+function searchPoolTotal(){
+  const set = new Set();
+  for(const v of VOCABULARY){
+    const w = searchClean(v.word);
+    if(w.length >= 3) set.add(w);
+  }
+  for(const w of SEARCH_POOL_EXTRA) set.add(w);
+  return [...set];
+}
 
-/* ------------------------------------------------------------
-   §5 ESTADO GLOBAL E PERSISTÊNCIA
-   ------------------------------------------------------------ */
+/* 4.6 Pool elegível para a fase, ignorando palavras já usadas */
+function searchPoolForFase(fase, naUsar){
+  const lim = SEARCH_LIMITE[fase] || SEARCH_LIMITE[9];
+  const vistas = new Set(naUsar.map(w => searchClean(w)));
+  const total = searchPoolTotal();
+  const candidatas = [];
+  for(const w of total){
+    if(w.length < lim.min || w.length > lim.max) continue;
+    if(vistas.has(w)) continue;
+    candidatas.push(w);
+  }
+  if(candidatas.length < 8){
+    for(const w of total){
+      if(vistas.has(w)) continue;
+      candidatas.push(w);
+    }
+  }
+  return candidatas;
+}
+
+/* 4.7 Direções vetoriais conforme a fase */
+function searchDirs(fase){
+  const cfg = SEARCH_DIFICULDADE[fase] || SEARCH_DIFICULDADE[9];
+  const dirs = [];
+  if(cfg.dirs.includes("H")) dirs.push([0,1], [0,-1]);
+  if(cfg.dirs.includes("V")) dirs.push([1,0], [-1,0]);
+  if(cfg.dirs.includes("D")) dirs.push([1,1], [-1,-1], [1,-1], [-1,1]);
+  return dirs;
+}
+
+/* 4.8 Coloca uma palavra na grade */
+function searchPlaceOne(G, size, word, dirs, tentativas){
+  for(let t = 0; t < tentativas; t++){
+    const dir = dirs[Math.floor(Math.random() * dirs.length)];
+    const r = Math.floor(Math.random() * size);
+    const c = Math.floor(Math.random() * size);
+    const endR = r + dir[0] * (word.length - 1);
+    const endC = c + dir[1] * (word.length - 1);
+    if(endR < 0 || endR >= size || endC < 0 || endC >= size) continue;
+    let colide = false;
+    for(let i = 0; i < word.length; i++){
+      const rr = r + dir[0] * i;
+      const cc = c + dir[1] * i;
+      if(G[rr][cc] && G[rr][cc] !== word[i]){ colide = true; break; }
+    }
+    if(colide) continue;
+    for(let i = 0; i < word.length; i++){
+      G[r + dir[0] * i][c + dir[1] * i] = word[i];
+    }
+    return {word, r, c, dr:dir[0], dc:dir[1], len:word.length};
+  }
+  return null;
+}
+
+/* 4.9 Gera grade completa do caça-palavras */
+function buildSearchGrid(fase, palavrasProibidas){
+  const cfg = SEARCH_DIFICULDADE[fase] || SEARCH_DIFICULDADE[9];
+  const dirs = searchDirs(fase);
+  const pool = shuffle(searchPoolForFase(fase, palavrasProibidas || []));
+  const size = cfg.size;
+  const G = Array.from({length:size}, () => Array.from({length:size}, () => ""));
+  const placed = [];
+  const usadas = new Set();
+  for(const w of pool){
+    if(placed.length >= cfg.n) break;
+    if(usadas.has(w)) continue;
+    const enc = searchPlaceOne(G, size, w, dirs, 60);
+    if(enc){ placed.push(enc); usadas.add(w); }
+  }
+  if(placed.length < 2){
+    for(const w of pool){
+      if(placed.length >= cfg.n) break;
+      if(usadas.has(w)) continue;
+      const enc = searchPlaceOne(G, size, w, [[0,1]], 120);
+      if(enc){ placed.push(enc); usadas.add(w); }
+    }
+  }
+  const alfabeto = "ABCDEGIKMNOPRSTUWY";
+  for(let i = 0; i < size; i++){
+    for(let j = 0; j < size; j++){
+      if(!G[i][j]) G[i][j] = alfabeto[Math.floor(Math.random()*alfabeto.length)];
+    }
+  }
+  return { G, placed, size, words: placed.map(p => p.word) };
+}
+
+/* ---------- §5 ESTADO GLOBAL ---------- */
 const state = {
   index:0, score:0, fase:1, answered:false, sound:true, time:null,
   questions:[], salvar:true, acertos:0, erros:0
@@ -1146,10 +1005,7 @@ function registrarConclusao(fase){
   try{ localStorage.setItem(SAVE_KEY, JSON.stringify(p)); }catch(e){}
 }
 
-
-/* ------------------------------------------------------------
-   §6 UTILIDADES
-   ------------------------------------------------------------ */
+/* ---------- §6 UTILIDADES ---------- */
 function shuffle(a){
   const out = [...a];
   for(let i=out.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [out[i],out[j]]=[out[j],out[i]]; }
@@ -1168,27 +1024,15 @@ function pickMeanings(item, list, n){
   while(out.length < n){ out.push("—"); }
   return shuffle(out);
 }
-function word(w){ return VOCABULARY.find(v => v.word === w); }
 function numberWord(n){ return NUMBER_VOCABULARY.find(v => v.value === n); }
-function normalizar(s){
-  return String(s).toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .replace(/[´`^~¨]/g,"")
-    .replace(/[’']/g,"")
-    .replace(/[^a-z]/g,"");
-}
 
-/* Listas derivadas do vocabulário */
 const FACIL = VOCABULARY.filter(v => v.file);
 const COM_AUDIO = VOCABULARY.filter(v => v.audio);
 const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
 const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
 const PARENTESCO = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
-
-/* ------------------------------------------------------------
-   §7 ÁUDIO (Web Audio API + MP3)
-   ------------------------------------------------------------ */
+/* ---------- §7 ÁUDIO ---------- */
 let audioCtx = null;
 function beep(freq, dur, type="sine", vol=.18){
   try{
@@ -1213,41 +1057,176 @@ const sfx = {
   clique(){ if(!state.sound) return; beep(520,.05,"sine",.10); }
 };
 
+/* ---------- §8 GERADORES DE QUESTÃO ---------- */
 
-/* ------------------------------------------------------------
-   §8 GERADORES DE QUESTÃO
-   ------------------------------------------------------------ */
+/* 8.1 Cruzadinha dinâmica */
+const CROSS_DIFICULDADE = {
+  1:{size:6,  n:4, dirs:["H","V"]},
+  2:{size:7,  n:4, dirs:["H","V"]},
+  3:{size:7,  n:5, dirs:["H","V"]},
+  4:{size:8,  n:5, dirs:["H","V"]},
+  5:{size:8,  n:6, dirs:["H","V"]},
+  6:{size:9,  n:6, dirs:["H","V"]},
+  7:{size:9,  n:7, dirs:["H","V"]},
+  8:{size:10, n:7, dirs:["H","V"]},
+  9:{size:10, n:8, dirs:["H","V"]}
+};
 
-/* 8.1 Vocabulário e tradução */
-function qWord(f){
-  const item = shuffle(FACIL)[0];
-  return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Nhandewa?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,f>=5?4:3).map(x=>x.word)};
+function clarificarSignificado(palavra){
+  const item = VOCABULARY.find(v => searchClean(v.word) === palavra);
+  if(item) return item.meaning;
+  return palavra.toLowerCase();
 }
-function qMeaning(f){
-  const item = shuffle(FACIL)[0];
-  return {type:"meaning",kind:"TRADUÇÃO",prompt:`O que significa «${item.word}»?`,hint:"Escolha o significado em português.",target:item.meaning,targetWord:item.word,audioItem:item,choices:pickMeanings(item,FACIL,f>=5?4:3)};
+
+function buildCrossGrid(fase, poolPalavras){
+  const cfg = CROSS_DIFICULDADE[fase] || CROSS_DIFICULDADE[9];
+  const size = cfg.size;
+  const G = Array.from({length:size}, () => Array.from({length:size}, () => ""));
+  const placed = [];
+  const dirs = [[0,1],[1,0]];
+
+  const tentar = (word, permitirDiagonal) => {
+    const locais = dirs.slice();
+    if(permitirDiagonal) locais.push([1,1],[1,-1]);
+    for(let tent = 0; tent < 80; tent++){
+      const dir = locais[Math.floor(Math.random() * locais.length)];
+      const r = Math.floor(Math.random() * size);
+      const c = Math.floor(Math.random() * size);
+      const endR = r + dir[0] * (word.length - 1);
+      const endC = c + dir[1] * (word.length - 1);
+      if(endR < 0 || endR >= size || endC < 0 || endC >= size) continue;
+      let colide = false;
+      let toques = 0;
+      for(let i = 0; i < word.length; i++){
+        const rr = r + dir[0] * i, cc = c + dir[1] * i;
+        if(G[rr][cc]){
+          toques++;
+          if(G[rr][cc] !== word[i]){ colide = true; break; }
+        }
+      }
+      if(colide) continue;
+      if(placed.length > 0 && toques === 0) continue;
+      for(let i = 0; i < word.length; i++){
+        G[r + dir[0] * i][c + dir[1] * i] = word[i];
+      }
+      return {r, c, dr:dir[0], dc:dir[1], len:word.length, word};
+    }
+    return null;
+  };
+
+  const fila = shuffle(poolPalavras.slice());
+  if(fila.length === 0) return null;
+  const primeira = fila.shift();
+  const linhaInicial = Math.floor(size / 2);
+  const colInicial = Math.max(0, Math.floor((size - primeira.length) / 2));
+  for(let i = 0; i < primeira.length; i++){
+    G[linhaInicial][colInicial + i] = primeira[i];
+  }
+  placed.push({r:linhaInicial, c:colInicial, dr:0, dc:1, len:primeira.length, word:primeira});
+
+  for(const w of fila){
+    if(placed.length >= cfg.n) break;
+    const permitirD = fase >= 5 && Math.random() < 0.2;
+    const enc = tentar(w, permitirD);
+    if(enc) placed.push(enc);
+  }
+  if(placed.length < 3) return null;
+
+  const ordenadas = placed.slice().sort((a,b) => a.r !== b.r ? a.r - b.r : a.c - b.c);
+  ordenadas.forEach((p, idx) => { p.num = idx + 1; });
+
+  let minR = size, minC = size, maxR = 0, maxC = 0;
+  for(let i = 0; i < size; i++){
+    for(let j = 0; j < size; j++){
+      if(G[i][j]){
+        if(i < minR) minR = i;
+        if(i > maxR) maxR = i;
+        if(j < minC) minC = j;
+        if(j > maxC) maxC = j;
+      }
+    }
+  }
+  const recorte = [];
+  for(let i = minR; i <= maxR; i++){
+    const linha = [];
+    for(let j = minC; j <= maxC; j++) linha.push(G[i][j] || "");
+    recorte.push(linha);
+  }
+
+  const words = ordenadas.map(p => ({
+    word: p.word,
+    clue: clarificarSignificado(p.word),
+    r: p.r - minR, c: p.c - minC,
+    dr: p.dr, dc: p.dc, num: p.num,
+    dir: p.dr === 0 ? "H" : "V"
+  }));
+
+  return {grid: recorte, rows: recorte.length, cols: recorte[0].length, words};
 }
-function qReverse(f){
-  const item = shuffle(FACIL)[0];
-  return {type:"reverse",kind:"PALAVRA EM NHANDEWA",prompt:`Como se diz «${item.meaning}» em Nhandewa?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,f>=5?4:3).map(x=>x.word)};
+
+function qCrossDinamica(fase, usadas){
+  const lim = SEARCH_LIMITE[fase] || SEARCH_LIMITE[9];
+  const pool = searchPoolForFase(fase, [...(usadas || new Set())]);
+  const curtidas = pool.filter(w => w.length >= lim.min && w.length <= 10);
+  const escolhidas = shuffle(curtidas.length ? curtidas : pool).slice(0, 12);
+  let resultado = buildCrossGrid(fase, escolhidas);
+  if(!resultado && usadas && usadas.size > 0){
+    const ampliado = searchPoolForFase(fase, []);
+    const curt2 = ampliado.filter(w => w.length >= 3 && w.length <= 10);
+    resultado = buildCrossGrid(fase, shuffle(curt2).slice(0, 12));
+  }
+  if(!resultado) return null;
+  return {
+    type:"cross", kind:"CRUZADINHA",
+    prompt:"Complete a cruzadinha com as palavras Nhandewa:",
+    hint:"Os números indicam onde cada palavra começa. As setas mostram a direção.",
+    puzzle: resultado,
+    _words: resultado.words.map(w => w.word),
+    target: "cross::" + resultado.words.map(w => w.word).sort().join(",")
+  };
 }
-function qAudio(f){
+
+/* 8.2 Caça-palavras dinâmico */
+function qSearch(fase, usadas){
+  const grid = buildSearchGrid(fase, [...(usadas || new Set())]);
+  const finalGrid = grid.words.length >= 2 ? grid : buildSearchGrid(fase, []);
+  return {
+    type:"search", kind:"CAÇA-PALAVRAS",
+    prompt:"Encontre as palavras Nhandewa escondidas:",
+    hint:"Toque no início e depois no fim de cada palavra.",
+    grid: finalGrid,
+    words: finalGrid.words,
+    _words: finalGrid.words,
+    target: "search::" + finalGrid.words.slice().sort().join(",")
+  };
+}
+
+/* 8.3 Geradores simples */
+function qWord(fase){
+  const item = shuffle(FACIL)[0];
+  return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Nhandewa?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+}
+function qMeaning(fase){
+  const item = shuffle(FACIL)[0];
+  return {type:"meaning",kind:"TRADUÇÃO",prompt:`O que significa «${item.word}»?`,hint:"Escolha o significado em português.",target:item.meaning,targetWord:item.word,audioItem:item,choices:pickMeanings(item,FACIL,fase>=5?4:3)};
+}
+function qReverse(fase){
+  const item = shuffle(FACIL)[0];
+  return {type:"reverse",kind:"PALAVRA EM NHANDEWA",prompt:`Como se diz «${item.meaning}» em Nhandewa?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+}
+function qAudio(fase){
   const item = shuffle(COM_AUDIO)[0];
-  return {type:"audio",kind:"ESCUTE E ESCOLHA",prompt:"Ouça a pronúncia e escolha a palavra certa.",hint:"Toque no alto-falante para ouvir.",target:item.word,audioItem:item,choices:pickN(item,COM_AUDIO,f>=5?4:3).map(x=>x.word)};
+  return {type:"audio",kind:"ESCUTE E ESCOLHA",prompt:"Ouça a pronúncia e escolha a palavra certa.",hint:"Toque no alto-falante para ouvir.",target:item.word,audioItem:item,choices:pickN(item,COM_AUDIO,fase>=5?4:3).map(x=>x.word)};
 }
-
-/* 8.2 Contagem e números */
-function qCount(f){
+function qCount(fase){
   const n = 1 + Math.floor(Math.random()*7);
   const animal = shuffle(ANIMAIS_COUNT)[0];
-  return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Toque em cada figura para marcar que já contou.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(f>=5?4:3)+1))).map(x=>x.value)};
+  return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Toque em cada figura para marcar que já contou.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(fase>=5?4:3)+1))).map(x=>x.value)};
 }
 function qNumber(){
   const n = shuffle(NUMBER_VOCABULARY)[0];
   return {type:"number",kind:"NÚMEROS",prompt:"Qual é a palavra Nhandewa para este número?",hint:"Observe o algarismo.",target:n.value,choices:shuffle(pickN(n,NUMBER_VOCABULARY,3)).map(x=>x.value)};
 }
-
-/* 8.3 Categorias */
 function qCategory(){
   const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.some(v => v.category === c && v.file));
   if(cats.length < 3) return null;
@@ -1265,8 +1244,6 @@ function qOdd(){
   if(!intru || grupo.length < 3) return null;
   return {type:"odd",kind:"INTRUSO",prompt:`Três palavras são de «${catA.toLowerCase()}». Qual NÃO pertence?`,hint:"Escolha a de outra categoria.",target:intru.word,choices:shuffle([...grupo.map(x=>x.word),intru.word])};
 }
-
-/* 8.4 Gramática */
 function qGap(){
   const item = shuffle(FRASES_POSPOSICAO)[0];
   return {type:"gap",kind:"POSPOSIÇÃO",prompt:"Complete a frase com a posposição correta:",hint:"As posposições vêm depois da palavra.",sentence:item.frase,target:item.resp,choices:shuffle([item.resp,...item.distratores])};
@@ -1295,8 +1272,6 @@ function qInterrog(){
   const distr = shuffle(INTERROGATIVAS.filter(x=>x.palavra!==item.palavra)).slice(0,2).map(x=>x.significado);
   return {type:"interrog",kind:"PALAVRA INTERROGATIVA",prompt:"Qual significado corresponde a esta palavra interrogativa?",hint:"Fazendo Perguntas (vol. 2, p.43).",target:item.significado,targetWord:item.palavra,choices:shuffle([item.significado,...distr])};
 }
-
-/* 8.5 Extras (imagem, cotidiano, calendário) */
 function qPictureSort(){
   const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.filter(v=>v.category===c && v.file).length >= 1);
   if(cats.length < 3) return null;
@@ -1334,8 +1309,6 @@ function qParentesco(){
     choices:shuffle([item.meaning, ...outros.map(x => x.meaning)])
   };
 }
-
-/* 8.6 Desafios compostos */
 function qOrder(){
   const base = shuffle(FRASES_ORDENAR)[0];
   return {
@@ -1358,42 +1331,18 @@ function qMatch(){
     target: selecionados.map(p=>p.a+"="+p.b).join("|")
   };
 }
-function qCross(){
-  const puzzle = shuffle(CROSSWORDS)[0];
-  return {
-    type:"cross",kind:"CRUZADINHA",
-    prompt:"Complete a cruzadinha com as palavras Nhandewa:",
-    hint:"Os números indicam onde cada palavra começa. As setas mostram a direção.",
-    puzzle,
-    target: puzzle.words.map(w=>w.word).join("|")
-  };
-}
-function qSearch(){
-  const set = shuffle(SEARCH_SETS)[0];
-  const grid = buildSearchGrid(set.words, set.size);
-  return {
-    type:"search",kind:"CAÇA-PALAVRAS",
-    prompt:"Encontre as palavras Nhandewa escondidas:",
-    hint:"Toque no início e depois no fim de cada palavra.",
-    grid, words: set.words,
-    target: set.words.join("|")
-  };
-}
 
-/* 8.7 Registro de geradores */
-const GERADORES = {
+/* 8.4 Registro de geradores simples (cross e search têm tratamento próprio) */
+const GERADORES_SIMPLES = {
   word:qWord, meaning:qMeaning, reverse:qReverse, audio:qAudio,
   count:qCount, number:qNumber, category:qCategory, odd:qOdd,
   gap:qGap, verb:qVerb, "choose-verb":qChooseVerb, adv:qAdv,
   interrog:qInterrog, "picture-sort":qPictureSort, greeting:qGreeting,
   cardinal:qCardinal, "month-day":qMonthDay, parentesco:qParentesco,
-  order:qOrder, match:qMatch, cross:qCross, search:qSearch
+  order:qOrder, match:qMatch
 };
 
-
-/* ------------------------------------------------------------
-   §9 MONTAGEM DA FASE
-   ------------------------------------------------------------ */
+/* ---------- §9 MONTAGEM DA FASE ---------- */
 const FASES_DISTRIBUICAO = {
   1:{word:14,number:4,count:4,category:3,order:3,match:2},
   2:{word:6,meaning:6,audio:4,count:4,number:2,order:3,match:3,cross:1,search:1},
@@ -1409,39 +1358,50 @@ const FASES_DISTRIBUICAO = {
 function montarFase(fase){
   const dist = FASES_DISTRIBUICAO[fase];
   const pool = [];
+  /* Set compartilhado entre cruzadinha e caça-palavras desta fase */
+  const palavrasUsadas = new Set();
+
   for(const [tipo, qtd] of Object.entries(dist)){
     for(let i = 0; i < qtd; i++){
-      const q = GERADORES[tipo] ? GERADORES[tipo](fase) : null;
+      let q = null;
+      if(tipo === "search"){
+        q = qSearch(fase, palavrasUsadas);
+        if(q && q._words) q._words.forEach(w => palavrasUsadas.add(w));
+      }
+      else if(tipo === "cross"){
+        q = qCrossDinamica(fase, palavrasUsadas);
+        if(q && q._words) q._words.forEach(w => palavrasUsadas.add(w));
+      }
+      else if(GERADORES_SIMPLES[tipo]){
+        q = GERADORES_SIMPLES[tipo](fase);
+      }
       if(q) pool.push(q);
     }
   }
+
   const vistos = new Set();
   const unicos = [];
   for(const q of pool){
-    const chave = q.type + "::" + q.prompt + "::" + q.target;
+    const chave = q.type + "::" + q.target;
     if(vistos.has(chave)) continue;
     vistos.add(chave); unicos.push(q);
   }
+
   let guard = 0;
-  const tipos = Object.keys(dist);
-  while(unicos.length < QS_PER_FASE && guard++ < 200){
-    const t = tipos[Math.floor(Math.random() * tipos.length)];
-    const q = GERADORES[t] ? GERADORES[t](fase) : null;
+  const tiposSimples = Object.keys(GERADORES_SIMPLES);
+  while(unicos.length < QS_PER_FASE && guard++ < 300){
+    const t = tiposSimples[Math.floor(Math.random() * tiposSimples.length)];
+    const q = GERADORES_SIMPLES[t](fase);
     if(!q) continue;
-    const chave = q.type + "::" + q.prompt + "::" + q.target;
+    const chave = q.type + "::" + q.target;
     if(vistos.has(chave)) continue;
     vistos.add(chave); unicos.push(q);
   }
-  if(unicos.length === 0){
-    throw new Error("Nenhum gerador produziu questão para a fase " + fase);
-  }
+  if(unicos.length === 0) throw new Error("Nenhum gerador produziu questão para a fase " + fase);
   return shuffle(unicos).slice(0, QS_PER_FASE);
 }
 
-
-/* ------------------------------------------------------------
-   §10 FLUXO DE TELAS E HUD
-   ------------------------------------------------------------ */
+/* ---------- §10 FLUXO DE TELAS ---------- */
 function periodNow(){
   const h = new Date().getHours();
   if(h >= 5 && h < 12) return {name:"manhã",icon:"☀",title:"Ko'ẽ Porã!",desc:"A luz da manhã abre o caminho para novas descobertas.",msg:"A jornada começa com a luz do dia."};
@@ -1457,10 +1417,9 @@ function screen(id){
 }
 function safeBind(id, event, handler){
   const el = $(id);
-  if(!el){ console.warn("[safeBind] elemento ausente:", id); return; }
+  if(!el){ console.warn("[safeBind] ausente:", id); return; }
   el.addEventListener(event, handler);
 }
-
 function start(fase){
   const alvo = fase || 1;
   if(!faseDesbloqueada(alvo)) return;
@@ -1505,12 +1464,7 @@ function atualizarHUDInicio(){
   const m = $("period-message"); if(m && state.time) m.textContent = state.time.msg;
 }
 
-
-/* ------------------------------------------------------------
-   §11 RENDER DA QUESTÃO
-   ------------------------------------------------------------ */
-
-/* 11.1 Helpers de DOM */
+/* ---------- §11 RENDER ---------- */
 function createImage(item, className){
   const img = document.createElement("img");
   img.className = className || "visual-image";
@@ -1540,8 +1494,6 @@ function limparAnswers(box){
   box.classList.remove("two-cols");
   box.setAttribute("data-kind","");
 }
-
-/* 11.2 Render principal */
 function render(){
   try{
     const q = state.questions[state.index];
@@ -1585,7 +1537,6 @@ function mostrarTraducao(q){
   }
 }
 
-/* 11.3 Visual (área superior do card) */
 function visual(q){
   const box = $("visual");
   box.innerHTML = "";
@@ -1596,8 +1547,6 @@ function visual(q){
     $("listen").disabled = false;
     $("listen").onclick = () => audio(item.audio);
   };
-
-  /* Imagem */
   if(q.type === "word" && q.imageItem){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1609,7 +1558,6 @@ function visual(q){
     box.append(card);
     enableAudio(q.imageItem);
   }
-  /* Escuta */
   else if(q.type === "audio" && q.audioItem){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1624,7 +1572,6 @@ function visual(q){
     box.append(card);
     enableAudio(q.audioItem);
   }
-  /* Número */
   else if(q.type === "number"){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1638,7 +1585,6 @@ function visual(q){
     box.append(card);
     enableAudio(numberWord(q.target));
   }
-  /* Contagem */
   else if(q.type === "count"){
     const wrap = document.createElement("div");
     wrap.className = "visual-count";
@@ -1677,21 +1623,18 @@ function visual(q){
     note.textContent = "TOQUE EM CADA FIGURA PARA MARCAR";
     box.append(note);
   }
-  /* Posposição em lacuna */
   else if(q.type === "gap"){
     const s = document.createElement("div");
     s.className = "gap-sentence";
     s.innerHTML = q.sentence.replace("_", "<span class='blank'>___</span>");
     box.append(s);
   }
-  /* Interrogativa */
   else if(q.type === "interrog"){
     const s = document.createElement("div");
     s.className = "interrog-sentence";
     s.textContent = q.targetWord;
     box.append(s);
   }
-  /* Escolha de figura */
   else if(q.type === "picture-sort"){
     const grid = document.createElement("div");
     grid.className = "sort-grid";
@@ -1706,7 +1649,6 @@ function visual(q){
     });
     box.append(grid);
   }
-  /* Verbo */
   else if(q.type === "verb" || q.type === "choose-verb"){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1720,7 +1662,6 @@ function visual(q){
     card.append(w, lab);
     box.append(card);
   }
-  /* Parentesco */
   else if(q.type === "parentesco"){
     const w = document.createElement("span");
     w.className = "word-highlight";
@@ -1732,7 +1673,6 @@ function visual(q){
     box.append(lab);
     enableAudio(q.audioItem);
   }
-  /* Ordenar frase */
   else if(q.type === "order"){
     const target = document.createElement("div");
     target.className = "tokens label-wrap target";
@@ -1758,7 +1698,6 @@ function visual(q){
     trad.style.display = "none";
     box.append(trad);
   }
-  /* Padrão: palavra em destaque */
   else if(["meaning","reverse","category","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1777,7 +1716,6 @@ function visual(q){
     box.append(card);
     if(q.audioItem) enableAudio(q.audioItem);
   }
-  /* Cruzadinha: lista de pistas */
   else if(q.type === "cross"){
     const clues = document.createElement("ul");
     clues.className = "cw-clues";
@@ -1785,7 +1723,7 @@ function visual(q){
       const li = document.createElement("li");
       const n = document.createElement("strong");
       n.textContent = (w.num || "?") + ".";
-      li.append(n, document.createTextNode(w.clue));
+      li.append(n, document.createTextNode(w.clue || w.word));
       const dir = document.createElement("span");
       dir.className = "cw-dir";
       dir.textContent = w.dir === "H" ? "→" : "↓";
@@ -1794,7 +1732,6 @@ function visual(q){
     });
     box.append(clues);
   }
-  /* Ligar palavras */
   else if(q.type === "match"){
     const note = document.createElement("span");
     note.className = "visual-note";
@@ -1803,13 +1740,11 @@ function visual(q){
   }
 }
 
-/* 11.4 Alternativas / área de resposta */
 function answers(q){
   const box = $("answers");
   limparAnswers(box);
   box.setAttribute("data-kind", q.type);
 
-  /* Escolha de figura */
   if(q.type === "picture-sort" && q.items){
     box.style.display = "grid";
     box.style.gridTemplateColumns = "repeat(3, 1fr)";
@@ -1836,12 +1771,10 @@ function answers(q){
     return;
   }
 
-  /* Ordenar frase */
   if(q.type === "order"){
     const pool = $("order-pool");
     const target = $("order-target");
     if(!pool || !target){ box.style.display = "none"; return; }
-
     function checarOrdem(){
       if(state.answered) return;
       const montada = Array.from(target.children).map(el=>el.dataset.word);
@@ -1882,35 +1815,26 @@ function answers(q){
     return;
   }
 
-  /* Ligar palavras */
   if(q.type === "match"){
     const stage = document.createElement("div");
     stage.className = "match-stage";
-
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("class", "match-svg");
     svg.innerHTML = `
       <defs>
-        <marker id="match-arrow-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#7be495"/>
-        </marker>
-        <marker id="match-arrow-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#ff7a7a"/>
-        </marker>
+        <marker id="match-arrow-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#7be495"/></marker>
+        <marker id="match-arrow-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#ff7a7a"/></marker>
       </defs>
     `;
-
     const grid = document.createElement("div");
     grid.className = "match-grid";
     const colL = document.createElement("div"); colL.className = "match-col left";
     const colR = document.createElement("div"); colR.className = "match-col right";
-
     const left = shuffle(q.pairs.map(p=>({t:p.a,k:p.b,side:"a"})));
     const right = shuffle(q.pairs.map(p=>({t:p.b,k:p.b,side:"b"})));
     let selL = null;
     let acertos = 0;
     const connectedLines = [];
-
     function drawArrowLine(elA, elB, isOk){
       const sRect = svg.getBoundingClientRect();
       const pinA = elA.querySelector(".match-pin");
@@ -1931,7 +1855,6 @@ function answers(q){
       svg.appendChild(line);
       return {line, elA, elB, isOk};
     }
-
     function recalcularLinhas(){
       const sRect = svg.getBoundingClientRect();
       connectedLines.forEach(item => {
@@ -1947,7 +1870,6 @@ function answers(q){
       });
     }
     window.addEventListener("resize", recalcularLinhas);
-
     const montar = (col, arr) => {
       arr.forEach(item => {
         const b = document.createElement("button");
@@ -1958,7 +1880,6 @@ function answers(q){
         const pin = document.createElement("span");
         pin.className = "match-pin";
         b.appendChild(pin);
-
         b.addEventListener("click", () => {
           if(state.answered || b.classList.contains("matched")) return;
           if(item.side === "a"){
@@ -2008,38 +1929,26 @@ function answers(q){
     return;
   }
 
-  /* Cruzadinha */
   if(q.type === "cross"){
     const wrapper = document.createElement("div");
     wrapper.className = "cw-wrapper";
-
     const grid = document.createElement("div");
     grid.className = "cw-grid";
     grid.style.setProperty("--cw-cols", q.puzzle.cols);
-
     const inputs = [];
-
     for(let r = 0; r < q.puzzle.rows; r++){
       for(let c = 0; c < q.puzzle.cols; c++){
         const cell = q.puzzle.grid[r][c];
         const div = document.createElement("div");
         div.className = "cw-cell";
-
-        if(!cell){
-          div.classList.add("cw-blocked");
-          grid.append(div);
-          continue;
-        }
-
+        if(!cell){ div.classList.add("cw-blocked"); grid.append(div); continue; }
         div.classList.add("cw-open");
-
         if(cell.num){
           const num = document.createElement("span");
           num.className = "cw-num";
           num.textContent = cell.num;
           div.append(num);
         }
-
         const inp = document.createElement("input");
         inp.type = "text";
         inp.maxLength = 1;
@@ -2053,9 +1962,7 @@ function answers(q){
         inp.setAttribute("aria-label", `Letra ${r + 1}, ${c + 1}`);
         inp.setAttribute("data-r", r);
         inp.setAttribute("data-c", c);
-
         div.addEventListener("click", () => inp.focus());
-
         inp.addEventListener("input", () => {
           const v = inp.value.replace(/[^A-Za-zÀ-ÿ]/g, "").slice(0, 1).toUpperCase();
           inp.value = v;
@@ -2068,17 +1975,12 @@ function answers(q){
           }
           checarCross();
         });
-
         inp.addEventListener("keydown", (e) => {
           const r0 = Number(inp.dataset.r);
           const c0 = Number(inp.dataset.c);
           const focusCell = (nr, nc) => {
             const next = grid.querySelector(`.cw-input[data-r="${nr}"][data-c="${nc}"]`);
-            if(next){
-              e.preventDefault();
-              next.focus();
-              next.select();
-            }
+            if(next){ e.preventDefault(); next.focus(); next.select(); }
           };
           if(e.key === "ArrowRight") focusCell(r0, c0 + 1);
           if(e.key === "ArrowLeft")  focusCell(r0, c0 - 1);
@@ -2086,33 +1988,25 @@ function answers(q){
           if(e.key === "ArrowUp")    focusCell(r0 - 1, c0);
           if(e.key === "Backspace" && !inp.value) focusCell(r0, c0 - 1);
         });
-
         div.append(inp);
         inputs.push({inp, sol: cell.letter});
         grid.append(div);
       }
     }
-
     function checarCross(){
       if(state.answered) return;
-      const ok = inputs.every(({inp, sol}) =>
-        inp.value.toUpperCase() === sol
-      );
+      const ok = inputs.every(({inp, sol}) => inp.value.toUpperCase() === sol);
       if(ok) verificar(q, true, grid);
     }
-
     wrapper.append(grid);
-
     const note = document.createElement("div");
     note.className = "cw-note";
     note.textContent = "Toque nas células e digite as letras. Sem acentos.";
     wrapper.append(note);
-
     box.append(wrapper);
     return;
   }
 
-  /* Caça-palavras */
   if(q.type === "search"){
     const wrap = document.createElement("div");
     wrap.className = "search-grid";
@@ -2142,11 +2036,8 @@ function answers(q){
         cell.dataset.r = r; cell.dataset.c = c;
         cell.addEventListener("click", () => {
           if(state.answered) return;
-          if(!startCell){
-            startCell = cell;
-            cell.classList.add("sel");
-            sfx.clique();
-          } else marcar(startCell, cell);
+          if(!startCell){ startCell = cell; cell.classList.add("sel"); sfx.clique(); }
+          else marcar(startCell, cell);
         });
         cells.push(cell);
         wrap.append(cell);
@@ -2157,7 +2048,7 @@ function answers(q){
       const r2 = +b.dataset.r, c2 = +b.dataset.c;
       const dr = Math.sign(r2 - r1), dc = Math.sign(c2 - c1);
       const len = Math.abs(r2-r1) + Math.abs(c2-c1) + 1;
-      const straight = (r1===r2) || (c1===c2);
+      const straight = (r1===r2) || (c1===c2) || Math.abs(r2-r1)===Math.abs(c2-c1);
       a.classList.remove("sel");
       startCell = null;
       if(!straight || len < 2) return;
@@ -2184,7 +2075,6 @@ function answers(q){
     return;
   }
 
-  /* Fallback: alternativas de texto */
   (q.choices || []).forEach(v => {
     const b = document.createElement("button");
     b.className = "answer";
@@ -2201,12 +2091,7 @@ function answers(q){
   });
 }
 
-
-/* ------------------------------------------------------------
-   §12 VERIFICAÇÃO DE RESPOSTA
-   ------------------------------------------------------------ */
-
-/* 12.1 Usado por desafios compostos (order / match / cross / search) */
+/* ---------- §12 VERIFICAÇÃO ---------- */
 function verificar(q, ok, anchor){
   if(state.answered) return;
   state.answered = true;
@@ -2232,8 +2117,6 @@ function verificar(q, ok, anchor){
   $("next").disabled = false;
   salvarProgresso();
 }
-
-/* 12.2 Usado por alternativas simples (clicou numa opção) */
 function check(value, button){
   if(state.answered) return;
   const q = state.questions[state.index];
@@ -2264,8 +2147,6 @@ function check(value, button){
   $("next").disabled = false;
   salvarProgresso();
 }
-
-/* 12.3 Avançar para a próxima questão */
 function next(){
   if(!state.answered) return;
   sfx.clique();
@@ -2276,10 +2157,7 @@ function next(){
   finish();
 }
 
-
-/* ------------------------------------------------------------
-   §13 CONCLUSÃO DE FASE
-   ------------------------------------------------------------ */
+/* ---------- §13 CONCLUSÃO ---------- */
 function scoreProfile(){
   const total = state.questions.length || QS_PER_FASE;
   const ok = state.acertos;
@@ -2287,7 +2165,6 @@ function scoreProfile(){
   const erros = state.erros;
   const perfeito = erros === 0;
   let medal, title, sub, apoio, atencao;
-
   if(ratio >= 0.9){
     medal = "🏆"; title = "Jornada excelente!";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
@@ -2313,7 +2190,6 @@ function scoreProfile(){
   }
   return {medal, title, sub, apoio, atencao};
 }
-
 function finish(){
   $("progress-fill").style.width = "100%";
   const p = scoreProfile();
@@ -2340,10 +2216,7 @@ function finish(){
   screen("finish");
 }
 
-
-/* ------------------------------------------------------------
-   §14 SELETOR DE FASES E BOTÃO CONTINUAR
-   ------------------------------------------------------------ */
+/* ---------- §14 SELETOR E CONTINUAR ---------- */
 function atualizarSeletorFase(){
   const box = $("fase-botoes");
   if(!box) return;
@@ -2377,10 +2250,7 @@ function showBootError(msg){
   box.textContent = "⚠ " + msg + "\n\nRecarregue a página (Ctrl+F5). Se persistir, abra o console (F12) e copie a primeira linha vermelha.";
 }
 
-
-/* ------------------------------------------------------------
-   §15 BIND DE EVENTOS E BOOT
-   ------------------------------------------------------------ */
+/* ---------- §15 BIND E BOOT ---------- */
 function bindEvents(){
   safeBind("start", "click", () => { state.salvar = true; apagarProgresso(); start(1); });
   safeBind("next", "click", next);
@@ -2400,7 +2270,6 @@ function bindEvents(){
   });
   safeBind("continue", "click", continuarSalvo);
 }
-
 (function boot(){
   try{
     const p = periodNow();

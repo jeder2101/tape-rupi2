@@ -5,51 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Tape-rupi — Jornada Tupi</title>
 <link rel="stylesheet" href="style.css" />
-
-<!-- ============================================================
-     HOME — estilos específicos da tela de início
-     Quando migrar para o style.css, mova este bloco para §3
-     ============================================================ -->
-<style>
-.hero-image-wrap{position:relative;width:100%;aspect-ratio:16/10;margin:0 0 18px;border-radius:24px;overflow:hidden;border:1px solid var(--stroke);box-shadow:0 14px 34px rgba(0,0,0,.5);background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.22),transparent 70%)}
-.hero-image{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.03)}
-.hero-image-wrap::after{content:"";position:absolute;inset:auto 0 0 0;height:48%;background:linear-gradient(180deg,transparent,rgba(11,20,16,.85));pointer-events:none}
-.hero-image-wrap.is-empty{display:none}
-.hero-title-brand{margin:0 0 10px;text-align:center;font-size:clamp(36px,11vw,54px);font-weight:900;letter-spacing:.04em;line-height:1;background:linear-gradient(180deg,#ffffff 0%,var(--accent) 60%,#e0a83d 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 22px rgba(243,201,105,.4))}
-.hero-subtitle{margin:0 0 16px;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:var(--accent-2);opacity:.85}
-.hero-greeting-card{margin-top:4px;padding:22px 20px 20px}
-.hero-greeting-block{display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;z-index:1}
-</style>
 </head>
 <body>
 <div class="app">
 <header>
   <div class="hud-left">
     <span class="chip chip-accent" id="time-chip">JORNADA</span>
-  </div>
-  <div class="weather-card" id="weather-card" aria-live="polite" title="Clima local (Open-Meteo)">
-    <div class="weather-top">
-      <div class="weather-city" id="weather-city">Barão de Antonina, SP</div>
-      <select class="weather-select" id="weather-select" aria-label="Escolher cidade do clima"></select>
-      <div class="weather-updated" id="weather-updated">—</div>
-    </div>
-    <div class="weather-main">
-      <span class="weather-icon" id="weather-icon">☀️</span>
-      <span class="weather-temp" id="weather-temp">—</span>
-    </div>
-    <div class="weather-desc" id="weather-desc">tempo</div>
-    <div class="weather-extra">
-      <span id="weather-feels">—</span>
-      <span class="sep">·</span>
-      <span>Máx <b id="weather-max">—</b></span>
-      <span class="sep">·</span>
-      <span>Mín <b id="weather-min">—</b></span>
-    </div>
-    <div class="weather-extra weather-extra--minor">
-      <span>💧 <b id="weather-hum">—</b></span>
-      <span class="sep">·</span>
-      <span>💨 <b id="weather-wind">—</b></span>
-    </div>
   </div>
   <button class="icon-btn" id="sound" aria-label="Desativar sons">♫</button>
 </header>
@@ -71,7 +32,30 @@
 
     <div class="hero hero-greeting-card">
       <div class="hero-greeting-block">
-        <div class="hero-icon" id="period-icon">☀</div>
+        <div class="weather-card weather-card--hero" id="weather-card" aria-live="polite" title="Clima local (Open-Meteo)">
+          <div class="weather-top">
+            <div class="weather-city" id="weather-city">Barão de Antonina, SP</div>
+            <select class="weather-select" id="weather-select" aria-label="Escolher cidade do clima"></select>
+            <div class="weather-updated" id="weather-updated">—</div>
+          </div>
+          <div class="weather-main">
+            <span class="weather-icon" id="weather-icon">☀️</span>
+            <span class="weather-temp" id="weather-temp">—</span>
+          </div>
+          <div class="weather-desc" id="weather-desc">tempo</div>
+          <div class="weather-extra">
+            <span id="weather-feels">—</span>
+            <span class="sep">·</span>
+            <span>Máx <b id="weather-max">—</b></span>
+            <span class="sep">·</span>
+            <span>Mín <b id="weather-min">—</b></span>
+          </div>
+          <div class="weather-extra weather-extra--minor">
+            <span>💧 <b id="weather-hum">—</b></span>
+            <span class="sep">·</span>
+            <span>💨 <b id="weather-wind">—</b></span>
+          </div>
+        </div>
         <h2 class="hero-title" id="greeting">Ko'ẽ Porã!</h2>
         <p class="hero-desc" id="period-desc">Aprenda o vocabulário Tupi atravessando o caminho sagrado.</p>
         <span class="hero-tag" id="period-label">FASE 1 · 30 DESAFIOS</span>

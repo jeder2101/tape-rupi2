@@ -690,7 +690,7 @@ function qCrossDinamica(fase, usadas){
   if(!resultado) return null;
   return {
     type:"cross", kind:"CRUZADINHA",
-    prompt:"Complete a cruzadinha com as palavras Nhandewa:",
+    prompt:"Complete a cruzadinha em Tupi:",
     hint:"Os números indicam onde cada palavra começa. As setas mostram a direção.",
     puzzle: resultado,
     _words: resultado.words.map(w => w.word),
@@ -703,7 +703,7 @@ function qSearch(fase, usadas){
   const finalGrid = grid.words.length >= 2 ? grid : buildSearchGrid(fase, []);
   return {
     type:"search", kind:"CAÇA-PALAVRAS",
-    prompt:"Encontre as palavras Nhandewa escondidas:",
+    prompt:"Encontre as palavras Tupi escondidas:",
     hint:"Toque no início e depois no fim de cada palavra.",
     grid: finalGrid,
     words: finalGrid.words,
@@ -715,7 +715,7 @@ function qSearch(fase, usadas){
 /* ---------- §8.3 GERADORES SIMPLES ---------- */
 function qWord(fase){
   const item = shuffle(FACIL)[0];
-  return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Nhandewa?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+  return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Tupi?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
 }
 function qMeaning(fase){
   const item = shuffle(FACIL)[0];
@@ -723,7 +723,7 @@ function qMeaning(fase){
 }
 function qReverse(fase){
   const item = shuffle(FACIL)[0];
-  return {type:"reverse",kind:"PALAVRA EM NHANDEWA",prompt:`Como se diz «${item.meaning}» em Nhandewa?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+  return {type:"reverse",kind:"PALAVRA EM Tupi",prompt:`Como se diz «${item.meaning}» em Tupi?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
 }
 function qAudio(fase){
   const item = shuffle(COM_AUDIO)[0];
@@ -739,7 +739,7 @@ function qNumber(fase){
   const qtdOpcoes = (fase >= 5) ? 4 : 3;
   return {
     type:"number", kind:"NÚMEROS",
-    prompt:"Qual é a palavra Nhandewa para este número?",
+    prompt:"Qual é a palavra Tupi para este número?",
     hint:"Observe o algarismo.",
     target:n.value,
     choices:shuffle(pickN(n,NUMBER_VOCABULARY,qtdOpcoes)).map(x=>x.value)
@@ -813,7 +813,7 @@ function qMonthDay(){
   const isMes = Math.random() < 0.5;
   const arr = isMes ? MESES : DIAS;
   const item = shuffle(arr)[0];
-  return {type:isMes ? "month" : "day",kind:isMes ? "MÊS" : "DIA DA SEMANA",prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,hint:"Calendário Nhandewa (vol. 2, p.46).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,arr,4)};
+  return {type:isMes ? "month" : "day",kind:isMes ? "MÊS" : "DIA DA SEMANA",prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,hint:"Calendário Tupi (vol. 2, p.46).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,arr,4)};
 }
 
 let _filaParentesco = [];
@@ -861,7 +861,7 @@ function qMatch(){
   const selecionados = shuffle(PARES_LIGAR).slice(0, 4);
   return {
     type:"match",kind:"LIGUE AS PALAVRAS",
-    prompt:"Ligue cada palavra Nhandewa ao seu significado:",
+    prompt:"Ligue cada palavra Tupi ao seu significado:",
     hint:"Toque num item da esquerda e depois no seu correspondente da direita.",
     pairs: selecionados,
     target: selecionados.map(p=>p.a+"="+p.b).join("|")
@@ -1023,7 +1023,7 @@ function atualizarHUDInicio(){
 function createImage(item, className){
   const img = document.createElement("img");
   img.className = className || "visual-image";
-  img.alt = item.meaning || "Imagem Nhandewa";
+  img.alt = item.meaning || "Imagem Tupi";
   img.onerror = function(){
     const wrap = document.createElement("div");
     wrap.className = "visual-card";
@@ -1033,7 +1033,7 @@ function createImage(item, className){
     w.textContent = item.word || "?";
     const lab = document.createElement("span");
     lab.className = "visual-label";
-    lab.textContent = "PALAVRA NHANDEWA";
+    lab.textContent = "PALAVRA Tupi";
     wrap.append(w, lab);
     this.replaceWith(wrap);
   };
@@ -1224,7 +1224,7 @@ function visual(q){
     box.append(w);
     const lab = document.createElement("span");
     lab.className = "visual-label";
-    lab.textContent = "PALAVRA NHANDEWA";
+    lab.textContent = "PALAVRA Tupi";
     box.append(lab);
     enableAudio(q.audioItem);
   }
@@ -1290,7 +1290,7 @@ function visual(q){
   else if(q.type === "match"){
     const note = document.createElement("span");
     note.className = "visual-note";
-    note.textContent = "Ligue a palavra em Nhandewa à sua tradução em português.";
+    note.textContent = "Ligue a palavra em Tupi à sua tradução em português.";
     box.append(note);
   }
 }

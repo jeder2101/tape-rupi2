@@ -4,22 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Tape-rupi — Jornada Nhandewa</title>
-
-<!-- ============================================================
-     ESTILOS
-     §1  Variáveis e reset
-     §2  Layout base
-     §3  Tela Home (hero e fases)
-     §4  HUD do jogo
-     §5  Card da questão e visuais
-     §6  Alternativas e feedback
-     §7  Ordenar Frase
-     §8  Ligar Palavras
-     §9  Cruzadinha (visual)
-     §10 Caça-palavras (visual)
-     §11 Tela de conclusão
-     §12 Responsivos
-     ============================================================ -->
 <style>
 /* --- §1 VARIÁVEIS E RESET --- */
 :root{--bg-0:#0b1410;--bg-1:#122a20;--bg-2:#1d3d2c;--accent:#f3c969;--accent-2:#8fd6a4;--danger:#ff7a7a;--ok:#7be495;--glass:rgba(255,255,255,.08);--glass-strong:rgba(255,255,255,.14);--stroke:rgba(255,255,255,.18);--text:#f4f6f0;--muted:#b9c7bd;--radius:22px;--shadow:0 18px 60px rgba(0,0,0,.55);--font:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
@@ -43,7 +27,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .primary-btn:active{transform:translateY(2px) scale(.99)}
 .ghost-btn{width:100%;padding:15px;border-radius:18px;cursor:pointer;background:var(--glass);border:1px solid var(--stroke);color:var(--text);font-weight:700;font-size:13px;letter-spacing:.10em;text-transform:uppercase;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .ghost-btn:active{background:var(--glass-strong)}
-#continue{font-size:11px;letter-spacing:.08em;line-height:1.4;text-transform:none}
+.ghost-btn--continuar{font-size:11px;letter-spacing:.08em;text-transform:none;line-height:1.4}
 
 /* --- §3 TELA HOME --- */
 .hero{position:relative;overflow:hidden;padding:26px 22px 24px;border-radius:28px;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);text-align:center}
@@ -231,7 +215,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
       <span class="hero-tag" id="period-label">FASE 1 · 30 DESAFIOS</span>
     </div>
     <button class="primary-btn" id="start">COMEÇAR A JORNADA</button>
-    <button class="ghost-btn" id="continue" style="display:none">Continuar</button>
+    <button class="ghost-btn ghost-btn--continuar" id="continue" style="display:none">Continuar</button>
     <div>
       <div class="section-title">Escolha a fase</div>
       <div class="fase-grid" id="fase-botoes"></div>
@@ -293,31 +277,12 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 <script>
 "use strict";
 
-/* ============================================================
-   JAVASCRIPT
-   §1   Constantes e configuração
-   §2   Listas de conteúdo
-   §3   Cruzadinha — motor legado (reserva)
-   §4   Caça-palavras — motor adaptativo
-   §5   Estado global e persistência
-   §6   Utilidades
-   §7   Áudio
-   §8   Geradores de questão
-   §9   Montagem da fase (progressão por nível)
-   §10  Fluxo de telas
-   §11  Render
-   §12  Verificação
-   §13  Conclusão de fase
-   §14  Seletor e continuar
-   §15  Bind e boot
-   ============================================================ */
-
 /* ---------- §1 CONSTANTES ---------- */
 const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/tela-de-inicio/" };
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 7;
+const SAVE_VERSION = 8;
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"🌱", bonus:0},
@@ -333,19 +298,17 @@ const FASES_INFO = {
 
 /* ---------- §2 LISTAS DE CONTEÚDO ---------- */
 const NUMBER_VOCABULARY = [
-  {value:0,word:"DJERE",  audio:"numero-0.mp3"},
-  {value:1,word:"PETEĨ",  audio:"numero-1.mp3"},
-  {value:2,word:"MÕKÕI",  audio:"numero-2.mp3"},
-  {value:3,word:"MBOAPY", audio:"numero-3.mp3"},
-  {value:4,word:"IRUNDY", audio:"numero-4.mp3"},
-  {value:5,word:"NIRUI",  audio:"numero-5.mp3"},
-  {value:6,word:"YPÉ",    audio:"numero-6.mp3"},
-  {value:7,word:"TXA'I",  audio:"numero-7.mp3"}
-  {value:8,word:"IPOKÁ",  audio:"numero-8.mp3"}
-  {value:9,word:"TSYTA",  audio:"numero-9.mp3"}
-  {value:10,word:"TEĨ-DJERE",  audio:"numero-10.mp3"}
- 
-
+  {value:0,  word:"DJERE",     audio:"numero-0.mp3"},
+  {value:1,  word:"PETEĨ",     audio:"numero-1.mp3"},
+  {value:2,  word:"MÕKÕI",     audio:"numero-2.mp3"},
+  {value:3,  word:"MBOAPY",    audio:"numero-3.mp3"},
+  {value:4,  word:"IRUNDY",    audio:"numero-4.mp3"},
+  {value:5,  word:"NIRUI",     audio:"numero-5.mp3"},
+  {value:6,  word:"YPÉ",       audio:"numero-6.mp3"},
+  {value:7,  word:"TXA'I",     audio:"numero-7.mp3"},
+  {value:8,  word:"IPOKÁ",     audio:"numero-8.mp3"},
+  {value:9,  word:"TSYTA",     audio:"numero-9.mp3"},
+  {value:10, word:"TEĨ-DJERE", audio:"numero-10.mp3"}
 ];
 
 const VOCABULARY = [
@@ -444,7 +407,6 @@ const VOCABULARY = [
   {word:"OWY-REI",meaning:"azul",category:"CORES",audio:"owy-rei.mp3",file:"owy-rei.png"},
   {word:"UŨ",meaning:"preto",category:"CORES",audio:"uu.mp3",file:"uu.png"},
   {word:"MORÕTI",meaning:"branco",category:"CORES",audio:"moroti.mp3",file:"moroti.png"},
-  {word:"OWY",meaning:"verde",category:"CORES",audio:"owy.mp3",file:"owy.png"},
   {word:"POTYGWÁ",meaning:"rosa",category:"CORES",audio:"potygwa.mp3",file:"potygwa.png"},
   {word:"PUNTÃ-REGWÁ",meaning:"roxo",category:"CORES",audio:"punta-regwa.mp3",file:"punta-regwa.png"},
   {word:"YWY-RAMIGWÁ",meaning:"marrom",category:"CORES",audio:"ywy-ramigwa.mp3",file:"ywy-ramigwa.png"},
@@ -486,9 +448,9 @@ const VOCABULARY = [
   {word:"TXERU",meaning:"meu pai",category:"PARENTESCO",audio:"txeru.mp3"},
   {word:"NHANERAMÕI",meaning:"nosso avô",category:"PARENTESCO",audio:"nhaneramoi.mp3"},
   {word:"TXERA'Y",meaning:"meu filho (pai)",category:"PARENTESCO",audio:"txeray.mp3"},
-  {word:"TXEMEMBY",meaning:"meu filho (mãe)",category:"PARENTESCO",audio:"txeray.mp3"},
+  {word:"TXEMEMBY",meaning:"meu filho (mãe)",category:"PARENTESCO",audio:"txememby.mp3"},
   {word:"TXERADJY",meaning:"minha filha (pai)",category:"PARENTESCO",audio:"txeradjy.mp3"},
-  {word:"TXERYWY",meaning:"irmão mais novo",category:"PARENTESCO",audio:"txeradjy.mp3"},
+  {word:"TXERYWY",meaning:"irmão mais novo",category:"PARENTESCO",audio:"txerywy.mp3"},
   {word:"TXERYKE'Y",meaning:"irmão mais velho",category:"PARENTESCO",audio:"txerykey.mp3"},
   {word:"TXINDY",meaning:"irmã mais nova",category:"PARENTESCO",audio:"txindy.mp3"},
   {word:"TXEKYPY'Y",meaning:"irmã mais velha",category:"PARENTESCO",audio:"txekypy.mp3"},
@@ -505,7 +467,7 @@ const VOCABULARY = [
   {word:"TOWADJÁ",meaning:"cunhado",category:"PARENTESCO",audio:"towadja.mp3"},
   {word:"TSANGÁ",meaning:"madrinha",category:"PARENTESCO",audio:"tsanga.mp3"},
   {word:"KWARAY",meaning:"sol",category:"NATUREZA",audio:"kwaray.mp3",file:"kwaray.png"},
-  {word:"JASY",meaning:"lua",category:"NATUREZA",audio:"jasy.mp3",file:"jasy.png"},
+  {word:"DJASY",meaning:"lua",category:"NATUREZA",audio:"djasy.mp3",file:"djasy.png"},
   {word:"TATÁ",meaning:"fogo",category:"NATUREZA",audio:"tata.mp3",file:"tata.png"},
   {word:"YY",meaning:"água",category:"NATUREZA",audio:"yy.mp3",file:"yy.png"},
   {word:"YBY",meaning:"terra",category:"NATUREZA",audio:"yby.mp3",file:"yby.png"},
@@ -645,10 +607,6 @@ const INTERROGATIVAS = [
   {palavra:"Maã?", significado:"Cadê?"}
 ];
 
-/* 2.1 Ordenar Frase — nível mínimo exigido por frase
-   nivel 2: 3 blocos simples
-   nivel 4: 4 blocos com posposição
-   nivel 6: 5+ blocos com posposições compostas */
 const FRASES_ORDENAR = [
   {tokens:["Txeé","aikó","karugwá-py"], pt:"Eu moro em karugwá.", nivel:2},
   {tokens:["Katxuru","oikó","oká-py"], pt:"O cachorro mora fora.", nivel:2},
@@ -656,7 +614,7 @@ const FRASES_ORDENAR = [
   {tokens:["Txedjaryi","omombe'u","txewy"], pt:"Minha avó me contou.", nivel:2},
   {tokens:["Nhaneramõi","oendá-py","oké"], pt:"Nosso avô dormiu em casa.", nivel:2},
   {tokens:["Petsy","oóta","Barão-py"], pt:"Tua mãe vai para Barão.", nivel:4},
-  {tokens:["Kweé","txetuty","oú","São Paulo-gwi"], pt:"Ontem meu tio veio de São paulo.", nivel:4},
+  {tokens:["Kweé","txetuty","oú","São Paulo-gwi"], pt:"Ontem meu tio veio de São Paulo.", nivel:4},
   {tokens:["Nhandé","nhaporandu","Nhanderu-upé"], pt:"Nós falamos com Nhanderu.", nivel:4},
   {tokens:["Yy","opytá","tapé","koty","rowai-py"], pt:"A água fica ao lado da estrada.", nivel:6},
   {tokens:["Mitãngwé","onhimangá","ywyrá-gwypy"], pt:"As crianças brincam debaixo da árvore.", nivel:4},
@@ -668,177 +626,25 @@ const FRASES_ORDENAR = [
 ];
 
 const PARES_LIGAR = [
-  {a:"WEI",b:"bastante"},
-  {a:"PETEREMÉ",b:"rápido"},
-  {a:"MBENGWE'I",b:"lentamente"},
-  {a:"KWEÉ",b:"ontem"},
-  {a:"KO'ẼRO",b:"amanhã"},
-  {a:"MOMBYRY",b:"longe"},
-  {a:"DJAWÉ",b:"perto"},
-  {a:"APY",b:"aqui"},
-  {a:"PY-PY",b:"dentro"},
-  {a:"OKÁ-PY",b:"fora"},
-  {a:"DJIWY",b:"novamente"},
-  {a:"YMÃ",b:"antigamente"},
-  {a:"RYAÉ",b:"frequentemente"},
-  {a:"E'ỸWA",b:"nunca"},
-  {a:"IDJYPYE'YWA",b:"sempre"},
-  {a:"MBOWÉ",b:"antes de"},
-  {a:"RIRÉ",b:"depois de"},
-  {a:"TERI",b:"ainda"},
-  {a:"ETÉ",b:"muito"},
-  {a:"MBARIÍ",b:"pouco"},
-  {a:"-py",b:"em, para"},
-  {a:"-rupi",b:"por, pelo"},
-  {a:"-arõ",b:"em cima, sobre"},
-  {a:"-gwypy",b:"embaixo, debaixo"},
-  {a:"-mbyté-py",b:"entre, no meio"},
-  {a:"-gwi",b:"de (origem)"},
-  {a:"Mawã?",b:"Quem?"},
-  {a:"Mba'ewa?",b:"O que?"},
-  {a:"Marũ?",b:"Quando?"},
-  {a:"Ma'erã?",b:"Por quê?"},
-  {a:"Mamõ?",b:"Onde?"},
-  {a:"Mbowy?",b:"Quanto?"},
-  {a:"Maã?",b:"Cadê?"}
+  {a:"WEI",b:"bastante"}, {a:"PETEREMÉ",b:"rápido"}, {a:"MBENGWE'I",b:"lentamente"},
+  {a:"KWEÉ",b:"ontem"}, {a:"KO'ẼRO",b:"amanhã"}, {a:"MOMBYRY",b:"longe"},
+  {a:"DJAWÉ",b:"perto"}, {a:"APY",b:"aqui"}, {a:"PY-PY",b:"dentro"},
+  {a:"OKÁ-PY",b:"fora"}, {a:"DJIWY",b:"novamente"}, {a:"YMÃ",b:"antigamente"},
+  {a:"RYAÉ",b:"frequentemente"}, {a:"E'ỸWA",b:"nunca"}, {a:"IDJYPYE'YWA",b:"sempre"},
+  {a:"MBOWÉ",b:"antes de"}, {a:"RIRÉ",b:"depois de"}, {a:"TERI",b:"ainda"},
+  {a:"ETÉ",b:"muito"}, {a:"MBARIÍ",b:"pouco"},
+  {a:"-py",b:"em, para"}, {a:"-rupi",b:"por, pelo"}, {a:"-arõ",b:"em cima, sobre"},
+  {a:"-gwypy",b:"embaixo, debaixo"}, {a:"-mbyté-py",b:"entre, no meio"}, {a:"-gwi",b:"de (origem)"},
+  {a:"Mawã?",b:"Quem?"}, {a:"Mba'ewa?",b:"O que?"}, {a:"Marũ?",b:"Quando?"},
+  {a:"Ma'erã?",b:"Por quê?"}, {a:"Mamõ?",b:"Onde?"}, {a:"Mbowy?",b:"Quanto?"}, {a:"Maã?",b:"Cadê?"}
 ];
 
 /* ---------- §3 CRUZADINHA — MOTOR LEGADO (RESERVA) ---------- */
-/* Obsoleto: mantido apenas para recomputar CROSSWORDS caso necessário.
-   O fluxo principal usa §8.1 (qCrossDinamica + buildCrossGrid).        */
-
-const CROSSWORD_DEFS = [
-  {words:[
-    {word:"AWATI", clue:"Milho (alimento sagrado)"},
-    {word:"ATXA",  clue:"Machado"},
-    {word:"TAY",   clue:"Formiga"},
-    {word:"TATU",  clue:"Tatu"},
-    {word:"TXIWI", clue:"Gato"}
-  ]},
-  {words:[
-    {word:"DJETY",  clue:"Batata-doce"},
-    {word:"DJAPEPÓ",clue:"Panela"},
-    {word:"PIRÁ",   clue:"Peixe"},
-    {word:"PY",     clue:"Pé"},
-    {word:"TATU",   clue:"Tatu"}
-  ]},
-  {words:[
-    {word:"TSANDIÁ", clue:"Melancia"},
-    {word:"TATU",    clue:"Tatu"},
-    {word:"AJU",     clue:"Caju (fruta)"},
-    {word:"YY",      clue:"Água"}
-  ]}
-];
-
 function cwNormalize(s){
-  return String(s).toUpperCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .replace(/[^A-Z]/g,"");
+  return String(s).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z]/g,"");
 }
-function cwLayout(def){
-  const placed = [];
-  const words = def.words.map(w => ({...w, letters: cwNormalize(w.word)})).filter(w => w.letters.length >= 2);
-  if(words.length === 0) return {placed:[], rows:0, cols:0};
-  words.sort((a,b)=> b.letters.length - a.letters.length);
-  const first = words[0];
-  placed.push({...first, row:0, col:0, dir:"H"});
-  const used = new Set([first.word]);
-  let safety = 0;
-  while(placed.length < words.length && safety++ < 50){
-    let found = null;
-    for(let wi = 0; wi < words.length && !found; wi++){
-      const w = words[wi];
-      if(used.has(w.word)) continue;
-      for(const p of placed){
-        for(let pi = 0; pi < p.letters.length; pi++){
-          for(let wi2 = 0; wi2 < w.letters.length; wi2++){
-            if(p.letters[pi] !== w.letters[wi2]) continue;
-            let newRow, newCol, newDir;
-            if(p.dir === "H"){ newDir = "V"; newRow = p.row - wi2; newCol = p.col + pi; }
-            else { newDir = "H"; newRow = p.row + pi; newCol = p.col - wi2; }
-            if(cwIsFree(placed, w.letters, newRow, newCol, newDir)){
-              found = {...w, row: newRow, col: newCol, dir: newDir}; break;
-            }
-          }
-          if(found) break;
-        }
-        if(found) break;
-      }
-    }
-    if(!found) break;
-    placed.push(found);
-    used.add(found.word);
-  }
-  let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
-  placed.forEach(p => {
-    for(let i=0;i<p.letters.length;i++){
-      const r = p.row + (p.dir==="V"?i:0);
-      const c = p.col + (p.dir==="H"?i:0);
-      minR = Math.min(minR,r); maxR = Math.max(maxR,r);
-      minC = Math.min(minC,c); maxC = Math.max(maxC,c);
-    }
-  });
-  const dr = -minR, dc = -minC;
-  placed.forEach(p => { p.row += dr; p.col += dc; });
-  return {placed, rows: maxR - minR + 1, cols: maxC - minC + 1};
-}
-function cwIsFree(placed, letters, row, col, dir){
-  const occ = new Map();
-  placed.forEach(p => {
-    for(let i=0;i<p.letters.length;i++){
-      const r = p.row + (p.dir==="V"?i:0);
-      const c = p.col + (p.dir==="H"?i:0);
-      occ.set(r+","+c, p.letters[i]);
-    }
-  });
-  let inter = 0;
-  for(let i=0;i<letters.length;i++){
-    const r = row + (dir==="V"?i:0);
-    const c = col + (dir==="H"?i:0);
-    const key = r+","+c;
-    if(occ.has(key)){
-      if(occ.get(key) !== letters[i]) return false;
-      inter++;
-    }
-  }
-  return inter > 0;
-}
-function buildCrossword(def){
-  const layout = cwLayout(def);
-  if(!layout.placed.length) return {grid:[], rows:0, cols:0, words:[]};
-  const raw = Array.from({length: layout.rows}, () => Array.from({length: layout.cols}, () => null));
-  layout.placed.forEach(p => {
-    for(let i = 0; i < p.letters.length; i++){
-      const r = p.row + (p.dir === "V" ? i : 0);
-      const c = p.col + (p.dir === "H" ? i : 0);
-      if(!raw[r][c]) raw[r][c] = {letter: p.letters[i], num: null};
-    }
-  });
-  const rowHas = raw.map(row => row.some(c => c !== null));
-  const colHas = Array.from({length: raw[0].length}, (_, c) => raw.some(row => row[c] !== null));
-  const keepRows = rowHas.reduce((a,h,i)=> h ? [...a,i] : a, []);
-  const keepCols = colHas.reduce((a,h,i)=> h ? [...a,i] : a, []);
-  const rowMap = new Map(keepRows.map((o,n)=>[o,n]));
-  const colMap = new Map(keepCols.map((o,n)=>[o,n]));
-  const grid = keepRows.map(r => keepCols.map(c => raw[r][c] ? {letter: raw[r][c].letter, num: null} : null));
-  const placed = layout.placed.map(p => ({...p, row: rowMap.get(p.row), col: colMap.get(p.col)}));
-  const startsSet = new Map();
-  placed.forEach(p => startsSet.set(`${p.row},${p.col}`, {r: p.row, c: p.col}));
-  const cellsOrd = [...startsSet.values()].sort((a,b)=> a.r - b.r || a.c - b.c);
-  const numPorCelula = new Map();
-  cellsOrd.forEach((s,i)=> numPorCelula.set(`${s.r},${s.c}`, i+1));
-  placed.forEach(p => {
-    const cell = grid[p.row][p.col];
-    if(cell && cell.num === null) cell.num = numPorCelula.get(`${p.row},${p.col}`);
-  });
-  const numbered = placed.map(p => ({...p, num: numPorCelula.get(`${p.row},${p.col}`)}));
-  return {grid, rows: keepRows.length, cols: keepCols.length, words: numbered};
-}
-const CROSSWORDS = CROSSWORD_DEFS.map(buildCrossword);
 
 /* ---------- §4 CAÇA-PALAVRAS — MOTOR ADAPTATIVO ---------- */
-
-/* 4.1 Dificuldade por fase: tamanho, direções e nº de palavras */
 const SEARCH_DIFICULDADE = {
   1:{size:7, dirs:["H"],                       n:4},
   2:{size:8, dirs:["H","V"],                   n:4},
@@ -850,34 +656,17 @@ const SEARCH_DIFICULDADE = {
   8:{size:11,dirs:["H","V","D"],               n:7},
   9:{size:11,dirs:["H","V","D"],               n:8}
 };
-
-/* 4.2 Comprimento mínimo/máximo de palavra por fase */
 const SEARCH_LIMITE = {
-  1:{min:3, max:5},
-  2:{min:3, max:6},
-  3:{min:4, max:6},
-  4:{min:4, max:7},
-  5:{min:4, max:8},
-  6:{min:5, max:9},
-  7:{min:5, max:10},
-  8:{min:6, max:12},
-  9:{min:6, max:20}
+  1:{min:3, max:5}, 2:{min:3, max:6}, 3:{min:4, max:6}, 4:{min:4, max:7}, 5:{min:4, max:8},
+  6:{min:5, max:9}, 7:{min:5, max:10}, 8:{min:6, max:12}, 9:{min:6, max:20}
 };
-
-/* 4.3 Extras curtos para as fases iniciais */
 const SEARCH_POOL_EXTRA = [
   "YY","TAY","KY","PY","MUA","TATA","TATU","TUKU","KAI","OWY","MBOI",
   "PIRA","OKY","JASY","YBY","UU","AWY","PO","KYA","UY","EIA"
 ];
-
-/* 4.4 Normalização de palavra (só A-Z) */
 function searchClean(s){
-  return String(s).toUpperCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-    .replace(/[^A-Z]/g,"");
+  return String(s).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z]/g,"");
 }
-
-/* 4.5 Pool total normalizado */
 function searchPoolTotal(){
   const set = new Set();
   for(const v of VOCABULARY){
@@ -887,8 +676,6 @@ function searchPoolTotal(){
   for(const w of SEARCH_POOL_EXTRA) set.add(w);
   return [...set];
 }
-
-/* 4.6 Pool elegível para a fase, ignorando palavras já usadas */
 function searchPoolForFase(fase, naUsar){
   const lim = SEARCH_LIMITE[fase] || SEARCH_LIMITE[9];
   const vistas = new Set(naUsar.map(w => searchClean(w)));
@@ -907,8 +694,6 @@ function searchPoolForFase(fase, naUsar){
   }
   return candidatas;
 }
-
-/* 4.7 Direções vetoriais conforme a fase */
 function searchDirs(fase){
   const cfg = SEARCH_DIFICULDADE[fase] || SEARCH_DIFICULDADE[9];
   const dirs = [];
@@ -917,8 +702,6 @@ function searchDirs(fase){
   if(cfg.dirs.includes("D")) dirs.push([1,1], [-1,-1], [1,-1], [-1,1]);
   return dirs;
 }
-
-/* 4.8 Coloca uma palavra na grade */
 function searchPlaceOne(G, size, word, dirs, tentativas){
   for(let t = 0; t < tentativas; t++){
     const dir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -941,8 +724,6 @@ function searchPlaceOne(G, size, word, dirs, tentativas){
   }
   return null;
 }
-
-/* 4.9 Gera grade completa do caça-palavras */
 function buildSearchGrid(fase, palavrasProibidas){
   const cfg = SEARCH_DIFICULDADE[fase] || SEARCH_DIFICULDADE[9];
   const dirs = searchDirs(fase);
@@ -1072,17 +853,11 @@ const sfx = {
 };
 
 /* ---------- §8 GERADORES DE QUESTÃO ---------- */
-
-/* 8.1 Cruzadinha dinâmica */
 const CROSS_DIFICULDADE = {
-  1:{size:6,  n:4, dirs:["H","V"]},
-  2:{size:7,  n:4, dirs:["H","V"]},
-  3:{size:7,  n:5, dirs:["H","V"]},
-  4:{size:8,  n:5, dirs:["H","V"]},
-  5:{size:8,  n:6, dirs:["H","V"]},
-  6:{size:9,  n:6, dirs:["H","V"]},
-  7:{size:9,  n:7, dirs:["H","V"]},
-  8:{size:10, n:7, dirs:["H","V"]},
+  1:{size:6,  n:4, dirs:["H","V"]}, 2:{size:7,  n:4, dirs:["H","V"]},
+  3:{size:7,  n:5, dirs:["H","V"]}, 4:{size:8,  n:5, dirs:["H","V"]},
+  5:{size:8,  n:6, dirs:["H","V"]}, 6:{size:9,  n:6, dirs:["H","V"]},
+  7:{size:9,  n:7, dirs:["H","V"]}, 8:{size:10, n:7, dirs:["H","V"]},
   9:{size:10, n:8, dirs:["H","V"]}
 };
 
@@ -1200,7 +975,6 @@ function qCrossDinamica(fase, usadas){
   };
 }
 
-/* 8.2 Caça-palavras dinâmico */
 function qSearch(fase, usadas){
   const grid = buildSearchGrid(fase, [...(usadas || new Set())]);
   const finalGrid = grid.words.length >= 2 ? grid : buildSearchGrid(fase, []);
@@ -1215,7 +989,7 @@ function qSearch(fase, usadas){
   };
 }
 
-/* 8.3 Geradores simples */
+/* ---------- §8.3 GERADORES SIMPLES ---------- */
 function qWord(fase){
   const item = shuffle(FACIL)[0];
   return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Nhandewa?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
@@ -1237,9 +1011,18 @@ function qCount(fase){
   const animal = shuffle(ANIMAIS_COUNT)[0];
   return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Toque em cada figura para marcar que já contou.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(fase>=5?4:3)+1))).map(x=>x.value)};
 }
-function qNumber(){
+/* qNumber agora usa 3 alternativas nas fases 1-4 e 4 alternativas da fase 5 em diante,
+   aproveitando os 11 números disponíveis (0-10). */
+function qNumber(fase){
   const n = shuffle(NUMBER_VOCABULARY)[0];
-  return {type:"number",kind:"NÚMEROS",prompt:"Qual é a palavra Nhandewa para este número?",hint:"Observe o algarismo.",target:n.value,choices:shuffle(pickN(n,NUMBER_VOCABULARY,3)).map(x=>x.value)};
+  const qtdOpcoes = (fase >= 5) ? 4 : 3;
+  return {
+    type:"number", kind:"NÚMEROS",
+    prompt:"Qual é a palavra Nhandewa para este número?",
+    hint:"Observe o algarismo.",
+    target:n.value,
+    choices:shuffle(pickN(n,NUMBER_VOCABULARY,qtdOpcoes)).map(x=>x.value)
+  };
 }
 function qCategory(){
   const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.some(v => v.category === c && v.file));
@@ -1311,10 +1094,24 @@ function qMonthDay(){
   const item = shuffle(arr)[0];
   return {type:isMes ? "month" : "day",kind:isMes ? "MÊS" : "DIA DA SEMANA",prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,hint:"Calendário Nhandewa (vol. 2, p.46).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,arr,4)};
 }
-function qParentesco(){
+
+/* Parentesco — fila rotativa (14 palavras sem repetir) */
+let _filaParentesco = [];
+let _faseFilaParentesco = 0;
+function _resetarFilaParentesco(){
+  _filaParentesco = shuffle(PARENTESCO.slice());
+}
+function qParentesco(fase){
   if(PARENTESCO.length < 4) return null;
-  const item = shuffle(PARENTESCO)[0];
-  const outros = shuffle(PARENTESCO.filter(x => x.meaning !== item.meaning)).slice(0, 3);
+  if(_faseFilaParentesco !== fase){
+    _faseFilaParentesco = fase;
+    _resetarFilaParentesco();
+  }
+  if(_filaParentesco.length === 0) _resetarFilaParentesco();
+  const item = _filaParentesco.shift();
+  const outros = shuffle(
+    PARENTESCO.filter(x => x.meaning !== item.meaning)
+  ).slice(0, 3);
   return {
     type:"parentesco",kind:"PARENTESCO",
     prompt:"O que significa esta palavra em português?",
@@ -1324,7 +1121,6 @@ function qParentesco(){
   };
 }
 
-/* 8.4 Ordenar Frase — filtrado por nível da fase */
 function qOrder(fase){
   const nivelFase = fase || 1;
   const viaveis = FRASES_ORDENAR.filter(f => (f.nivel || 2) <= nivelFase);
@@ -1341,7 +1137,6 @@ function qOrder(fase){
   };
 }
 
-/* 8.5 Ligar Palavras */
 function qMatch(){
   const selecionados = shuffle(PARES_LIGAR).slice(0, 4);
   return {
@@ -1353,7 +1148,6 @@ function qMatch(){
   };
 }
 
-/* 8.6 Registro de geradores simples (cross e search têm tratamento próprio) */
 const GERADORES_SIMPLES = {
   word:qWord, meaning:qMeaning, reverse:qReverse, audio:qAudio,
   count:qCount, number:qNumber, category:qCategory, odd:qOdd,
@@ -1363,11 +1157,7 @@ const GERADORES_SIMPLES = {
   order:qOrder, match:qMatch
 };
 
-/* ---------- §9 MONTAGEM DA FASE (PROGRESSÃO POR NÍVEL) ---------- */
-
-/* 9.1 Distribuição calibrada — o que cai em cada fase.
-   Fase 1: só reconhecimento visual, contagem, número e categoria.
-           Sem frase, sem ligar palavras, sem cruzadinha. */
+/* ---------- §9 MONTAGEM DA FASE ---------- */
 const FASES_DISTRIBUICAO = {
   1:{word:12, number:5, count:6, category:4, "picture-sort":3},
   2:{word:8, number:3, count:4, category:3, "picture-sort":3, meaning:4, audio:3, order:2},
@@ -1380,9 +1170,6 @@ const FASES_DISTRIBUICAO = {
   9:{meaning:2, reverse:2, audio:2, adv:3, gap:3, interrog:3, verb:3, "choose-verb":3, cardinal:2, "month-day":2, order:2, match:2, cross:1, search:2}
 };
 
-/* 9.2 Trava de nível — tipos permitidos por fase.
-   Mesmo que algo escape da distribuição ou venha do fallback,
-   é descartado se não pertencer ao nível. */
 const NIVEIS_FASE = {
   1:["word","number","count","category","picture-sort"],
   2:["word","number","count","category","picture-sort","meaning","audio","order"],
@@ -1403,7 +1190,6 @@ function tipoPermitido(fase, tipo){
 function montarFase(fase){
   const dist = FASES_DISTRIBUICAO[fase];
   const pool = [];
-  /* Set compartilhado entre cruzadinha e caça-palavras desta fase */
   const palavrasUsadas = new Set();
 
   for(const [tipo, qtd] of Object.entries(dist)){
@@ -1425,7 +1211,6 @@ function montarFase(fase){
     }
   }
 
-  /* Deduplicação por type + target */
   const vistos = new Set();
   const unicos = [];
   for(const q of pool){
@@ -1434,8 +1219,6 @@ function montarFase(fase){
     vistos.add(chave); unicos.push(q);
   }
 
-  /* Fallback respeitando a trava de nível.
-     Fases 1-2 não recebem tipos avançados nem no preenchimento. */
   let guard = 0;
   const tiposPermitidos = Object.keys(GERADORES_SIMPLES).filter(t => tipoPermitido(fase, t));
   while(unicos.length < QS_PER_FASE && guard++ < 400){

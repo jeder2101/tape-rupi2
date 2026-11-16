@@ -8,15 +8,15 @@ const SAVE_KEY = "tape-rupi-progresso";
 const SAVE_VERSION = 8;
 
 const FASES_INFO = {
-  1:{nome:"Fase 1",nivel:"Fácil",    icone:"🌱", bonus:0},
-  2:{nome:"Fase 2",nivel:"Médio",    icone:"🌿", bonus:2},
-  3:{nome:"Fase 3",nivel:"Difícil",  icone:"🌳", bonus:4},
-  4:{nome:"Fase 4",nivel:"Avançado", icone:"⭐", bonus:6},
-  5:{nome:"Fase 5",nivel:"Desafio",  icone:"🔥", bonus:8},
-  6:{nome:"Fase 6",nivel:"Mestre",   icone:"🦅", bonus:10},
-  7:{nome:"Fase 7",nivel:"Xamã",     icone:"🐆", bonus:12},
-  8:{nome:"Fase 8",nivel:"Sagrado",  icone:"🌌", bonus:14},
-  9:{nome:"Fase 9",nivel:"Nhanderu", icone:"☀️", bonus:16}
+  1:{nome:"Fase 1",nivel:"Fácil",    icone:"1️⃣", bonus:0},
+  2:{nome:"Fase 2",nivel:"Médio",    icone:"2️⃣", bonus:2},
+  3:{nome:"Fase 3",nivel:"Difícil",  icone:"3️⃣", bonus:4},
+  4:{nome:"Fase 4",nivel:"Avançado", icone:"4️⃣", bonus:6},
+  5:{nome:"Fase 5",nivel:"Desafio",  icone:"5️⃣", bonus:8},
+  6:{nome:"Fase 6",nivel:"Mestre",   icone:"6️⃣", bonus:10},
+  7:{nome:"Fase 7",nivel:"Xamã",     icone:"7️⃣", bonus:12},
+  8:{nome:"Fase 8",nivel:"Sagrado",  icone:"8️⃣", bonus:14},
+  9:{nome:"Fase 9",nivel:"Nhanderu", icone:"9️⃣", bonus:16}
 };
 
 /* ---------- §2 LISTAS DE CONTEÚDO ---------- */

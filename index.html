@@ -7,42 +7,50 @@
 <link rel="stylesheet" href="style.css" />
 
 <!-- ============================================================
-     HERO IMAGE — estilos específicos da imagem na tela de início
-     (quando migrar para o style.css, mova este bloco para §3)
+     HOME — estilos específicos da tela de início
+     Quando migrar para o style.css, mova este bloco para §3
      ============================================================ -->
 <style>
 .hero-image-wrap{position:relative;width:100%;aspect-ratio:16/10;margin:0 0 18px;border-radius:24px;overflow:hidden;border:1px solid var(--stroke);box-shadow:0 14px 34px rgba(0,0,0,.5);background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.22),transparent 70%)}
 .hero-image{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.03)}
 .hero-image-wrap::after{content:"";position:absolute;inset:auto 0 0 0;height:48%;background:linear-gradient(180deg,transparent,rgba(11,20,16,.85));pointer-events:none}
 .hero-image-wrap.is-empty{display:none}
-.hero-title-brand{margin:0 0 12px;text-align:center;font-size:clamp(36px,11vw,54px);font-weight:900;letter-spacing:.04em;line-height:1;background:linear-gradient(180deg,#ffffff 0%,var(--accent) 60%,#e0a83d 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 22px rgba(243,201,105,.4))}
+.hero-title-brand{margin:0 0 10px;text-align:center;font-size:clamp(36px,11vw,54px);font-weight:900;letter-spacing:.04em;line-height:1;background:linear-gradient(180deg,#ffffff 0%,var(--accent) 60%,#e0a83d 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 22px rgba(243,201,105,.4))}
 .hero-subtitle{margin:0 0 16px;text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:var(--accent-2);opacity:.85}
-.hero-greeting-block{display:flex;flex-direction:column;align-items:center;gap:2px}
+.hero-greeting-card{margin-top:4px;padding:22px 20px 20px}
+.hero-greeting-block{display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;z-index:1}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <div class="hud-left"><span class="chip chip-accent" id="time-chip">JORNADA</span></div>
+    <div class="hud-left">
+      <span class="chip chip-accent" id="time-chip">JORNADA</span>
+      <span class="chip" id="weather-chip" aria-live="polite" title="Clima local (Open-Meteo)">
+        <span id="weather-icon">☀</span>
+        <span id="weather-temp">—</span>
+        <span id="weather-label">tempo</span>
+      </span>
+    </div>
     <button class="icon-btn" id="sound" aria-label="Desativar sons">♫</button>
   </header>
 
   <div id="boot-error"></div>
 
   <section class="screen active" id="home">
-    <div class="hero">
-      <h1 class="hero-title-brand">TAPE–RUPI</h1>
-      <p class="hero-subtitle">Jornada Tupi</p>
+    <h1 class="hero-title-brand">TAPE–RUPI</h1>
+    <p class="hero-subtitle">Jornada Tupi</p>
 
-      <div class="hero-image-wrap" id="hero-image-wrap">
-        <img
-          class="hero-image"
-          src="assets/tela-de-inicio/hero.png"
-          alt="Caminho sagrado Tupi"
-          onerror="document.getElementById('hero-image-wrap').classList.add('is-empty')"
-        />
-      </div>
+    <div class="hero-image-wrap" id="hero-image-wrap">
+      <img
+        class="hero-image"
+        src="assets/tela-de-inicio/hero.png"
+        alt="Caminho sagrado Tupi"
+        onerror="document.getElementById('hero-image-wrap').classList.add('is-empty')"
+      />
+    </div>
 
+    <div class="hero hero-greeting-card">
       <div class="hero-greeting-block">
         <div class="hero-icon" id="period-icon">☀</div>
         <h2 class="hero-title" id="greeting">Ko'ẽ Porã!</h2>
@@ -50,6 +58,7 @@
         <span class="hero-tag" id="period-label">FASE 1 · 30 DESAFIOS</span>
       </div>
     </div>
+
     <button class="primary-btn" id="start">COMEÇAR A JORNADA</button>
     <button class="ghost-btn ghost-btn--continuar" id="continue" style="display:none">Continuar</button>
     <div>

@@ -74,6 +74,28 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .weather-select{all:unset;cursor:pointer;font-size:9.5px;letter-spacing:.10em;text-transform:uppercase;font-weight:800;color:var(--accent);padding:2px 6px;border-radius:6px;border:1px solid rgba(243,201,105,.35);background:rgba(243,201,105,.10);max-width:52%;flex:0 0 auto}
 .weather-select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .weather-select option{background:#122a20;color:#f4f6f0;text-transform:none;font-size:12px}
+/* --- §4.1.1 CARD DE CLIMA — variante embutida no hero --- */
+.weather-card--hero{
+  width:100%;
+  max-width:340px;
+  margin:0 auto 14px;
+  flex:initial;
+  align-items:center;
+  text-align:center;
+  padding:14px 16px;
+  border-radius:20px;
+  background:linear-gradient(160deg,rgba(243,201,105,.14),rgba(255,255,255,.03));
+  border-color:rgba(243,201,105,.35);
+}
+.weather-card--hero .weather-top{
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px 10px;
+}
+.weather-card--hero .weather-city{flex:0 1 auto}
+.weather-card--hero .weather-main{justify-content:center}
+.weather-card--hero .weather-extra{justify-content:center}
+
 
 /* --- §5 CARD E VISUAIS --- */
 .card{padding:18px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;flex-direction:column;gap:14px;animation:cardIn .32s ease}

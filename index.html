@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Tape-rupi — Jornada Tupi</title>
 <link rel="stylesheet" href="style.css" />
+
+<!-- ============================================================
+     HERO IMAGE — estilos específicos da imagem na tela de início
+     (quando migrar para o style.css, mova este bloco para §3)
+     ============================================================ -->
+<style>
+.hero-image-wrap{position:relative;width:100%;aspect-ratio:16/10;margin:-6px 0 14px;border-radius:20px;overflow:hidden;border:1px solid var(--stroke);box-shadow:0 12px 30px rgba(0,0,0,.45);background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.22),transparent 70%)}
+.hero-image{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.03)}
+.hero-image-wrap::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(180deg,transparent,rgba(11,20,16,.75));pointer-events:none}
+.hero-image-wrap.is-empty .hero-image{display:none}
+</style>
 </head>
 <body>
 <div class="app">
@@ -17,6 +28,14 @@
 
   <section class="screen active" id="home">
     <div class="hero">
+      <div class="hero-image-wrap" id="hero-image-wrap">
+        <img
+          class="hero-image"
+          src="assets/tela-de-inicio/hero.png"
+          alt="Caminho sagrado Tupi"
+          onerror="document.getElementById('hero-image-wrap').classList.add('is-empty')"
+        />
+      </div>
       <div class="hero-icon" id="period-icon">☀</div>
       <h1 class="hero-title" id="greeting">Ko'ẽ Porã!</h1>
       <p class="hero-desc" id="period-desc">Aprenda o vocabulário Tupi atravessando o caminho sagrado.</p>
@@ -28,7 +47,7 @@
       <div class="section-title">Escolha a fase</div>
       <div class="fase-grid" id="fase-botoes"></div>
     </div>
-    <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;padding:0 8px">Material de referência: <em>PRojeto karumbé / Tupi</em> —Dicionário Online.</p>
+    <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;padding:0 8px">Material de referência: <em>Projeto Karumbé / Tupi — Dicionário Online</em>.</p>
   </section>
 
   <section class="screen" id="game">

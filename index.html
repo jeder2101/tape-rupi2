@@ -12,30 +12,6 @@
   <div class="hud-left">
     <span class="chip chip-accent" id="time-chip">JORNADA</span>
   </div>
-  <div class="weather-card" id="weather-card" aria-live="polite" title="Clima local (Open-Meteo)">
-    <div class="weather-top">
-      <div class="weather-city" id="weather-city">Barão de Antonina, SP</div>
-      <select class="weather-select" id="weather-select" aria-label="Escolher cidade do clima"></select>
-      <div class="weather-updated" id="weather-updated">—</div>
-    </div>
-    <div class="weather-main">
-      <span class="weather-icon" id="weather-icon">☀️</span>
-      <span class="weather-temp" id="weather-temp">—</span>
-    </div>
-    <div class="weather-desc" id="weather-desc">tempo</div>
-    <div class="weather-extra">
-      <span id="weather-feels">—</span>
-      <span class="sep">·</span>
-      <span>Máx <b id="weather-max">—</b></span>
-      <span class="sep">·</span>
-      <span>Mín <b id="weather-min">—</b></span>
-    </div>
-    <div class="weather-extra weather-extra--minor">
-      <span>💧 <b id="weather-hum">—</b></span>
-      <span class="sep">·</span>
-      <span>💨 <b id="weather-wind">—</b></span>
-    </div>
-  </div>
   <button class="icon-btn" id="sound" aria-label="Desativar sons">♫</button>
 </header>
 
@@ -56,7 +32,30 @@
 
     <div class="hero hero-greeting-card">
       <div class="hero-greeting-block">
-        <div class="hero-icon" id="period-icon">☀</div>
+        <div class="weather-card weather-card--hero" id="weather-card" aria-live="polite" title="Clima local (Open-Meteo)">
+          <div class="weather-top">
+            <div class="weather-city" id="weather-city">Barão de Antonina, SP</div>
+            <select class="weather-select" id="weather-select" aria-label="Escolher cidade do clima"></select>
+            <div class="weather-updated" id="weather-updated">—</div>
+          </div>
+          <div class="weather-main">
+            <span class="weather-icon" id="weather-icon">☀️</span>
+            <span class="weather-temp" id="weather-temp">—</span>
+          </div>
+          <div class="weather-desc" id="weather-desc">tempo</div>
+          <div class="weather-extra">
+            <span id="weather-feels">—</span>
+            <span class="sep">·</span>
+            <span>Máx <b id="weather-max">—</b></span>
+            <span class="sep">·</span>
+            <span>Mín <b id="weather-min">—</b></span>
+          </div>
+          <div class="weather-extra weather-extra--minor">
+            <span>💧 <b id="weather-hum">—</b></span>
+            <span class="sep">·</span>
+            <span>💨 <b id="weather-wind">—</b></span>
+          </div>
+        </div>
         <h2 class="hero-title" id="greeting">Ko'ẽ Porã!</h2>
         <p class="hero-desc" id="period-desc">Aprenda o vocabulário Tupi atravessando o caminho sagrado.</p>
         <span class="hero-tag" id="period-label">FASE 1 · 30 DESAFIOS</span>

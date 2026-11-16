@@ -1,5 +1,25 @@
 "use strict";
 
+/* ============================================================
+   JAVASCRIPT
+   §1   Constantes e configuração
+   §2   Listas de conteúdo
+   §3   Cruzadinha — motor legado (reserva)
+   §4   Caça-palavras — motor adaptativo
+   §5   Estado global e persistência
+   §6   Utilidades
+   §7   Áudio
+   §8   Geradores de questão
+   §9   Montagem da fase (progressão por nível)
+   §10  Fluxo de telas
+   §11  Render
+   §12  Verificação
+   §13  Conclusão de fase
+   §14  Seletor e continuar
+   §15  Clima — Open-Meteo (card MSN + seletor)
+   §16  Bind e boot
+   ============================================================ */
+
 /* ---------- §1 CONSTANTES ---------- */
 const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/tela-de-inicio/" };
 const QS_PER_FASE = 30;
@@ -1805,32 +1825,57 @@ function showBootError(msg){
   box.textContent = "⚠ " + msg + "\n\nRecarregue a página (Ctrl+F5). Se persistir, abra o console (F12) e copie a primeira linha vermelha.";
 }
 
-/* ---------- §15 CLIMA — Open-Meteo (real, com fallback simbólico) ---------- */
-const CLIMA_LOCAL = {
-  nome: "Barão de Antonina",
-  lat: -23.6364,
-  lon: -49.5601,
-  timezone: "America/Sao_Paulo"
-};
+/* ---------- §15 CLIMA — Open-Meteo (card MSN + seletor) ---------- */
+const CLIMA_CIDADES = [
+  {nome:"Barão de Antonina", uf:"SP", lat:-23.6296, lon:-49.5632},
+  {nome:"Itaporanga",         uf:"SP", lat:-23.7086, lon:-49.4884},
+  {nome:"Itararé",            uf:"SP", lat:-24.1131, lon:-49.3347},
+  {nome:"São Paulo",          uf:"SP", lat:-23.5505, lon:-46.6333},
+  {nome:"Curitiba",           uf:"PR", lat:-25.4284, lon:-49.2733}
+];
+const CLIMA_KEY = "tape-rupi-clima-cidade";
+const CLIMA_LOCAL = { ...CLIMA_CIDADES[0], timezone:"America/Sao_Paulo" };
 
 const WMO = {
-  0:{icon:"☀",label:"céu limpo"},1:{icon:"🌤",label:"quase limpo"},
-  2:{icon:"⛅",label:"parcial. nublado"},3:{icon:"☁",label:"nublado"},
-  45:{icon:"🌫",label:"névoa"},48:{icon:"🌫",label:"névoa gelada"},
-  51:{icon:"🌦",label:"garoa leve"},53:{icon:"🌦",label:"garoa"},55:{icon:"🌧",label:"garoa forte"},
-  61:{icon:"🌧",label:"chuva leve"},63:{icon:"🌧",label:"chuva"},65:{icon:"🌧",label:"chuva forte"},
-  71:{icon:"🌨",label:"neve leve"},73:{icon:"🌨",label:"neve"},75:{icon:"❄",label:"neve forte"},
-  80:{icon:"🌦",label:"pancadas"},81:{icon:"🌧",label:"pancadas fortes"},82:{icon:"⛈",label:"pancadas violentas"},
-  95:{icon:"⛈",label:"trovoada"},96:{icon:"⛈",label:"trovoada c/ granizo"},99:{icon:"⛈",label:"trovoada severa"}
+  0:{icon:"☀️",label:"Ensolarado"},1:{icon:"🌤",label:"Quase limpo"},
+  2:{icon:"⛅",label:"Parcial. nublado"},3:{icon:"☁️",label:"Nublado"},
+  45:{icon:"🌫",label:"Névoa"},48:{icon:"🌫",label:"Névoa gelada"},
+  51:{icon:"🌦",label:"Garoa leve"},53:{icon:"🌦",label:"Garoa"},55:{icon:"🌧",label:"Garoa forte"},
+  61:{icon:"🌧",label:"Chuva leve"},63:{icon:"🌧",label:"Chuva"},65:{icon:"🌧",label:"Chuva forte"},
+  71:{icon:"🌨",label:"Neve leve"},73:{icon:"🌨",label:"Neve"},75:{icon:"❄️",label:"Neve forte"},
+  80:{icon:"🌦",label:"Pancadas"},81:{icon:"🌧",label:"Pancadas fortes"},82:{icon:"⛈",label:"Pancadas violentas"},
+  95:{icon:"⛈",label:"Trovoada"},96:{icon:"⛈",label:"Trovoada c/ granizo"},99:{icon:"⛈",label:"Trovoada severa"}
 };
 
-function renderizarClima({icon, temp, label}){
-  const chip = $("weather-chip");
-  if(!chip) return;
-  chip.classList.remove("is-loading");
-  const i = $("weather-icon"); if(i) i.textContent = icon;
-  const t = $("weather-temp");  if(t) t.textContent = temp;
-  const l = $("weather-label"); if(l) l.textContent = label;
+function lerCidadeSalva(){
+  try{
+    const i = Number(localStorage.getItem(CLIMA_KEY));
+    if(Number.isInteger(i) && CLIMA_CIDADES[i]) return i;
+  }catch(e){}
+  return 0;
+}
+
+function horaAgora(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+}
+
+function renderizarClima(dados){
+  const card = $("weather-card");
+  if(!card) return;
+  card.classList.remove("is-loading");
+  card.classList.toggle("is-fallback", card.dataset.fonte === "simbolico");
+  const set = (id, txt) => { const el = $(id); if(el) el.textContent = txt; };
+  set("weather-city", dados.cidade);
+  set("weather-icon", dados.icon);
+  set("weather-temp", dados.temp);
+  set("weather-desc", dados.label);
+  set("weather-feels", dados.feels);
+  set("weather-max", dados.max);
+  set("weather-min", dados.min);
+  set("weather-hum", dados.hum);
+  set("weather-wind", dados.wind);
+  set("weather-updated", dados.updated);
 }
 
 function climaSimbolico(){
@@ -1840,40 +1885,92 @@ function climaSimbolico(){
   let seed = 0;
   for(let i = 0; i < iso.length; i++) seed = (seed * 31 + iso.charCodeAt(i)) >>> 0;
   const opcoes = [
-    {icon:"☀", label:"céu limpo"},
-    {icon:"⛅", label:"nublado"},
-    {icon:"🌦", label:"chuva isolada"}
+    {icon:"☀️",label:"Ensolarado"},
+    {icon:"⛅",label:"Parcial. nublado"},
+    {icon:"🌦",label:"Chuva isolada"}
   ];
   const v = opcoes[seed % opcoes.length];
-  const tempBase = 18 + (seed % 13);
+  const base = 18 + (seed % 13);
   const ajuste = (h >= 12 && h < 16) ? 2 : ((h >= 22 || h < 6) ? -2 : 0);
-  const icon = (h >= 18 || h < 6) ? "🌙" : v.icon;
-  renderizarClima({ icon, temp: (tempBase + ajuste) + "º", label: v.label });
+  const t = base + ajuste;
+  const card = $("weather-card");
+  if(card) card.dataset.fonte = "simbolico";
+  renderizarClima({
+    cidade: `${CLIMA_LOCAL.nome}, ${CLIMA_LOCAL.uf}`,
+    icon: (h >= 18 || h < 6) ? "🌙" : v.icon,
+    temp: `${t}°`,
+    label: v.label,
+    feels: `Sensação ${t + 1}°`,
+    max: `${t + 3}°`,
+    min: `${t - 4}°`,
+    hum: "—",
+    wind: "—",
+    updated: "simbólico"
+  });
 }
 
 async function atualizarClima(){
-  const chip = $("weather-chip");
-  if(chip) chip.classList.add("is-loading");
+  const card = $("weather-card");
+  if(card){ card.classList.add("is-loading"); card.dataset.fonte = "real"; }
   const url = "https://api.open-meteo.com/v1/forecast" +
     `?latitude=${CLIMA_LOCAL.lat}` +
     `&longitude=${CLIMA_LOCAL.lon}` +
-    `&current=temperature_2m,weather_code,is_day` +
+    `&current=temperature_2m,apparent_temperature,weather_code,is_day,relative_humidity_2m,wind_speed_10m` +
+    `&daily=temperature_2m_max,temperature_2m_min` +
+    `&forecast_days=1` +
     `&timezone=${encodeURIComponent(CLIMA_LOCAL.timezone)}`;
   try{
     const r = await fetch(url, { cache: "no-store" });
     if(!r.ok) throw new Error("HTTP " + r.status);
     const d = await r.json();
     const c = d && d.current;
+    const daily = d && d.daily;
     if(!c || typeof c.temperature_2m !== "number") throw new Error("payload");
     const meta = WMO[Number(c.weather_code)] || {icon:"🌡", label:"tempo"};
     const icon = c.is_day === 0 ? "🌙" : meta.icon;
-    renderizarClima({ icon, temp: Math.round(c.temperature_2m) + "º", label: meta.label });
-    if(chip) chip.setAttribute("title", `Clima em ${CLIMA_LOCAL.nome} (Open-Meteo, agora)`);
+    renderizarClima({
+      cidade: `${CLIMA_LOCAL.nome}, ${CLIMA_LOCAL.uf}`,
+      icon,
+      temp: `${Math.round(c.temperature_2m)}°`,
+      label: meta.label,
+      feels: typeof c.apparent_temperature === "number" ? `Sensação ${Math.round(c.apparent_temperature)}°` : "",
+      max: daily && daily.temperature_2m_max ? `${Math.round(daily.temperature_2m_max[0])}°` : "—",
+      min: daily && daily.temperature_2m_min ? `${Math.round(daily.temperature_2m_min[0])}°` : "—",
+      hum: typeof c.relative_humidity_2m === "number" ? `${c.relative_humidity_2m}%` : "—",
+      wind: typeof c.wind_speed_10m === "number" ? `${Math.round(c.wind_speed_10m)} km/h` : "—",
+      updated: horaAgora()
+    });
+    if(card) card.setAttribute("title", `Clima em ${CLIMA_LOCAL.nome} (Open-Meteo · agora)`);
   }catch(e){
     console.warn("[clima] fallback simbólico:", e.message);
     climaSimbolico();
-    if(chip) chip.setAttribute("title", "Clima simbólico (falha ao consultar Open-Meteo)");
   }
+}
+
+function aplicarCidade(idx){
+  const c = CLIMA_CIDADES[idx] || CLIMA_CIDADES[0];
+  CLIMA_LOCAL.nome = c.nome;
+  CLIMA_LOCAL.uf   = c.uf;
+  CLIMA_LOCAL.lat  = c.lat;
+  CLIMA_LOCAL.lon  = c.lon;
+  try{ localStorage.setItem(CLIMA_KEY, String(idx)); }catch(e){}
+  atualizarClima();
+}
+
+function montarSeletorClima(){
+  const sel = $("weather-select");
+  if(!sel) return;
+  sel.innerHTML = "";
+  CLIMA_CIDADES.forEach((c,i) => {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `${c.nome} · ${c.uf}`;
+    sel.append(opt);
+  });
+  const salvo = lerCidadeSalva();
+  sel.value = String(salvo);
+  sel.addEventListener("change", () => aplicarCidade(Number(sel.value)));
+  aplicarCidade(salvo);
 }
 
 /* ---------- §16 BIND E BOOT ---------- */
@@ -1905,8 +2002,8 @@ document.addEventListener("DOMContentLoaded", () => {
     bindEvents();
     atualizarSeletorFase();
     atualizarBotaoContinuar();
-    atualizarClima();
-    setInterval(atualizarClima, 15 * 60 * 1000);
+    montarSeletorClima();
+    setInterval(atualizarClima, 10 * 60 * 1000);
   }catch(e){
     console.error("[boot]", e);
     showBootError("Falha ao iniciar: " + e.message);

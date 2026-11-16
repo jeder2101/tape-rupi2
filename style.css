@@ -51,6 +51,13 @@ header{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .progress-wrap{height:10px;border-radius:999px;overflow:hidden;background:rgba(0,0,0,.35);border:1px solid var(--stroke);position:relative}
 .progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent));box-shadow:0 0 12px rgba(243,201,105,.7);transition:width .45s cubic-bezier(.2,.9,.3,1)}
 
+/* --- §4.1 CHIP DE CLIMA --- */
+#weather-chip{transition:opacity .3s ease}
+#weather-chip.is-loading{opacity:.55}
+#weather-chip #weather-icon{font-size:13px;line-height:1}
+#weather-chip #weather-temp{color:var(--text);letter-spacing:.02em}
+#weather-chip #weather-label{font-size:10px;letter-spacing:.08em}
+
 /* --- §5 CARD E VISUAIS --- */
 .card{padding:18px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;flex-direction:column;gap:14px;animation:cardIn .32s ease}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}

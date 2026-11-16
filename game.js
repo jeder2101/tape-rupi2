@@ -171,7 +171,7 @@ const VOCABULARY = [
   {word:"TXERU",meaning:"meu pai",category:"PARENTESCO",audio:"txeru.mp3"},
   {word:"NHANERAMÕI",meaning:"nosso avô",category:"PARENTESCO",audio:"nhaneramoi.mp3"},
   {word:"TXERA'Y",meaning:"meu filho (pai)",category:"PARENTESCO",audio:"txeray.mp3"},
-  {word:"TXEMEMBY",meaning:"meu filho (mãe)",category:"PARENTESCO",audio:"txeray.mp3"},
+  {word:"TXEMEMBY",meaning:"meu filho (mãe)",category:"PARENTESCO",audio:"txememby.mp3"},
   {word:"TXERADJY",meaning:"minha filha (pai)",category:"PARENTESCO",audio:"txeradjy.mp3"},
   {word:"TXERYWY",meaning:"irmão mais novo",category:"PARENTESCO",audio:"txerywy.mp3"},
   {word:"TXERYKE'Y",meaning:"irmão mais velho",category:"PARENTESCO",audio:"txerykey.mp3"},
@@ -180,7 +180,7 @@ const VOCABULARY = [
   {word:"TXETUTY",meaning:"meu tio",category:"PARENTESCO",audio:"txetuty.mp3"},
   {word:"TXETSY'Y",meaning:"minha tia",category:"PARENTESCO",audio:"txetsyy.mp3"},
   {word:"TXERAPITXÁ",meaning:"meu amigo",category:"PARENTESCO",audio:"txerapitxa.mp3"},
-  {word:"TXEIRŨ",meaning:"meu colega",category:"PARENTESCO",audio:"txerapitxa.mp3"},
+  {word:"TXEIRŨ",meaning:"meu colega",category:"PARENTESCO",audio:"txeiru.mp3"},
   {word:"TXEMẼ",meaning:"meu marido",category:"PARENTESCO",audio:"txeme.mp3"},
   {word:"TXEREMBIREKÓ",meaning:"minha esposa",category:"PARENTESCO",audio:"txerembireko.mp3"},
   {word:"TXETXAÍ",meaning:"minha avó",category:"PARENTESCO",audio:"txetxai.mp3"},
@@ -1033,7 +1033,7 @@ function createImage(item, className){
     w.textContent = item.word || "?";
     const lab = document.createElement("span");
     lab.className = "visual-label";
-    lab.textContent = "PALAVRA Tupi";
+    lab.textContent = "PALAVRA TUPI";
     wrap.append(w, lab);
     this.replaceWith(wrap);
   };
@@ -1224,7 +1224,7 @@ function visual(q){
     box.append(w);
     const lab = document.createElement("span");
     lab.className = "visual-label";
-    lab.textContent = "PALAVRA Tupi";
+    lab.textContent = "PALAVRA TUPI";
     box.append(lab);
     enableAudio(q.audioItem);
   }
@@ -1805,7 +1805,78 @@ function showBootError(msg){
   box.textContent = "⚠ " + msg + "\n\nRecarregue a página (Ctrl+F5). Se persistir, abra o console (F12) e copie a primeira linha vermelha.";
 }
 
-/* ---------- §15 BIND E BOOT ---------- */
+/* ---------- §15 CLIMA — Open-Meteo (real, com fallback simbólico) ---------- */
+const CLIMA_LOCAL = {
+  nome: "Barão de Antonina",
+  lat: -23.6364,
+  lon: -49.5601,
+  timezone: "America/Sao_Paulo"
+};
+
+const WMO = {
+  0:{icon:"☀",label:"céu limpo"},1:{icon:"🌤",label:"quase limpo"},
+  2:{icon:"⛅",label:"parcial. nublado"},3:{icon:"☁",label:"nublado"},
+  45:{icon:"🌫",label:"névoa"},48:{icon:"🌫",label:"névoa gelada"},
+  51:{icon:"🌦",label:"garoa leve"},53:{icon:"🌦",label:"garoa"},55:{icon:"🌧",label:"garoa forte"},
+  61:{icon:"🌧",label:"chuva leve"},63:{icon:"🌧",label:"chuva"},65:{icon:"🌧",label:"chuva forte"},
+  71:{icon:"🌨",label:"neve leve"},73:{icon:"🌨",label:"neve"},75:{icon:"❄",label:"neve forte"},
+  80:{icon:"🌦",label:"pancadas"},81:{icon:"🌧",label:"pancadas fortes"},82:{icon:"⛈",label:"pancadas violentas"},
+  95:{icon:"⛈",label:"trovoada"},96:{icon:"⛈",label:"trovoada c/ granizo"},99:{icon:"⛈",label:"trovoada severa"}
+};
+
+function renderizarClima({icon, temp, label}){
+  const chip = $("weather-chip");
+  if(!chip) return;
+  chip.classList.remove("is-loading");
+  const i = $("weather-icon"); if(i) i.textContent = icon;
+  const t = $("weather-temp");  if(t) t.textContent = temp;
+  const l = $("weather-label"); if(l) l.textContent = label;
+}
+
+function climaSimbolico(){
+  const d = new Date();
+  const h = d.getHours();
+  const iso = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  let seed = 0;
+  for(let i = 0; i < iso.length; i++) seed = (seed * 31 + iso.charCodeAt(i)) >>> 0;
+  const opcoes = [
+    {icon:"☀", label:"céu limpo"},
+    {icon:"⛅", label:"nublado"},
+    {icon:"🌦", label:"chuva isolada"}
+  ];
+  const v = opcoes[seed % opcoes.length];
+  const tempBase = 18 + (seed % 13);
+  const ajuste = (h >= 12 && h < 16) ? 2 : ((h >= 22 || h < 6) ? -2 : 0);
+  const icon = (h >= 18 || h < 6) ? "🌙" : v.icon;
+  renderizarClima({ icon, temp: (tempBase + ajuste) + "º", label: v.label });
+}
+
+async function atualizarClima(){
+  const chip = $("weather-chip");
+  if(chip) chip.classList.add("is-loading");
+  const url = "https://api.open-meteo.com/v1/forecast" +
+    `?latitude=${CLIMA_LOCAL.lat}` +
+    `&longitude=${CLIMA_LOCAL.lon}` +
+    `&current=temperature_2m,weather_code,is_day` +
+    `&timezone=${encodeURIComponent(CLIMA_LOCAL.timezone)}`;
+  try{
+    const r = await fetch(url, { cache: "no-store" });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json();
+    const c = d && d.current;
+    if(!c || typeof c.temperature_2m !== "number") throw new Error("payload");
+    const meta = WMO[Number(c.weather_code)] || {icon:"🌡", label:"tempo"};
+    const icon = c.is_day === 0 ? "🌙" : meta.icon;
+    renderizarClima({ icon, temp: Math.round(c.temperature_2m) + "º", label: meta.label });
+    if(chip) chip.setAttribute("title", `Clima em ${CLIMA_LOCAL.nome} (Open-Meteo, agora)`);
+  }catch(e){
+    console.warn("[clima] fallback simbólico:", e.message);
+    climaSimbolico();
+    if(chip) chip.setAttribute("title", "Clima simbólico (falha ao consultar Open-Meteo)");
+  }
+}
+
+/* ---------- §16 BIND E BOOT ---------- */
 function bindEvents(){
   safeBind("start", "click", () => { state.salvar = true; apagarProgresso(); start(1); });
   safeBind("next", "click", next);
@@ -1826,8 +1897,6 @@ function bindEvents(){
   safeBind("continue", "click", continuarSalvo);
 }
 
-/* Boot: o script tem `defer`, então o DOM já está pronto quando chega aqui,
-   mas manter o listener garante robustez se o atributo `defer` for removido. */
 document.addEventListener("DOMContentLoaded", () => {
   try{
     const p = periodNow();
@@ -1836,6 +1905,8 @@ document.addEventListener("DOMContentLoaded", () => {
     bindEvents();
     atualizarSeletorFase();
     atualizarBotaoContinuar();
+    atualizarClima();
+    setInterval(atualizarClima, 15 * 60 * 1000);
   }catch(e){
     console.error("[boot]", e);
     showBootError("Falha ao iniciar: " + e.message);

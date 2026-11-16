@@ -1,22 +1,22 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT
+   JAVASCRIPT — Tape-rupi
    §1   Constantes e configuração
    §2   Listas de conteúdo
-   §3   Cruzadinha — motor legado (reserva)
+   §3   Motor legado de cruzadinha (reserva)
    §4   Caça-palavras — motor adaptativo
-   §5   Estado global e persistência
+   §5   Estado global, persistência e saudação
    §6   Utilidades
    §7   Áudio
    §8   Geradores de questão
-   §9   Montagem da fase (progressão por nível)
+   §9   Montagem da fase
    §10  Fluxo de telas
    §11  Render
    §12  Verificação
-   §13  Conclusão de fase
+   §13  Conclusão
    §14  Seletor e continuar
-   §15  Clima — Open-Meteo (card MSN + seletor)
+   §15  Clima — Open-Meteo
    §16  Bind e boot
    ============================================================ */
 
@@ -382,7 +382,7 @@ const PARES_LIGAR = [
   {a:"Ma'erã?",b:"Por quê?"}, {a:"Mamõ?",b:"Onde?"}, {a:"Mbowy?",b:"Quanto?"}, {a:"Maã?",b:"Cadê?"}
 ];
 
-/* ---------- §3 CRUZADINHA — MOTOR LEGADO (RESERVA) ---------- */
+/* ---------- §3 MOTOR LEGADO (RESERVA) ---------- */
 function cwNormalize(s){
   return String(s).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z]/g,"");
 }
@@ -407,6 +407,7 @@ const SEARCH_POOL_EXTRA = [
   "YY","TAY","KY","PY","MUA","TATA","TATU","TUKU","KAI","OWY","MBOI",
   "PIRA","OKY","JASY","YBY","UU","AWY","PO","KYA","UY","EIA"
 ];
+
 function searchClean(s){
   return String(s).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z]/g,"");
 }
@@ -498,12 +499,32 @@ function buildSearchGrid(fase, palavrasProibidas){
   return { G, placed, size, words: placed.map(p => p.word) };
 }
 
-/* ---------- §5 ESTADO GLOBAL ---------- */
+/* ---------- §5 ESTADO GLOBAL E SAUDAÇÃO ---------- */
 const state = {
   index:0, score:0, fase:1, answered:false, sound:true, time:null,
   questions:[], salvar:true, acertos:0, erros:0
 };
 const $ = id => document.getElementById(id);
+
+function periodNow(){
+  const h = new Date().getHours();
+  if(h >= 5 && h < 12) return {name:"manhã",icon:"☀",title:"Ko'ẽ Porã!",desc:"A luz da manhã abre o caminho para novas descobertas.",msg:"A jornada começa com a luz do dia."};
+  if(h >= 12 && h < 18) return {name:"tarde",icon:"◉",title:"Ka'aru Porã!",desc:"O caminho continua. Observe cada detalhe e descubra.",msg:"A tarde convida a explorar."};
+  return {name:"noite",icon:"☾",title:"Pyntũ Porã!",desc:"Quando a noite chega, a atenção ilumina o caminho.",msg:"A noite também guarda descobertas."};
+}
+
+function aplicarSaudacao(){
+  const p = periodNow();
+  const g = $("greeting");        if(g) g.textContent = p.title;
+  const d = $("period-desc");     if(d) d.textContent = p.desc;
+  const i = $("period-icon");     if(i) i.textContent = p.icon;
+  const home = $("home");
+  const naHome = home && home.classList.contains("active");
+  const chip = $("time-chip");
+  if(naHome && chip) chip.textContent = "JORNADA DA " + p.name.toUpperCase();
+  state.time = p;
+  return p;
+}
 
 function lerProgresso(){
   try{
@@ -732,7 +753,7 @@ function qSearch(fase, usadas){
   };
 }
 
-/* ---------- §8.3 GERADORES SIMPLES ---------- */
+/* §8.3 Geradores simples */
 function qWord(fase){
   const item = shuffle(FACIL)[0];
   return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Tupi?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
@@ -743,7 +764,7 @@ function qMeaning(fase){
 }
 function qReverse(fase){
   const item = shuffle(FACIL)[0];
-  return {type:"reverse",kind:"PALAVRA EM Tupi",prompt:`Como se diz «${item.meaning}» em Tupi?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+  return {type:"reverse",kind:"PALAVRA EM TUPI",prompt:`Como se diz «${item.meaning}» em Tupi?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
 }
 function qAudio(fase){
   const item = shuffle(COM_AUDIO)[0];
@@ -977,18 +998,16 @@ function montarFase(fase){
 }
 
 /* ---------- §10 FLUXO DE TELAS ---------- */
-function periodNow(){
-  const h = new Date().getHours();
-  if(h >= 5 && h < 12) return {name:"manhã",icon:"☀",title:"Ko'ẽ Porã!",desc:"A luz da manhã abre o caminho para novas descobertas.",msg:"A jornada começa com a luz do dia."};
-  if(h >= 12 && h < 18) return {name:"tarde",icon:"◉",title:"Ka'aru Porã!",desc:"O caminho continua. Observe cada detalhe e descubra.",msg:"A tarde convida a explorar."};
-  return {name:"noite",icon:"☾",title:"Pyntũ Porã!",desc:"Quando a noite chega, a atenção ilumina o caminho.",msg:"A noite também guarda descobertas."};
-}
 function screen(id){
   ["home","game","finish"].forEach(x => {
     const el = $(x);
     if(el) el.classList.toggle("active", x === id);
   });
-  if(id === "home"){ atualizarSeletorFase(); atualizarBotaoContinuar(); }
+  if(id === "home"){
+    aplicarSaudacao();
+    atualizarSeletorFase();
+    atualizarBotaoContinuar();
+  }
 }
 function safeBind(id, event, handler){
   const el = $(id);
@@ -1743,7 +1762,7 @@ function scoreProfile(){
   if(ratio >= 0.9){
     medal = "🏆"; title = "Jornada excelente!";
     sub = FASES_INFO[state.fase].nome.toUpperCase() + " · RESUMO";
-    apoio = "PORÃETE ! Você dominou quase tudo. Nhandé nhe'ẽ (nossa língua) floresce com você.";
+    apoio = "PORÃETE! Você dominou quase tudo. Nhandé nhe'ẽ (nossa língua) floresce com você.";
     atencao = perfeito
       ? "Nenhuma distração detectada. Siga com a próxima fase no mesmo ritmo e mantenha a atenção plena."
       : `Apenas ${erros} tropeço(s) — ótimo sinal. Releia as questões erradas e confirme os detalhes que confundem.`;
@@ -1825,7 +1844,7 @@ function showBootError(msg){
   box.textContent = "⚠ " + msg + "\n\nRecarregue a página (Ctrl+F5). Se persistir, abra o console (F12) e copie a primeira linha vermelha.";
 }
 
-/* ---------- §15 CLIMA — Open-Meteo (card MSN + seletor) ---------- */
+/* ---------- §15 CLIMA — Open-Meteo ---------- */
 const CLIMA_CIDADES = [
   {nome:"Barão de Antonina", uf:"SP", lat:-23.6296, lon:-49.5632},
   {nome:"Itaporanga",         uf:"SP", lat:-23.7086, lon:-49.4884},
@@ -1835,6 +1854,7 @@ const CLIMA_CIDADES = [
 ];
 const CLIMA_KEY = "tape-rupi-clima-cidade";
 const CLIMA_LOCAL = { ...CLIMA_CIDADES[0], timezone:"America/Sao_Paulo" };
+let   CLIMA_REQUEST_ID = 0;
 
 const WMO = {
   0:{icon:"☀️",label:"Ensolarado"},1:{icon:"🌤",label:"Quase limpo"},
@@ -1854,16 +1874,15 @@ function lerCidadeSalva(){
   }catch(e){}
   return 0;
 }
-
 function horaAgora(){
   const d = new Date();
   return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
 }
-
 function renderizarClima(dados){
   const card = $("weather-card");
-  if(!card) return;
+  if(!card || !dados) return;
   card.classList.remove("is-loading");
+  card.dataset.fonte = dados.fonte || "real";
   card.classList.toggle("is-fallback", card.dataset.fonte === "simbolico");
   const set = (id, txt) => { const el = $(id); if(el) el.textContent = txt; };
   set("weather-city", dados.cidade);
@@ -1877,7 +1896,6 @@ function renderizarClima(dados){
   set("weather-wind", dados.wind);
   set("weather-updated", dados.updated);
 }
-
 function climaSimbolico(){
   const d = new Date();
   const h = d.getHours();
@@ -1893,8 +1911,6 @@ function climaSimbolico(){
   const base = 18 + (seed % 13);
   const ajuste = (h >= 12 && h < 16) ? 2 : ((h >= 22 || h < 6) ? -2 : 0);
   const t = base + ajuste;
-  const card = $("weather-card");
-  if(card) card.dataset.fonte = "simbolico";
   renderizarClima({
     cidade: `${CLIMA_LOCAL.nome}, ${CLIMA_LOCAL.uf}`,
     icon: (h >= 18 || h < 6) ? "🌙" : v.icon,
@@ -1905,13 +1921,14 @@ function climaSimbolico(){
     min: `${t - 4}°`,
     hum: "—",
     wind: "—",
-    updated: "simbólico"
+    updated: "simbólico",
+    fonte: "simbolico"
   });
 }
-
 async function atualizarClima(){
   const card = $("weather-card");
-  if(card){ card.classList.add("is-loading"); card.dataset.fonte = "real"; }
+  if(card) card.classList.add("is-loading");
+  const meuId = ++CLIMA_REQUEST_ID;
   const url = "https://api.open-meteo.com/v1/forecast" +
     `?latitude=${CLIMA_LOCAL.lat}` +
     `&longitude=${CLIMA_LOCAL.lon}` +
@@ -1921,6 +1938,7 @@ async function atualizarClima(){
     `&timezone=${encodeURIComponent(CLIMA_LOCAL.timezone)}`;
   try{
     const r = await fetch(url, { cache: "no-store" });
+    if(meuId !== CLIMA_REQUEST_ID) return;
     if(!r.ok) throw new Error("HTTP " + r.status);
     const d = await r.json();
     const c = d && d.current;
@@ -1938,15 +1956,16 @@ async function atualizarClima(){
       min: daily && daily.temperature_2m_min ? `${Math.round(daily.temperature_2m_min[0])}°` : "—",
       hum: typeof c.relative_humidity_2m === "number" ? `${c.relative_humidity_2m}%` : "—",
       wind: typeof c.wind_speed_10m === "number" ? `${Math.round(c.wind_speed_10m)} km/h` : "—",
-      updated: horaAgora()
+      updated: horaAgora(),
+      fonte: "real"
     });
     if(card) card.setAttribute("title", `Clima em ${CLIMA_LOCAL.nome} (Open-Meteo · agora)`);
   }catch(e){
+    if(meuId !== CLIMA_REQUEST_ID) return;
     console.warn("[clima] fallback simbólico:", e.message);
     climaSimbolico();
   }
 }
-
 function aplicarCidade(idx){
   const c = CLIMA_CIDADES[idx] || CLIMA_CIDADES[0];
   CLIMA_LOCAL.nome = c.nome;
@@ -1956,7 +1975,6 @@ function aplicarCidade(idx){
   try{ localStorage.setItem(CLIMA_KEY, String(idx)); }catch(e){}
   atualizarClima();
 }
-
 function montarSeletorClima(){
   const sel = $("weather-select");
   if(!sel) return;
@@ -1977,8 +1995,8 @@ function montarSeletorClima(){
 function bindEvents(){
   safeBind("start", "click", () => { state.salvar = true; apagarProgresso(); start(1); });
   safeBind("next", "click", next);
-  safeBind("home-button", "click", () => { if(state.time) $("time-chip").textContent = "JORNADA DA " + state.time.name.toUpperCase(); screen("home"); });
-  safeBind("finish-home", "click", () => { if(state.time) $("time-chip").textContent = "JORNADA DA " + state.time.name.toUpperCase(); screen("home"); });
+  safeBind("home-button", "click", () => screen("home"));
+  safeBind("finish-home", "click", () => screen("home"));
   safeBind("again-fase", "click", () => { apagarProgresso(); rejogarFase(); });
   safeBind("next-fase", "click", () => {
     const prox = state.fase + 1;
@@ -1996,14 +2014,15 @@ function bindEvents(){
 
 document.addEventListener("DOMContentLoaded", () => {
   try{
-    const p = periodNow();
-    const chip = $("time-chip");
-    if(chip) chip.textContent = "JORNADA DA " + p.name.toUpperCase();
+    aplicarSaudacao();
     bindEvents();
     atualizarSeletorFase();
     atualizarBotaoContinuar();
     montarSeletorClima();
-    setInterval(atualizarClima, 10 * 60 * 1000);
+    setInterval(() => {
+      aplicarSaudacao();
+      atualizarClima();
+    }, 10 * 60 * 1000);
   }catch(e){
     console.error("[boot]", e);
     showBootError("Falha ao iniciar: " + e.message);

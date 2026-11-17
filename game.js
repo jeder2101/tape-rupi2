@@ -8,7 +8,7 @@
    §4   Caça-palavras — motor adaptativo
    §5   Estado global, persistência e saudação
    §6   Utilidades
-   §6.2 Imagens das categorias
+   §6.2 Imagens das categorias          ★ NOVO
    §7   Áudio
    §8   Geradores de questão
    §9   Montagem da fase
@@ -592,7 +592,7 @@ const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file)
 const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
 const PARENTESCO = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
-/* ---------- §6.2 IMAGENS DAS CATEGORIAS ---------- */
+/* ---------- §6.2 IMAGENS DAS CATEGORIAS — ★ NOVO ---------- */
 const CATEGORIA_ARQUIVO = {
   "OBJETOS":    "objetos.png",
   "ALIMENTOS":  "alimentos.png",
@@ -1306,6 +1306,8 @@ function visual(q){
     box.append(lab);
     enableAudio(q.audioItem);
   }
+  /* ★ ALTERADO — a categoria não fica mais no bloco genérico.
+     Agora tem bloco próprio com <div class="cat-hero-image"> + <img>. */
   else if(q.type === "category"){
     const card = document.createElement("div");
     card.className = "visual-card";
@@ -1739,26 +1741,13 @@ function answers(q){
     return;
   }
 
+  /* ★ ALTERADO — alternativas da categoria ficam SÓ COM TEXTO.
+     O bloco antigo que adicionava <span class="answer-icon"><img ...> foi removido. */
   (q.choices || []).forEach(v => {
     const b = document.createElement("button");
     b.className = "answer";
     b.type = "button";
     b.dataset.value = String(v);
-    if(q.type === "category"){
-      const ic = document.createElement("span");
-      ic.className = "answer-icon";
-      const src = imagemCategoria(v);
-      if(src){
-        const im = document.createElement("img");
-        im.src = src;
-        im.alt = String(v);
-        im.onerror = () => { im.remove(); ic.textContent = emojiCategoria(v); };
-        ic.append(im);
-      } else {
-        ic.textContent = emojiCategoria(v);
-      }
-      b.append(ic);
-    }
     if(q.type === "number" || q.type === "count"){
       const n = numberWord(Number(v));
       b.append(document.createTextNode(n ? n.word : String(v)));

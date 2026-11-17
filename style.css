@@ -339,38 +339,54 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 
 
 /* ============================================================
-   §14 PICTURE-SORT — 2 colunas + card mais alto (não estoura)
+   §14 PICTURE-SORT — duas prateleiras idênticas
+   topo: .sort-grid > .sort-item | baixo: .answers > .answer
    ============================================================ */
-.sort-grid{
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:16px;
+.sort-grid,
+.answers[data-kind="picture-sort"]{
+  display:grid !important;
+  grid-template-columns:repeat(2, 1fr) !important;
+  gap:14px !important;
   width:100%;
-  min-width:0;
-  max-width:420px;
+  max-width:460px;
   margin:0 auto;
-  padding:8px 4px;
-}
-.sort-item{
+  padding:8px;
   min-width:0;
-  padding:12px 8px 10px;
+}
+@media (min-width:520px){
+  .sort-grid,
+  .answers[data-kind="picture-sort"]{grid-template-columns:repeat(3, 1fr) !important;max-width:520px;gap:16px !important}
+}
+
+/* Container único das duas prateleiras */
+.sort-item,
+.answers[data-kind="picture-sort"] .answer{
+  position:relative;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:8px;
+  min-width:0;
+  padding:12px 8px 10px !important;
   border-radius:20px;
   background:rgba(0,0,0,.24);
   border:1px solid rgba(255,255,255,.10);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  gap:8px;
   overflow:visible;
+  box-sizing:border-box;
+  text-align:center;
 }
+
+/* Imagem — preenche 100% da largura do slot, mantém proporção 1:1 */
+.sort-item img,
 .sort-item img.sort-item-img,
-.sort-item > img{
+.answers[data-kind="picture-sort"] .answer img,
+.answers[data-kind="picture-sort"] .answer-img{
   width:100% !important;
   height:auto !important;
-  max-width:100%;
-  max-height:none;
-  aspect-ratio:1/1;
+  max-width:none !important;
+  max-height:none !important;
+  aspect-ratio:1 / 1;
   object-fit:contain;
   padding:3%;
   box-sizing:border-box;
@@ -381,54 +397,35 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   display:block;
   margin:0 auto;
   filter:none;
+  flex-shrink:0;
 }
-.sort-item > span{
+
+/* Legenda sob a imagem — mesma altura nas duas prateleiras */
+.sort-item > span,
+.answers[data-kind="picture-sort"] .answer > span{
   font-size:11px;
   letter-spacing:.10em;
   text-transform:uppercase;
   color:var(--muted);
-  line-height:1;
-}
-@media (min-width:480px){
-  .sort-grid{grid-template-columns:repeat(3, 1fr);max-width:520px;gap:18px}
-  .sort-item img.sort-item-img,
-  .sort-item > img{padding:2%}
-}
-@media (max-width:380px){
-  .sort-grid{gap:10px;padding:6px 0}
-  .sort-item{padding:8px 6px 8px;border-radius:16px}
-  .sort-item img.sort-item-img,
-  .sort-item > img{padding:2%}
+  line-height:1.1;
+  margin:0;
+  padding:0;
+  min-height:14px;
 }
 
+/* Feedback (certo/errado) na prateleira de baixo precisa continuar visível */
+.answers[data-kind="picture-sort"] .answer.correct{
+  background:linear-gradient(135deg,rgba(123,228,149,.28),rgba(123,228,149,.12)) !important;
+  border-color:rgba(123,228,149,.7) !important;
+}
+.answers[data-kind="picture-sort"] .answer.wrong{
+  background:linear-gradient(135deg,rgba(255,122,122,.26),rgba(255,122,122,.10)) !important;
+  border-color:rgba(255,122,122,.7) !important;
+}
 
-/* ============================================================
-   §15 .answer do picture-sort — mais espaço, círculo centralizado
-   ============================================================ */
-.answers[data-kind="picture-sort"]{
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:12px;
-  width:100%;
-}
-.answers[data-kind="picture-sort"] .answer{
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:14px 10px;
-  min-height:auto;
-  text-align:center;
-}
-.answers[data-kind="picture-sort"] .answer span{
-  font-size:11px;
-  color:var(--muted);
-  letter-spacing:.08em;
-}
-@media (min-width:480px){
-  .answers[data-kind="picture-sort"]{grid-template-columns:repeat(3, 1fr);gap:14px}
-}
 @media (max-width:380px){
-  .answers[data-kind="picture-sort"]{gap:10px}
-  .answers[data-kind="picture-sort"] .answer{padding:10px 8px}
+  .sort-grid,
+  .answers[data-kind="picture-sort"]{gap:10px !important;padding:6px}
+  .sort-item,
+  .answers[data-kind="picture-sort"] .answer{padding:8px 6px !important;border-radius:16px}
 }

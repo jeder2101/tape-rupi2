@@ -1276,7 +1276,7 @@ function visual(q){
     q.items.forEach(item => {
       const b2 = document.createElement("div");
       b2.className = "sort-item";
-      b2.append(createImage(item, ""));
+      b2.append(createImage(item, "sort-item-img"));
       const n = document.createElement("span");
       n.textContent = "?";
       b2.append(n);
@@ -1428,7 +1428,7 @@ function answers(q){
       b.style.justifyContent = "center";
       b.style.gap = "6px";
       b.style.textAlign = "center";
-      b.append(createImage(item, ""));
+      b.append(createImage(item, "answer-img"));
       const lab = document.createElement("span");
       lab.style.fontSize = "12px";
       lab.style.color = "var(--muted)";

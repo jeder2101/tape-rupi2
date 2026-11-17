@@ -8,6 +8,7 @@
    §4   Caça-palavras — motor adaptativo
    §5   Estado global, persistência e saudação
    §6   Utilidades
+   §6.2 Imagens das categorias
    §7   Áudio
    §8   Geradores de questão
    §9   Montagem da fase
@@ -591,6 +592,36 @@ const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file)
 const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
 const PARENTESCO = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
+/* ---------- §6.2 IMAGENS DAS CATEGORIAS ---------- */
+const CATEGORIA_ARQUIVO = {
+  "OBJETOS":    "objetos.png",
+  "ALIMENTOS":  "alimentos.png",
+  "ANIMAIS":    "animais.png",
+  "CORES":      "cores.png",
+  "CORPO":      "corpo.png",
+  "PARENTESCO": "parentesco.png",
+  "NATUREZA":   "natureza.png",
+  "GEOGRAFIA":  "geografia.png",
+  "SAUDAÇÕES":  "saudacoes.png",
+  "ADVÉRBIOS":  "adverbios.png"
+};
+const CATEGORIA_EMOJI = {
+  "OBJETOS":"🏺","ALIMENTOS":"🍌","ANIMAIS":"🐾","CORES":"🎨",
+  "CORPO":"👁️","PARENTESCO":"👪","NATUREZA":"🌿","GEOGRAFIA":"🗺️",
+  "SAUDAÇÕES":"👋","ADVÉRBIOS":"💬"
+};
+const CATEGORIA_FALLBACK = "📂";
+
+function imagemCategoria(cat){
+  const chave = String(cat || "").toUpperCase();
+  const arq = CATEGORIA_ARQUIVO[chave];
+  return arq ? `${ASSET.images}categorias/${arq}` : null;
+}
+function emojiCategoria(cat){
+  const chave = String(cat || "").toUpperCase();
+  return CATEGORIA_EMOJI[chave] || CATEGORIA_FALLBACK;
+}
+
 /* ---------- §7 ÁUDIO ---------- */
 let audioCtx = null;
 function beep(freq, dur, type="sine", vol=.18){
@@ -792,7 +823,15 @@ function qCategory(){
   const cat = shuffle(cats)[0];
   const item = shuffle(VOCABULARY.filter(v => v.category === cat && v.file))[0];
   if(!item) return null;
-  return {type:"category",kind:"CATEGORIA",prompt:`A palavra «${item.word}» pertence a qual categoria?`,hint:"Escolha entre as categorias.",target:cat,choices:shuffle([cat,...shuffle(cats.filter(c=>c!==cat)).slice(0,3)])};
+  return {
+    type:"category", kind:"CATEGORIA",
+    prompt:`A palavra «${item.word}» pertence a qual categoria?`,
+    hint:"Escolha entre as categorias.",
+    target:cat,
+    targetWord:item.word,
+    imageItem:item,
+    choices:shuffle([cat,...shuffle(cats.filter(c=>c!==cat)).slice(0,3)])
+  };
 }
 function qOdd(){
   const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.filter(v=>v.category===c).length >= 4);
@@ -1267,6 +1306,38 @@ function visual(q){
     box.append(lab);
     enableAudio(q.audioItem);
   }
+  else if(q.type === "category"){
+    const card = document.createElement("div");
+    card.className = "visual-card";
+    const hero = document.createElement("div");
+    hero.className = "cat-hero-image";
+    const src = imagemCategoria(q.target);
+    if(src){
+      const img = document.createElement("img");
+      img.className = "cat-hero-img";
+      img.alt = String(q.target);
+      img.src = src;
+      img.onerror = () => {
+        img.remove();
+        const fb = document.createElement("span");
+        fb.className = "cat-hero-fallback";
+        fb.textContent = emojiCategoria(q.target);
+        hero.append(fb);
+      };
+      hero.append(img);
+    } else {
+      const fb = document.createElement("span");
+      fb.className = "cat-hero-fallback";
+      fb.textContent = emojiCategoria(q.target);
+      hero.append(fb);
+    }
+    const lab = document.createElement("span");
+    lab.className = "visual-label";
+    lab.textContent = q.kind;
+    card.append(hero, lab);
+    box.append(card);
+    if(q.audioItem) enableAudio(q.audioItem);
+  }
   else if(q.type === "order"){
     const target = document.createElement("div");
     target.className = "tokens label-wrap target";
@@ -1292,7 +1363,7 @@ function visual(q){
     trad.style.display = "none";
     box.append(trad);
   }
-  else if(["meaning","reverse","category","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
+  else if(["meaning","reverse","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
     const card = document.createElement("div");
     card.className = "visual-card";
     const w = document.createElement("span");
@@ -1302,7 +1373,6 @@ function visual(q){
     else if(q.type === "adv") w.textContent = q.targetWord || "";
     else if(q.type === "greeting" || q.type === "cardinal" || q.type === "month" || q.type === "day") w.textContent = q.targetWord || "";
     else if(q.type === "odd") w.textContent = "🤔";
-    else if(q.type === "category") w.textContent = "📂";
     const lab = document.createElement("span");
     lab.className = "visual-label";
     lab.textContent = q.kind;
@@ -1674,11 +1744,26 @@ function answers(q){
     b.className = "answer";
     b.type = "button";
     b.dataset.value = String(v);
+    if(q.type === "category"){
+      const ic = document.createElement("span");
+      ic.className = "answer-icon";
+      const src = imagemCategoria(v);
+      if(src){
+        const im = document.createElement("img");
+        im.src = src;
+        im.alt = String(v);
+        im.onerror = () => { im.remove(); ic.textContent = emojiCategoria(v); };
+        ic.append(im);
+      } else {
+        ic.textContent = emojiCategoria(v);
+      }
+      b.append(ic);
+    }
     if(q.type === "number" || q.type === "count"){
       const n = numberWord(Number(v));
-      b.textContent = n ? n.word : String(v);
+      b.append(document.createTextNode(n ? n.word : String(v)));
     } else {
-      b.textContent = String(v);
+      b.append(document.createTextNode(String(v)));
     }
     b.addEventListener("click", () => check(v, b));
     box.append(b);

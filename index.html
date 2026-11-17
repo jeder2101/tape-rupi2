@@ -3,8 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Tape-rupi </title>
+<title>Tape-rupi — Jornada Tupi</title>
 <link rel="stylesheet" href="style.css" />
+<link rel="manifest" href="./manifest.json" />
+<meta name="theme-color" content="#122a20" />
+<link rel="apple-touch-icon" href="./assets/icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
 </head>
 <body>
 <div class="app">
@@ -19,7 +24,6 @@
 
   <section class="screen active" id="home">
     <h1 class="hero-title-brand">TAPE–RUPI</h1>
-  
 
     <div class="hero-image-wrap" id="hero-image-wrap">
       <img
@@ -123,5 +127,15 @@
 </div>
 
 <script src="game.js" defer></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("./service-worker.js")
+        .then((reg) => console.log("[sw] registrado:", reg.scope))
+        .catch((err) => console.warn("[sw] falhou:", err));
+    });
+  }
+</script>
 </body>
 </html>

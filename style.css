@@ -325,7 +325,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .cat-slot-fallback{font-size:44px}
 }
 
-/* --- §13 UNIFORMIZAÇÃO FINAL — quadro e alternativas com o mesmo círculo --- */
+/* --- §13 PICTURE-SORT — imagem preenchendo o círculo sem estourar --- */
 .sort-item img.sort-item-img,
 .answer-img{
   width:min(30vw,130px);
@@ -333,8 +333,8 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   aspect-ratio:1/1;
   max-width:none;
   max-height:none;
-  object-fit:cover;
-  padding:0;
+  object-fit:contain;
+  padding:4%;
   box-sizing:border-box;
   border-radius:50%;
   border:2px solid rgba(243,201,105,.55);
@@ -342,6 +342,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   box-shadow:0 8px 20px rgba(0,0,0,.45);
   display:block;
   margin:0 auto;
+  filter:none;
 }
 @media (min-width:480px){
   .sort-item img.sort-item-img,

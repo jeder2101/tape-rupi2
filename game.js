@@ -8,7 +8,7 @@
    §4   Caça-palavras — motor adaptativo
    §5   Estado global, persistência e saudação
    §6   Utilidades
-   §6.2 Imagens das categorias          ★ NOVO
+   §6.2 Imagens das categorias
    §7   Áudio
    §8   Geradores de questão
    §9   Montagem da fase
@@ -592,7 +592,7 @@ const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file)
 const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
 const PARENTESCO = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
-/* ---------- §6.2 IMAGENS DAS CATEGORIAS — ★ NOVO ---------- */
+/* ---------- §6.2 IMAGENS DAS CATEGORIAS ---------- */
 const CATEGORIA_ARQUIVO = {
   "OBJETOS":    "objetos.png",
   "ALIMENTOS":  "alimentos.png",
@@ -823,6 +823,7 @@ function qCategory(){
   const cat = shuffle(cats)[0];
   const item = shuffle(VOCABULARY.filter(v => v.category === cat && v.file))[0];
   if(!item) return null;
+  const choices = shuffle([cat, ...shuffle(cats.filter(c => c !== cat)).slice(0, 3)]);
   return {
     type:"category", kind:"CATEGORIA",
     prompt:`A palavra «${item.word}» pertence a qual categoria?`,
@@ -830,7 +831,8 @@ function qCategory(){
     target:cat,
     targetWord:item.word,
     imageItem:item,
-    choices:shuffle([cat,...shuffle(cats.filter(c=>c!==cat)).slice(0,3)])
+    choices,
+    categorias: choices
   };
 }
 function qOdd(){
@@ -1306,37 +1308,38 @@ function visual(q){
     box.append(lab);
     enableAudio(q.audioItem);
   }
-  /* ★ ALTERADO — a categoria não fica mais no bloco genérico.
-     Agora tem bloco próprio com <div class="cat-hero-image"> + <img>. */
   else if(q.type === "category"){
     const card = document.createElement("div");
     card.className = "visual-card";
-    const hero = document.createElement("div");
-    hero.className = "cat-hero-image";
-    const src = imagemCategoria(q.target);
-    if(src){
-      const img = document.createElement("img");
-      img.className = "cat-hero-img";
-      img.alt = String(q.target);
-      img.src = src;
-      img.onerror = () => {
-        img.remove();
+    const grid = document.createElement("div");
+    grid.className = "cat-grid";
+    const lista = q.categorias || q.choices || [];
+    lista.forEach(cat => {
+      const slot = document.createElement("div");
+      slot.className = "cat-slot";
+      const src = imagemCategoria(cat);
+      if(src){
+        const img = document.createElement("img");
+        img.className = "cat-slot-img";
+        img.alt = String(cat);
+        img.src = src;
+        img.onerror = () => {
+          img.remove();
+          const fb = document.createElement("span");
+          fb.className = "cat-slot-fallback";
+          fb.textContent = emojiCategoria(cat);
+          slot.append(fb);
+        };
+        slot.append(img);
+      } else {
         const fb = document.createElement("span");
-        fb.className = "cat-hero-fallback";
-        fb.textContent = emojiCategoria(q.target);
-        hero.append(fb);
-      };
-      hero.append(img);
-    } else {
-      const fb = document.createElement("span");
-      fb.className = "cat-hero-fallback";
-      fb.textContent = emojiCategoria(q.target);
-      hero.append(fb);
-    }
-    const lab = document.createElement("span");
-    lab.className = "visual-label";
-    lab.textContent = q.kind;
-    card.append(hero, lab);
+        fb.className = "cat-slot-fallback";
+        fb.textContent = emojiCategoria(cat);
+        slot.append(fb);
+      }
+      grid.append(slot);
+    });
+    card.append(grid);
     box.append(card);
     if(q.audioItem) enableAudio(q.audioItem);
   }
@@ -1741,8 +1744,6 @@ function answers(q){
     return;
   }
 
-  /* ★ ALTERADO — alternativas da categoria ficam SÓ COM TEXTO.
-     O bloco antigo que adicionava <span class="answer-icon"><img ...> foi removido. */
   (q.choices || []).forEach(v => {
     const b = document.createElement("button");
     b.className = "answer";

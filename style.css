@@ -310,3 +310,21 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .cat-slot{padding:10%}
   .cat-slot-fallback{font-size:44px}
 }
+/* --- §13 UNIFORMIZAÇÃO PICTURE-SORT --- */
+.sort-item img.sort-item-img{
+  width:100%;
+  height:auto;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  padding:8%;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid rgba(243,201,105,.45);
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
+}
+.answer-img{
+  object-fit:contain;
+  padding:8%;
+  box-sizing:border-box;
+}
+

@@ -249,15 +249,16 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
    §13 PADRÃO ÚNICO DE IMAGEM CIRCULAR — todas as imagens
    ============================================================ */
 
-/* 13.1 Base: toda img do jogo vira círculo, contida, centralizada */
+/* 13.1 Base: toda img do jogo é círculo, contida, centralizada */
 .visual-card img,
 .sort-item img,
 .sort-item img.sort-item-img,
 .answer img,
 .answer-img,
-.count-animal-image{
-  width:min(34vw,150px);
-  height:min(34vw,150px);
+.count-animal-image,
+.influencer-img{
+  width:clamp(120px, 36vw, 180px);
+  height:clamp(120px, 36vw, 180px);
   max-width:none;
   max-height:none;
   aspect-ratio:1/1;
@@ -276,10 +277,10 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   animation:pop .35s cubic-bezier(.2,1.4,.4,1);
 }
 
-/* 13.2 Imagem principal (word / audio-large) — círculo grande */
+/* 13.2 Imagem principal (word / audio-large) */
 .visual-image{
-  width:min(82vw, 340px);
-  height:min(82vw, 340px);
+  width:clamp(240px, 80vw, 360px);
+  height:clamp(240px, 80vw, 360px);
   max-width:none;
   max-height:none;
   aspect-ratio:1/1;
@@ -288,7 +289,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   box-sizing:border-box;
   border-radius:50%;
   border:3px solid rgba(243,201,105,.45);
-  background:radial-gradient(circle at 50% 40%,#ffffff,#e6e6eb);
+  background:radial-gradient(circle at 50% 40%,#fff,#e6e6eb);
   box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 6px rgba(255,255,255,.06);
   display:block;
   margin:0 auto;
@@ -296,7 +297,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   animation:pop .4s cubic-bezier(.2,1.4,.4,1);
 }
 
-/* 13.3 Contador — o círculo é o .count-bubble, a img apenas preenche */
+/* 13.3 Contador — .count-bubble é o círculo, a img preenche */
 .count-bubble{
   width:clamp(96px, 24vw, 118px);
   height:clamp(96px, 24vw, 118px);
@@ -319,7 +320,8 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .sort-item img.sort-item-img,
   .answer img,
   .answer-img,
-  .count-animal-image{width:160px;height:160px}
+  .count-animal-image,
+  .influencer-img{width:180px;height:180px}
   .visual-image{width:360px;height:360px}
   .count-bubble{width:124px;height:124px;padding:16px}
 }
@@ -329,28 +331,45 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .sort-item img.sort-item-img,
   .answer img,
   .answer-img,
-  .count-animal-image{width:min(30vw,124px);height:min(30vw,124px)}
-  .visual-image{width:min(80vw,260px);height:min(80vw,260px)}
+  .count-animal-image,
+  .influencer-img{width:clamp(104px, 34vw, 140px);height:clamp(104px, 34vw, 140px)}
+  .visual-image{width:min(78vw, 280px);height:min(78vw, 280px)}
   .count-bubble{width:88px;height:88px;padding:10px}
 }
 
 
 /* ============================================================
-   §14 PICTURE-SORT — contenção total do slot (não estoura o card)
+   §14 PICTURE-SORT — 2 colunas + card mais alto (não estoura)
    ============================================================ */
-.sort-grid{min-width:0}
+.sort-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:16px;
+  width:100%;
+  min-width:0;
+  max-width:420px;
+  margin:0 auto;
+  padding:8px 4px;
+}
 .sort-item{
   min-width:0;
-  overflow:hidden;
-  padding:8px;
+  padding:12px 8px 10px;
+  border-radius:20px;
+  background:rgba(0,0,0,.24);
+  border:1px solid rgba(255,255,255,.10);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
   justify-content:flex-start;
+  gap:8px;
+  overflow:visible;
 }
 .sort-item img.sort-item-img,
 .sort-item > img{
   width:100% !important;
   height:auto !important;
   max-width:100%;
-  max-height:100%;
+  max-height:none;
   aspect-ratio:1/1;
   object-fit:contain;
   padding:3%;
@@ -358,20 +377,58 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   border-radius:50%;
   border:2px solid rgba(243,201,105,.55);
   background:#fff;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
   display:block;
   margin:0 auto;
   filter:none;
 }
 .sort-item > span{
-  font-size:10px;
+  font-size:11px;
   letter-spacing:.10em;
   text-transform:uppercase;
   color:var(--muted);
   line-height:1;
 }
-@media (max-width:380px){
-  .sort-item{padding:6px}
+@media (min-width:480px){
+  .sort-grid{grid-template-columns:repeat(3, 1fr);max-width:520px;gap:18px}
   .sort-item img.sort-item-img,
   .sort-item > img{padding:2%}
+}
+@media (max-width:380px){
+  .sort-grid{gap:10px;padding:6px 0}
+  .sort-item{padding:8px 6px 8px;border-radius:16px}
+  .sort-item img.sort-item-img,
+  .sort-item > img{padding:2%}
+}
+
+
+/* ============================================================
+   §15 .answer do picture-sort — mais espaço, círculo centralizado
+   ============================================================ */
+.answers[data-kind="picture-sort"]{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:12px;
+  width:100%;
+}
+.answers[data-kind="picture-sort"] .answer{
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:14px 10px;
+  min-height:auto;
+  text-align:center;
+}
+.answers[data-kind="picture-sort"] .answer span{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.08em;
+}
+@media (min-width:480px){
+  .answers[data-kind="picture-sort"]{grid-template-columns:repeat(3, 1fr);gap:14px}
+}
+@media (max-width:380px){
+  .answers[data-kind="picture-sort"]{gap:10px}
+  .answers[data-kind="picture-sort"] .answer{padding:10px 8px}
 }

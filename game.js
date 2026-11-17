@@ -1770,7 +1770,7 @@ function verificar(q, ok, anchor){
     state.score += pontos;
     state.acertos += 1;
     if(anchor) anchor.classList.add("target");
-    $("feedback").textContent = "AGUYJEVETE! Você acertou.";
+    $("feedback").textContent = "PORÃETÉ! MUITO BOM!.";
     $("feedback").className = "feedback";
     sfx.acerto();
     if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);
@@ -1797,7 +1797,7 @@ function check(value, button){
     state.score += pontos;
     state.acertos += 1;
     button.classList.add("correct");
-    $("feedback").textContent = "AGUYJEVETE! Você acertou.";
+    $("feedback").textContent = "PORÃETÉ! MUITO BOM!.";
     $("feedback").className = "feedback";
     sfx.acerto();
     if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);

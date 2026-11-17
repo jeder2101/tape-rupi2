@@ -113,8 +113,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .gap-sentence .blank{color:var(--accent);font-weight:900;letter-spacing:.06em;padding:0 6px;border-bottom:2px solid var(--accent)}
 .interrog-sentence{font-size:clamp(15px,3.8vw,18px);font-weight:700;line-height:1.4;text-align:center;color:#f4f6f0;padding:16px;border-radius:16px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%}
 .sort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
-.sort-item{padding:10px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px}
-.sort-item img{width:100%;height:84px;object-fit:contain}
+.sort-item{padding:10px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.10em;text-transform:uppercase}
 
 /* --- §5.1 IMAGENS DE CATEGORIA — círculos padronizados --- */
 .cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:360px;margin:0 auto}
@@ -122,11 +121,21 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .cat-slot:hover{transform:scale(1.05);box-shadow:0 12px 30px rgba(0,0,0,.55),0 0 0 3px rgba(243,201,105,.35)}
 .cat-slot-img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 16px rgba(0,0,0,.55))}
 .cat-slot-fallback{font-size:58px;line-height:1;display:grid;place-items:center;filter:drop-shadow(0 6px 14px rgba(243,201,105,.45))}
-.cat-hero-image{width:100%;max-width:220px;aspect-ratio:1 / 1;margin:4px auto 6px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.22),transparent 65%);border:1px solid rgba(243,201,105,.35);overflow:hidden;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
-.cat-hero-img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,.55))}
-.cat-hero-fallback{font-size:72px;line-height:1;filter:drop-shadow(0 10px 22px rgba(243,201,105,.45))}
-.answer-icon{display:inline-grid;place-items:center;width:34px;height:34px;margin-right:10px;border-radius:50%;background:rgba(243,201,105,.12);color:var(--accent);font-size:18px;flex-shrink:0;overflow:hidden}
-.answer-icon img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+
+/* --- §5.2 IMAGENS DO picture-sort no quadro — círculos preenchidos --- */
+.sort-item img{width:100%;height:84px;object-fit:cover;border-radius:50%;background:#fff;display:block;padding:0;border:2px solid rgba(243,201,105,.45);box-shadow:0 8px 20px rgba(0,0,0,.45)}
+.sort-item img.sort-item-img{
+  width:100%;
+  height:auto;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  padding:0;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid rgba(243,201,105,.55);
+  box-shadow:0 8px 20px rgba(0,0,0,.45);
+  display:block;
+}
 
 /* --- §5.3 IMAGEM EM CÍRCULO GRANDE (word / audio / visual) --- */
 .visual-image{
@@ -159,23 +168,26 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
 
-/* --- §6.1 IMAGENS DAS ALTERNATIVAS EM CÍRCULO --- */
+/* --- §6.1 IMAGENS DAS ALTERNATIVAS EM CÍRCULO (picture-sort) --- */
 .answer-img{
-  width:min(28vw,120px);
-  height:min(28vw,120px);
+  width:min(34vw,150px);
+  height:min(34vw,150px);
   max-width:none;
   max-height:none;
   object-fit:cover;
+  padding:0;
+  box-sizing:border-box;
   border-radius:50%;
   border:2px solid rgba(243,201,105,.55);
   background:#fff;
-  box-shadow:0 8px 20px rgba(0,0,0,.45),inset 0 0 0 4px rgba(255,255,255,.06);
-  filter:drop-shadow(0 8px 16px rgba(0,0,0,.45));
+  box-shadow:0 8px 20px rgba(0,0,0,.45);
   animation:pop .35s cubic-bezier(.2,1.4,.4,1);
   flex-shrink:0;
+  display:block;
+  margin:0 auto;
 }
-@media (min-width:480px){ .answer-img{width:130px;height:130px} }
-@media (max-width:380px){ .answer-img{width:min(26vw,100px);height:min(26vw,100px)} }
+@media (min-width:480px){ .answer-img{width:160px;height:160px} }
+@media (max-width:380px){ .answer-img{width:min(30vw,120px);height:min(30vw,120px)} }
 
 /* --- §7 ORDENAR FRASE --- */
 .tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;padding:12px;border-radius:18px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%;transition:border-color .2s,background .2s}
@@ -277,6 +289,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .visual-image{width:340px;height:340px;max-width:340px;max-height:340px}
   .count-bubble{width:90px;height:90px;padding:12px}
   .sort-item img{height:96px}
+  .sort-item img.sort-item-img{height:auto}
   .finish-score-big{font-size:76px}
   .search-cell{font-size:14px}
   .match-item{min-height:62px;font-size:14.5px}
@@ -288,6 +301,8 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .number-visual{font-size:68px}
   .fase-grid{grid-template-columns:repeat(2,1fr)}
   .sort-grid{grid-template-columns:repeat(2,1fr)}
+  .sort-item img{height:auto}
+  .sort-item img.sort-item-img{height:auto}
   .visual-note{font-size:12px;padding:12px 16px}
   .count-bubble{width:68px;height:68px;padding:8px}
   .word-highlight{font-size:24px;padding:16px 20px}
@@ -310,21 +325,3 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .cat-slot{padding:10%}
   .cat-slot-fallback{font-size:44px}
 }
-/* --- §13 UNIFORMIZAÇÃO PICTURE-SORT --- */
-.sort-item img.sort-item-img{
-  width:100%;
-  height:auto;
-  aspect-ratio:1/1;
-  object-fit:contain;
-  padding:8%;
-  border-radius:50%;
-  background:#fff;
-  border:2px solid rgba(243,201,105,.45);
-  box-shadow:0 6px 16px rgba(0,0,0,.4);
-}
-.answer-img{
-  object-fit:contain;
-  padding:8%;
-  box-sizing:border-box;
-}
-

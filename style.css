@@ -58,7 +58,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 /* --- §4.1 CARD DE CLIMA --- */
 .weather-card{flex:1;min-width:0;padding:10px 12px;border-radius:18px;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid var(--stroke);box-shadow:0 8px 22px rgba(0,0,0,.30);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--text);display:flex;flex-direction:column;gap:2px;transition:opacity .3s ease}
 .weather-card.is-loading{opacity:.55}
-.weather-card.is-fallback{padding-bottom:6px}
 .weather-card.is-fallback #weather-updated::before{content:"~ ";color:var(--accent)}
 .weather-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);font-weight:800}
 .weather-city{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -72,7 +71,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .weather-extra b{color:var(--text);font-weight:800}
 .weather-extra .sep{opacity:.5}
 .weather-select{all:unset;cursor:pointer;font-size:9.5px;letter-spacing:.10em;text-transform:uppercase;font-weight:800;color:var(--accent);padding:2px 6px;border-radius:6px;border:1px solid rgba(243,201,105,.35);background:rgba(243,201,105,.10);max-width:52%;flex:0 0 auto}
-.weather-select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .weather-select option{background:#122a20;color:#f4f6f0;text-transform:none;font-size:12px}
 .weather-card--hero{width:100%;max-width:340px;margin:0 auto 14px;flex:initial;align-items:center;text-align:center;padding:14px 16px;border-radius:20px;background:linear-gradient(160deg,rgba(243,201,105,.14),rgba(255,255,255,.03));border-color:rgba(243,201,105,.35)}
 .weather-card--hero .weather-top{justify-content:center;flex-wrap:wrap;gap:6px 10px}
@@ -93,8 +91,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 #hint{font-size:12.5px;color:var(--muted);line-height:1.5}
 .visual{display:flex;flex-direction:column;align-items:center;gap:10px;justify-content:center;padding:8px 0 4px;width:100%}
 .visual-card{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px;border-radius:22px;width:100%;background:radial-gradient(circle at 50% 30%,rgba(243,201,105,.16),transparent 70%);border:1px solid rgba(255,255,255,.08)}
-.visual-image{width:100%;max-width:300px;height:200px;object-fit:contain;filter:drop-shadow(0 16px 30px rgba(0,0,0,.6));animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
-@keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
 .visual-label{font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:var(--muted)}
 .visual-note{font-size:13px;color:var(--accent);padding:14px 20px;border-radius:16px;background:rgba(0,0,0,.32);border:1px dashed rgba(243,201,105,.4);text-align:center;line-height:1.4;font-weight:700;max-width:340px}
 .word-highlight{font-size:clamp(26px,7vw,38px);font-weight:900;letter-spacing:.06em;color:var(--accent);padding:22px 28px;border-radius:22px;background:linear-gradient(160deg,rgba(243,201,105,.18),rgba(243,201,105,.06));border:1px solid rgba(243,201,105,.45);text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 10px 24px rgba(0,0,0,.4);animation:pop .4s cubic-bezier(.2,1.4,.4,1);width:100%;max-width:340px}
@@ -103,7 +99,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .count-animal{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;outline:none;transition:transform .18s ease}
 .count-animal:active{transform:scale(.94)}
 .count-bubble{width:82px;height:82px;border-radius:50%;background:#ffffff;display:flex;align-items:center;justify-content:center;padding:10px;border:3px solid rgba(255,255,255,.35);box-shadow:0 10px 26px rgba(0,0,0,.5);overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .2s;animation:pop .3s ease}
-.count-animal-image{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;display:block;filter:contrast(1.05)}
 .count-animal.selected .count-bubble{border-color:var(--accent);box-shadow:0 0 0 4px rgba(243,201,105,.45),0 12px 28px rgba(243,201,105,.55);transform:scale(1.06)}
 .count-check{position:absolute;top:-4px;right:-2px;width:24px;height:24px;border-radius:50%;display:none;place-items:center;font-size:13px;font-weight:900;color:#0b1410;background:linear-gradient(180deg,#f8e19a,var(--accent));box-shadow:0 4px 12px rgba(0,0,0,.6);border:2px solid #0b1410}
 .count-animal.selected .count-check{display:grid}
@@ -115,45 +110,15 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .sort-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
 .sort-item{padding:10px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.10em;text-transform:uppercase}
 
-/* --- §5.1 IMAGENS DE CATEGORIA — círculos padronizados (topo) --- */
+/* --- §5.1 IMAGENS DE CATEGORIA --- */
 .cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:360px;margin:0 auto}
-.cat-slot{position:relative;width:100%;aspect-ratio:1 / 1;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.26),rgba(30,50,38,.55));border:2px solid rgba(243,201,105,.42);box-shadow:0 10px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.18);padding:12%;animation:pop .35s cubic-bezier(.2,1.4,.4,1);transition:transform .2s ease,box-shadow .2s ease}
+.cat-slot{position:relative;width:100%;aspect-ratio:1 / 1;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.26),rgba(30,50,38,.55));border:2px solid rgba(243,201,105,.42);box-shadow:0 10px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.18);padding:10%;animation:pop .35s cubic-bezier(.2,1.4,.4,1);transition:transform .2s ease,box-shadow .2s ease}
 .cat-slot:hover{transform:scale(1.05);box-shadow:0 12px 30px rgba(0,0,0,.55),0 0 0 3px rgba(243,201,105,.35)}
 .cat-slot-img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 16px rgba(0,0,0,.55))}
 .cat-slot-fallback{font-size:58px;line-height:1;display:grid;place-items:center;filter:drop-shadow(0 6px 14px rgba(243,201,105,.45))}
-.cat-hero-image{width:100%;max-width:220px;aspect-ratio:1 / 1;margin:4px auto 6px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.22),transparent 65%);border:1px solid rgba(243,201,105,.35);overflow:hidden;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+.cat-hero-image{width:100%;max-width:220px;aspect-ratio:1 / 1;margin:4px auto 6px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:radial-gradient(circle at 50% 40%,rgba(243,201,105,.22),transparent 65%);border:1px solid rgba(243,201,105,.35);overflow:hidden;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
 .cat-hero-img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(0,0,0,.55))}
 .cat-hero-fallback{font-size:72px;line-height:1;filter:drop-shadow(0 10px 22px rgba(243,201,105,.45))}
-
-/* --- §5.2 IMAGENS DO picture-sort NO QUADRO (topo) — círculo preenchido --- */
-.sort-item img.sort-item-img{
-  width:100%;
-  height:auto;
-  aspect-ratio:1/1;
-  object-fit:cover;
-  padding:0;
-  border-radius:50%;
-  background:#fff;
-  border:2px solid rgba(243,201,105,.55);
-  box-shadow:0 8px 20px rgba(0,0,0,.45);
-  display:block;
-}
-
-/* --- §5.3 IMAGEM EM CÍRCULO GRANDE (word / audio / visual) --- */
-.visual-image{
-  width:min(78vw, 320px);
-  height:min(78vw, 320px);
-  max-width:none;
-  max-height:none;
-  object-fit:cover;
-  border-radius:50%;
-  border:3px solid rgba(243,201,105,.45);
-  box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 6px rgba(255,255,255,.06);
-  background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.95),rgba(230,230,235,.85));
-  padding:0;
-  filter:drop-shadow(0 16px 30px rgba(0,0,0,.55));
-  animation:pop .4s cubic-bezier(.2,1.4,.4,1);
-}
 
 /* --- §6 ALTERNATIVAS E FEEDBACK --- */
 .answers{display:flex;flex-direction:column;gap:10px;width:100%;margin:0;padding:0}
@@ -169,27 +134,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .next-btn:not(:disabled):active{transform:scale(.985)}
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
-
-/* --- §6.1 IMAGENS DAS ALTERNATIVAS (picture-sort, base) — mesmas dos círculos do topo --- */
-.answer-img{
-  width:min(30vw,130px);
-  height:min(30vw,130px);
-  max-width:none;
-  max-height:none;
-  object-fit:cover;
-  padding:0;
-  box-sizing:border-box;
-  border-radius:50%;
-  border:2px solid rgba(243,201,105,.55);
-  background:#fff;
-  box-shadow:0 8px 20px rgba(0,0,0,.45);
-  animation:pop .35s cubic-bezier(.2,1.4,.4,1);
-  flex-shrink:0;
-  display:block;
-  margin:0 auto;
-}
-@media (min-width:480px){ .answer-img{width:140px;height:140px} }
-@media (max-width:380px){ .answer-img{width:min(28vw,108px);height:min(28vw,108px)} }
 
 /* --- §7 ORDENAR FRASE --- */
 .tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;padding:12px;border-radius:18px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%;transition:border-color .2s,background .2s}
@@ -244,7 +188,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 
 /* --- §10 CAÇA-PALAVRAS --- */
 .search-grid{display:grid;gap:3px;padding:8px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--stroke);width:100%}
-.search-cell{aspect-ratio:1;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:rgba(255,255,255,.03);border-radius:4px;cursor:pointer;user-select:none;transition:background .15s,color .15s;font-family:var(--font)}
+.search-cell{aspect-ratio:1;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--muted);background:rgba(255,255,255,.03);border-radius:4px;cursor:pointer;user-select:none;transition:background .15s,color .15s}
 .search-cell:hover{background:rgba(243,201,105,.10)}
 .search-cell.sel{background:rgba(243,201,105,.32);color:#fff}
 .search-cell.found{background:rgba(123,228,149,.28);color:#d8f5df}
@@ -256,7 +200,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .finish-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding-top:10px;animation:fade .4s ease}
 .finish-bubble{position:relative;width:100%;padding:28px 22px 34px;border-radius:32px;background:linear-gradient(165deg,rgba(243,201,105,.22),rgba(255,255,255,.05) 60%,rgba(30,50,38,.85));border:1px solid rgba(243,201,105,.55);box-shadow:0 22px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);text-align:center;animation:bubbleIn .45s cubic-bezier(.2,1.3,.4,1)}
 @keyframes bubbleIn{from{opacity:0;transform:scale(.88) translateY(14px)}to{opacity:1;transform:none}}
-.finish-bubble::after{content:"";position:absolute;bottom:-14px;left:50%;transform:translateX(-50%) rotate(45deg);width:26px;height:26px;background:linear-gradient(135deg,rgba(30,50,38,.95),rgba(30,50,38,.85));border-right:1px solid rgba(243,201,105,.5);border-bottom:1px solid rgba(243,201,105,.5);border-radius:0 0 6px 0;box-shadow:6px 6px 14px rgba(0,0,0,.4)}
 .finish-medal{font-size:66px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 8px 20px rgba(243,201,105,.55));animation:medalIn .55s cubic-bezier(.2,1.6,.4,1)}
 @keyframes medalIn{0%{transform:scale(.3) rotate(-18deg);opacity:0}70%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}
 .finish-title{font-size:22px;margin:6px 0 4px;color:var(--accent);letter-spacing:.02em}
@@ -280,29 +223,11 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 #boot-error{display:none;padding:14px;border-radius:14px;background:rgba(255,122,122,.12);border:1px solid rgba(255,122,122,.5);color:#ffb8b8;font-size:12px;font-family:monospace;white-space:pre-wrap;line-height:1.4}
 
 /* --- §12 RESPONSIVOS --- */
-@media (max-width:420px){
-  .cw-grid{gap:4px;max-width:100%}
-  .cat-grid{max-width:320px;gap:12px}
-  .cat-slot{padding:11%}
-  .visual-image{width:min(80vw,280px);height:min(80vw,280px)}
-}
-@media (min-width:480px){
-  .hero-image-wrap{aspect-ratio:16/9}
-  .visual-image{width:340px;height:340px;max-width:340px;max-height:340px}
-  .count-bubble{width:90px;height:90px;padding:12px}
-  .sort-item img.sort-item-img{height:auto}
-  .finish-score-big{font-size:76px}
-  .search-cell{font-size:14px}
-  .match-item{min-height:62px;font-size:14.5px}
-  .cat-grid{max-width:380px;gap:16px}
-  .cat-slot-fallback{font-size:68px}
-}
+@media (max-width:420px){.cw-grid{gap:4px;max-width:100%}}
 @media (max-width:380px){
-  .visual-image{width:min(82vw,240px);height:min(82vw,240px)}
   .number-visual{font-size:68px}
   .fase-grid{grid-template-columns:repeat(2,1fr)}
   .sort-grid{grid-template-columns:repeat(2,1fr)}
-  .sort-item img.sort-item-img{height:auto}
   .visual-note{font-size:12px;padding:12px 16px}
   .count-bubble{width:68px;height:68px;padding:8px}
   .word-highlight{font-size:24px;padding:16px 20px}
@@ -318,22 +243,28 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .weather-icon{font-size:18px}
   .weather-desc{font-size:10.5px}
   .weather-extra{font-size:10px}
-  .cat-hero-image{max-width:170px}
-  .cat-hero-fallback{font-size:56px}
-  .cat-grid{max-width:280px;gap:10px}
-  .cat-slot{padding:10%}
-  .cat-slot-fallback{font-size:44px}
 }
 
-/* --- §13 PICTURE-SORT — imagem preenchendo o círculo sem estourar --- */
+/* ============================================================
+   §13 PADRÃO ÚNICO DE IMAGEM CIRCULAR — vale para TODAS as imagens
+   Regras específicas de cada componente; as de baixo vencem.
+   ============================================================ */
+
+/* 13.1 Base: toda img dentro do jogo é circular, centralizada, contida */
+.visual-card img,
+.sort-item img,
 .sort-item img.sort-item-img,
-.answer-img{
+.answer img,
+.answer-img,
+.count-animal-image,
+.influencer-img{
   width:min(30vw,130px);
   height:min(30vw,130px);
-  aspect-ratio:1/1;
   max-width:none;
   max-height:none;
+  aspect-ratio:1/1;
   object-fit:contain;
+  object-position:center;
   padding:4%;
   box-sizing:border-box;
   border-radius:50%;
@@ -343,12 +274,62 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   display:block;
   margin:0 auto;
   filter:none;
+  flex-shrink:0;
+  animation:pop .35s cubic-bezier(.2,1.4,.4,1);
 }
+
+/* 13.2 Casos maiores — a imagem principal (word / gap etc.) continua grande */
+.visual-image{
+  width:min(78vw, 320px);
+  height:min(78vw, 320px);
+  max-width:none;
+  max-height:none;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  property:padding;
+  padding:0;
+  box-sizing:border-box;
+  border-radius:50%;
+  border:3px solid rgba(243,201,105,.45);
+  background:radial-gradient(circle at 50% 40%,#ffffff,#e6e6eb);
+  box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 6px rgba(255,255,255,.06);
+  display:block;
+  margin:0 auto;
+  filter:drop-shadow(0 16px 30px rgba(0,0,0,.55));
+  animation:pop .4s cubic-bezier(.2,1.4,.4,1);
+}
+
+/* 13.3 Contador (count) usa o mesmo padrão das miniaturas */
+.count-bubble .count-animal-image{
+  width:100%;
+  height:100%;
+  padding:8%;
+  border:0;
+  box-shadow:none;
+  background:transparent;
+  mix-blend-mode:multiply;
+}
+
+/* 13.4 Responsivos do padrão único */
 @media (min-width:480px){
+  .visual-card img,
+  .sort-item img,
   .sort-item img.sort-item-img,
-  .answer-img{width:140px;height:140px}
+  .answer img,
+  .answer-img,
+  .count-animal-image,
+  .influencer-img{width:140px;height:140px}
+  .visual-image{width:340px;height:340px}
+  .count-bubble{width:90px;height:90px;padding:12px}
 }
 @media (max-width:380px){
+  .visual-card img,
+  .sort-item img,
   .sort-item img.sort-item-img,
-  .answer-img{width:min(28vw,108px);height:min(28vw,108px)}
+  .answer img,
+  .answer-img,
+  .count-animal-image,
+  .influencer-img{width:min(28vw,108px);height:min(28vw,108px)}
+  .visual-image{width:min(82vw,240px);height:min(82vw,240px)}
+  .count-bubble{width:68px;height:68px;padding:8px}
 }

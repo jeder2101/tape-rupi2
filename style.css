@@ -246,26 +246,24 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 }
 
 /* ============================================================
-   §13 PADRÃO ÚNICO DE IMAGEM CIRCULAR — vale para TODAS as imagens
-   Regras específicas de cada componente; as de baixo vencem.
+   §13 PADRÃO ÚNICO DE IMAGEM CIRCULAR — todas as imagens
    ============================================================ */
 
-/* 13.1 Base: toda img dentro do jogo é circular, centralizada, contida */
+/* 13.1 Base: toda img do jogo vira círculo, contida, centralizada */
 .visual-card img,
 .sort-item img,
 .sort-item img.sort-item-img,
 .answer img,
 .answer-img,
-.count-animal-image,
-.influencer-img{
-  width:min(30vw,130px);
-  height:min(30vw,130px);
+.count-animal-image{
+  width:min(34vw,150px);
+  height:min(34vw,150px);
   max-width:none;
   max-height:none;
   aspect-ratio:1/1;
   object-fit:contain;
   object-position:center;
-  padding:4%;
+  padding:3%;
   box-sizing:border-box;
   border-radius:50%;
   border:2px solid rgba(243,201,105,.55);
@@ -278,16 +276,15 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   animation:pop .35s cubic-bezier(.2,1.4,.4,1);
 }
 
-/* 13.2 Casos maiores — a imagem principal (word / gap etc.) continua grande */
+/* 13.2 Imagem principal (word / audio-large) — círculo grande */
 .visual-image{
-  width:min(78vw, 320px);
-  height:min(78vw, 320px);
+  width:min(82vw, 340px);
+  height:min(82vw, 340px);
   max-width:none;
   max-height:none;
   aspect-ratio:1/1;
-  object-fit:cover;
-  property:padding;
-  padding:0;
+  object-fit:contain;
+  padding:2%;
   box-sizing:border-box;
   border-radius:50%;
   border:3px solid rgba(243,201,105,.45);
@@ -295,15 +292,20 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 0 0 6px rgba(255,255,255,.06);
   display:block;
   margin:0 auto;
-  filter:drop-shadow(0 16px 30px rgba(0,0,0,.55));
+  filter:none;
   animation:pop .4s cubic-bezier(.2,1.4,.4,1);
 }
 
-/* 13.3 Contador (count) usa o mesmo padrão das miniaturas */
+/* 13.3 Contador — o círculo é o .count-bubble, a img apenas preenche */
+.count-bubble{
+  width:clamp(96px, 24vw, 118px);
+  height:clamp(96px, 24vw, 118px);
+  padding:14px;
+}
 .count-bubble .count-animal-image{
   width:100%;
   height:100%;
-  padding:8%;
+  padding:0;
   border:0;
   box-shadow:none;
   background:transparent;
@@ -317,10 +319,9 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .sort-item img.sort-item-img,
   .answer img,
   .answer-img,
-  .count-animal-image,
-  .influencer-img{width:140px;height:140px}
-  .visual-image{width:340px;height:340px}
-  .count-bubble{width:90px;height:90px;padding:12px}
+  .count-animal-image{width:160px;height:160px}
+  .visual-image{width:360px;height:360px}
+  .count-bubble{width:124px;height:124px;padding:16px}
 }
 @media (max-width:380px){
   .visual-card img,
@@ -328,15 +329,22 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .sort-item img.sort-item-img,
   .answer img,
   .answer-img,
-  .count-animal-image,
-  .influencer-img{width:min(28vw,108px);height:min(28vw,108px)}
-  .visual-image{width:min(82vw,240px);height:min(82vw,240px)}
-  .count-bubble{width:68px;height:68px;padding:8px}
+  .count-animal-image{width:min(30vw,124px);height:min(30vw,124px)}
+  .visual-image{width:min(80vw,260px);height:min(80vw,260px)}
+  .count-bubble{width:88px;height:88px;padding:10px}
 }
 
-/* --- §14 PICTURE-SORT — contenção do slot e imagem nunca estoura --- */
+
+/* ============================================================
+   §14 PICTURE-SORT — contenção total do slot (não estoura o card)
+   ============================================================ */
 .sort-grid{min-width:0}
-.sort-item{min-width:0;overflow:hidden;padding:6px;justify-content:flex-start}
+.sort-item{
+  min-width:0;
+  overflow:hidden;
+  padding:8px;
+  justify-content:flex-start;
+}
 .sort-item img.sort-item-img,
 .sort-item > img{
   width:100% !important;
@@ -345,7 +353,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   max-height:100%;
   aspect-ratio:1/1;
   object-fit:contain;
-  padding:4%;
+  padding:3%;
   box-sizing:border-box;
   border-radius:50%;
   border:2px solid rgba(243,201,105,.55);
@@ -363,7 +371,7 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   line-height:1;
 }
 @media (max-width:380px){
-  .sort-item{padding:4px}
+  .sort-item{padding:6px}
   .sort-item img.sort-item-img,
-  .sort-item > img{padding:3%}
+  .sort-item > img{padding:2%}
 }

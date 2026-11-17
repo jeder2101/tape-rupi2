@@ -159,6 +159,24 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
 .next-btn:disabled{opacity:.32;cursor:not-allowed}
 .next-btn:not(:disabled){background:rgba(243,201,105,.26)}
 
+/* --- §6.1 IMAGENS DAS ALTERNATIVAS EM CÍRCULO --- */
+.answer-img{
+  width:min(28vw,120px);
+  height:min(28vw,120px);
+  max-width:none;
+  max-height:none;
+  object-fit:cover;
+  border-radius:50%;
+  border:2px solid rgba(243,201,105,.55);
+  background:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,.45),inset 0 0 0 4px rgba(255,255,255,.06);
+  filter:drop-shadow(0 8px 16px rgba(0,0,0,.45));
+  animation:pop .35s cubic-bezier(.2,1.4,.4,1);
+  flex-shrink:0;
+}
+@media (min-width:480px){ .answer-img{width:130px;height:130px} }
+@media (max-width:380px){ .answer-img{width:min(26vw,100px);height:min(26vw,100px)} }
+
 /* --- §7 ORDENAR FRASE --- */
 .tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:60px;padding:12px;border-radius:18px;background:rgba(0,0,0,.28);border:1px dashed rgba(243,201,105,.35);width:100%;transition:border-color .2s,background .2s}
 .tokens.target{border-color:rgba(123,228,149,.7);background:rgba(123,228,149,.08)}

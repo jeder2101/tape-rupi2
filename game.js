@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi  (v12 · selo com tradução + categoria)
+   JAVASCRIPT — Tape-rupi  (v13 · selo count/number simplificado)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -20,13 +20,9 @@
    §15  Clima — Open-Meteo
    §16  Bind e boot
 
-   ✱ v12 — corrige qCategory()
-     · qCategory() agora também carrega `targetMeaning`
-       (significado da palavra-alvo) e `targetCategory` (a
-       categoria correta), separados do `target` (que é o valor
-       comparado pelo check()).
-     · _descreverRespostaCerta() usa esses campos para o selo:
-       linha TUPI = palavra; linha PT = "significado · Categoria: X"
+   ✱ v13 — selo count/number:
+     · count  → "número = N" (sem nome do animal)
+     · number → "número = N"
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -151,7 +147,7 @@ const VOCABULARY = [
   {word:"MBERU",meaning:"mosca",category:"ANIMAIS",audio:"mberu.mp3",file:"mberu.png"},
   {word:"MUÃ",meaning:"vagalume",category:"ANIMAIS",audio:"mua.mp3",file:"mua.png"},
   {word:"NHAKYRÃ",meaning:"cigarra",category:"ANIMAIS",audio:"nhakyra.mp3",file:"nhakyra.png"},
-  {word:"TARAWÉ",meaning:"barata",category:"ANIMAIS",audio:"tarawae.mp3",file:"tarawe.png"},
+  {word:"TARAWÉ",meaning:"barata",category:"ANIMAIS",audio:"tarawe.mp3",file:"tarawe.png"},
   {word:"TUKU",meaning:"gafanhoto",category:"ANIMAIS",audio:"tuku.mp3",file:"tuku.png"},
   {word:"PYNTÃ",meaning:"vermelho",category:"CORES",audio:"pynta.mp3",file:"pynta.png"},
   {word:"IDJU",meaning:"amarelo",category:"CORES",audio:"idju.mp3",file:"idju.png"},
@@ -599,10 +595,6 @@ function buscarVocab(word){
   const alvo = searchClean(word);
   return VOCABULARY.find(v => searchClean(v.word) === alvo) || null;
 }
-function buscarFraseCotidian(word){
-  if(!word) return null;
-  return FRASES_COTIDIANO.find(f => f.word === word) || null;
-}
 
 const TEM_IMAGEM     = item => !!(item && item.file);
 const FACIL_IMG      = VOCABULARY.filter(v => v.file);
@@ -880,11 +872,6 @@ function qNumber(fase){
     choices:shuffle(pickN(n, NUMBER_VOCABULARY, qtdOpcoes)).map(x=>x.value)
   };
 }
-/* ✱ qCategory() agora carrega TRÊS campos:
-     target         → a categoria (valor que o check() compara)
-     targetWord     → a palavra Tupi mostrada
-     targetMeaning  → o significado da palavra em português
-     targetCategory → a categoria correta (para o selo) */
 function qCategory(){
   const cats = catsComImagem();
   if(cats.length < 3) return null;
@@ -1988,12 +1975,12 @@ function answers(q){
 }
 
 /* ---------- §12 VERIFICAÇÃO ---------- */
-/* ✱ SELO "RESPOSTA CORRETA" COM TRADUÇÃO
+/* ✱ SELO "RESPOSTA CORRETA"
    Aparece SOMENTE quando o jogador acerta.
-   Cada tipo de questão produz duas linhas:
-     • tupi — a forma em Tupi (palavra, frase, conjugação)
+   Cada tipo produz duas linhas:
+     • tupi — a forma em Tupi
      • pt   — a tradução em português
-   Quando um dos dois não existe, só a linha presente é exibida.      */
+   count e number usam apenas "número = N".                  */
 
 function _descreverRespostaCerta(q){
   if(!q) return null;
@@ -2017,13 +2004,13 @@ function _descreverRespostaCerta(q){
       const item = q.audioItem || buscarVocab(q.target);
       return { tupi: q.target, pt: item ? item.meaning : "" };
     }
+    /* ✱ count e number: apenas "número = N" */
     case "number": {
-      return { tupi: numero(q.target), pt: String(q.target) };
+      return { tupi: numero(q.target), pt: `número = ${q.target}` };
     }
     case "count": {
-      return { tupi: numero(q.target), pt: `${q.target} ${q.countItem && q.countItem.meaning ? "· " + q.countItem.meaning : ""}`.trim() };
+      return { tupi: numero(q.target), pt: `número = ${q.target}` };
     }
-    /* ✱ category: mostra a palavra Tupi + o significado + a categoria */
     case "category": {
       const palavra = q.targetWord || "";
       const significado = q.targetMeaning || "";
@@ -2139,7 +2126,6 @@ function limparRespostaCerta(){
   document.querySelectorAll(".answer-key").forEach(el => el.remove());
 }
 
-/* ✱ verificar() — para tipos compostos (search, cross, match, order). */
 function verificar(q, ok, anchor){
   if(state.answered) return;
   state.answered = true;
@@ -2169,7 +2155,6 @@ function verificar(q, ok, anchor){
   salvarProgresso();
 }
 
-/* ✱ check() — para tipos com alternativas. */
 function check(value, button){
   if(state.answered) return;
   const q = state.questions[state.index];
@@ -2455,7 +2440,6 @@ function montarSeletorClima(){
 }
 
 /* ---------- §16 BIND E BOOT ---------- */
-/* ✱ CSS do selo — injetado em runtime, com linha Tupi + linha PT. */
 function instalarEstiloRespostaCerta(){
   if(document.getElementById("answer-key-style")) return;
   const css = `

@@ -362,21 +362,21 @@ const INTERROGATIVAS = [
 ];
 
 const FRASES_ORDENAR = [
-  {tokens:["Txeé","aikó","karugwá-py"], pt:"Eu moro em karugwá.", nivel:2},
-  {tokens:["Katxuru","oikó","oká-py"], pt:"O cachorro mora fora.", nivel:2},
+  {tokens:["Txeé","aikó","karugwá-py"], pt:"Eu moro no karugwá.", nivel:2},
+  {tokens:["Katxuru","oikó","oká-py"], pt:"O cachorro vive lá fora.", nivel:2},
   {tokens:["Txeru","omoendy","tatá"], pt:"Meu pai acendeu o fogo.", nivel:2},
   {tokens:["Txedjaryi","omombe'u","txewy"], pt:"Minha avó me contou.", nivel:2},
   {tokens:["Nhaneramõi","oendá-py","oké"], pt:"Nosso avô dormiu em casa.", nivel:2},
   {tokens:["Petsy","oóta","Barão-py"], pt:"Tua mãe vai para Barão.", nivel:4},
   {tokens:["Kweé","txetuty","oú","São Paulo-gwi"], pt:"Ontem meu tio veio de São Paulo.", nivel:4},
-  {tokens:["Nhandé","nhaporandu","Nhanderu-upé"], pt:"Nós falamos com Nhanderu.", nivel:4},
+  {tokens:["Nhandé","nhaporandu","Nhanderu-upé"], pt:"Nós cantanmos para DEUS.", nivel:4},
   {tokens:["Yy","opytá","tapé","koty","rowai-py"], pt:"A água fica ao lado da estrada.", nivel:6},
   {tokens:["Mitãngwé","onhimangá","ywyrá-gwypy"], pt:"As crianças brincam debaixo da árvore.", nivel:4},
-  {tokens:["Txekywy","oó","ka'agwy-py","odjaya","djedjy"], pt:"Meu irmão foi à mata colher mel.", nivel:6},
+  {tokens:["Txekywy","oó","ka'agwy-py","odjaya","djedjy"], pt:"Meu irmão foi à mata colher palmito.", nivel:6},
   {tokens:["Tuwitxá","oikó","nhandetekoá-mbyté-py"], pt:"O chefe mora no meio da nossa aldeia.", nivel:4},
   {tokens:["Oré","roetxá","nderu","oporaei"], pt:"Nós vimos teu pai cantar.", nivel:6},
   {tokens:["Ko'ẽ","py'i","eté","o'owy"], pt:"Cedo da manhã ela veio.", nivel:6},
-  {tokens:["Aipyý","manduwi","adjoká","ãwã"], pt:"Peguei amendoim para assar.", nivel:6}
+  {tokens:["Aipyý","manduwi"], pt:"Peguei amendoim.", nivel:6}
 ];
 
 const PARES_LIGAR = [

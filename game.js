@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi  (v9 · patch visual)
+   JAVASCRIPT — Tape-rupi  (v11 · selo com tradução)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -20,13 +20,11 @@
    §15  Clima — Open-Meteo
    §16  Bind e boot
 
-   ✱ v9 — Separação de conteúdo textual × visual
-     · Questões que pedem "observe a imagem" só usam itens com `file`
-     · Itens sem PNG (SAUDAÇÕES, ADVÉRBIOS e alguns PARENTESCO)
-       permanecem nas questões textuais (tradução, ligar, ordenar)
-     · Novos geradores: qGreetingTupi, qSaudacaoVocab,
-       qAdvMeaning, qAdvReverse, qPossPost
-     · Guarda final em montarFase() impede imagem quebrada
+   ✱ v11 — selo "Resposta correta" com TUPI + TRADUÇÃO
+     · _textoRespostaCerta retorna {topo, tupi, pt}
+     · mostrarRespostaCerta renderiza as 3 linhas
+     · Tradução aparece em TODOS os tipos de questão ao acertar
+     · Não aparece quando erra — só destaca o botão certo
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -34,7 +32,7 @@ const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/te
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 9;   /* ✱ bump pela nova distribuição */
+const SAVE_VERSION = 9;
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"1️⃣", bonus:0},
@@ -151,7 +149,7 @@ const VOCABULARY = [
   {word:"MBERU",meaning:"mosca",category:"ANIMAIS",audio:"mberu.mp3",file:"mberu.png"},
   {word:"MUÃ",meaning:"vagalume",category:"ANIMAIS",audio:"mua.mp3",file:"mua.png"},
   {word:"NHAKYRÃ",meaning:"cigarra",category:"ANIMAIS",audio:"nhakyra.mp3",file:"nhakyra.png"},
-  {word:"TARAWÉ",meaning:"barata",category:"ANIMAIS",audio:"tarawe.mp3",file:"tarawe.png"},
+  {word:"TARAWÉ",meaning:"barata",category:"ANIMAIS",audio:"tarawae.mp3",file:"tarawe.png"},
   {word:"TUKU",meaning:"gafanhoto",category:"ANIMAIS",audio:"tuku.mp3",file:"tuku.png"},
   {word:"PYNTÃ",meaning:"vermelho",category:"CORES",audio:"pynta.mp3",file:"pynta.png"},
   {word:"IDJU",meaning:"amarelo",category:"CORES",audio:"idju.mp3",file:"idju.png"},
@@ -594,8 +592,16 @@ function pickMeanings(item, list, n){
   return shuffle(out);
 }
 function numberWord(n){ return NUMBER_VOCABULARY.find(v => v.value === n); }
+function buscarVocab(word){
+  if(!word) return null;
+  const alvo = searchClean(word);
+  return VOCABULARY.find(v => searchClean(v.word) === alvo) || null;
+}
+function buscarFraseCotidian(word){
+  if(!word) return null;
+  return FRASES_COTIDIANO.find(f => f.word === word) || null;
+}
 
-/* ✱ Todos os conjuntos abaixo são SEGUROS para questões visuais */
 const TEM_IMAGEM     = item => !!(item && item.file);
 const FACIL_IMG      = VOCABULARY.filter(v => v.file);
 const COM_AUDIO_IMG  = VOCABULARY.filter(v => v.audio && v.file);
@@ -603,14 +609,12 @@ const ANIMAIS_COUNT  = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file
 const PARENTESCO_IMG = VOCABULARY.filter(v => v.category === "PARENTESCO" && v.file);
 const CATS_VISUAIS   = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","NATUREZA","GEOGRAFIA"];
 
-/* Categorias com pelo menos 3 itens com PNG — alvo seguro de pergunta visual */
 function catsComImagem(){
   return CATS_VISUAIS.filter(c =>
     VOCABULARY.filter(v => v.category === c && v.file).length >= 3
   );
 }
 
-/* Compat com o restante do código (§9 distribuições, §11 render) */
 const FACIL        = VOCABULARY.filter(v => v.file);
 const COM_AUDIO    = VOCABULARY.filter(v => v.audio);
 const CATS_BASE    = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
@@ -808,8 +812,7 @@ function qSearch(fase, usadas){
   };
 }
 
-/* §8.3 Geradores com imagem — ✱ só itens com PNG */
-
+/* §8.3 Geradores com imagem — só itens com PNG */
 function qWord(fase){
   if(FACIL_IMG.length < 3) return null;
   const item = shuffle(FACIL_IMG)[0];
@@ -842,13 +845,14 @@ function qReverse(fase){
   };
 }
 function qAudio(fase){
-  const item = shuffle(COM_AUDIO_IMG.length ? COM_AUDIO_IMG : COM_AUDIO)[0];
+  const pool = COM_AUDIO_IMG.length ? COM_AUDIO_IMG : COM_AUDIO;
+  const item = shuffle(pool)[0];
   return {
     type:"audio", kind:"ESCUTE E ESCOLHA",
     prompt:"Ouça a pronúncia e escolha a palavra certa.",
     hint:"Toque no alto-falante para ouvir.",
     target:item.word, audioItem:item,
-    choices:pickN(item, (COM_AUDIO_IMG.length ? COM_AUDIO_IMG : COM_AUDIO), fase>=5?4:3).map(x=>x.word)
+    choices:pickN(item, pool, fase>=5?4:3).map(x=>x.word)
   };
 }
 function qCount(fase){
@@ -924,7 +928,7 @@ function qVerb(){
     type:"verb", kind:"VERBO IRREGULAR",
     prompt:`Como se conjuga «${v.pessoa[i]}» do verbo ${v.base.toUpperCase()}?`,
     hint:"Verbos irregulares (vol. 2, p.29).",
-    target:certa, targetBase:v.base,
+    target:certa, targetBase:v.base, targetPessoa:v.pessoa[i],
     choices:shuffle([certa, ...erradas])
   };
 }
@@ -937,7 +941,7 @@ function qChooseVerb(){
     type:"choose-verb", kind:"CONJUGAÇÃO",
     prompt:`Qual é a forma correta em «${["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"][i]}» para o verbo ${v.base.toUpperCase()}?`,
     hint:"Verbos da 1ª conjugação (vol. 1, p.39).",
-    target:certa, targetBase:v.base,
+    target:certa, targetBase:v.base, targetPessoa:["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"][i],
     choices:shuffle(opcoes).slice(0,4)
   };
 }
@@ -1064,9 +1068,7 @@ function qMatch(){
   };
 }
 
-/* ✱ §8.4 NOVOS GERADORES textuais (sem imagem) — SAUDAÇÕES e ADVÉRBIOS */
-
-/* SAUDAÇÕES → tradução PT → Tupi (usa FRASES_COTIDIANO, sem PNG) */
+/* §8.4 Geradores textuais — SAUDAÇÕES e ADVÉRBIOS */
 function qGreetingTupi(){
   const item = shuffle(FRASES_COTIDIANO)[0];
   const distr = shuffle(FRASES_COTIDIANO.filter(x=>x.word!==item.word)).slice(0,2).map(x=>x.word);
@@ -1078,8 +1080,6 @@ function qGreetingTupi(){
     choices:shuffle([item.word, ...distr])
   };
 }
-
-/* SAUDAÇÕES do VOCABULARY (ARY PORÃ, KA'ARU PORÃ…) → significado */
 function qSaudacaoVocab(){
   const pool = VOCABULARY.filter(v => v.category === "SAUDAÇÕES");
   if(pool.length < 3) return null;
@@ -1093,8 +1093,6 @@ function qSaudacaoVocab(){
     choices:shuffle([item.meaning, ...distr])
   };
 }
-
-/* ADVÉRBIOS → Tupi → tradução */
 function qAdvMeaning(){
   const pool = VOCABULARY.filter(v => v.category === "ADVÉRBIOS");
   if(pool.length < 3) return null;
@@ -1108,8 +1106,6 @@ function qAdvMeaning(){
     choices:shuffle([item.meaning, ...distr])
   };
 }
-
-/* ADVÉRBIOS → tradução → Tupi */
 function qAdvReverse(){
   const pool = VOCABULARY.filter(v => v.category === "ADVÉRBIOS");
   if(pool.length < 3) return null;
@@ -1123,8 +1119,6 @@ function qAdvReverse(){
     choices:shuffle([item.word, ...distr])
   };
 }
-
-/* POSPOSIÇÃO / LIGAR curto — usa PARES_LIGAR, textual */
 function qPossPost(){
   const pool = PARES_LIGAR.filter(p => p.a.startsWith("-"));
   const item = shuffle(pool)[0];
@@ -1146,7 +1140,6 @@ const GERADORES_SIMPLES = {
   interrog:qInterrog, "picture-sort":qPictureSort, greeting:qGreeting,
   cardinal:qCardinal, "month-day":qMonthDay, parentesco:qParentesco,
   order:qOrder, match:qMatch,
-  /* ✱ novos */
   "greeting-rev":qGreetingTupi,
   saudacao:qSaudacaoVocab,
   "adv-meaning":qAdvMeaning,
@@ -1155,8 +1148,6 @@ const GERADORES_SIMPLES = {
 };
 
 /* ---------- §9 MONTAGEM DA FASE ---------- */
-/* ✱ Distribuição revisada: SAUDAÇÕES e ADVÉRBIOS entram já na fase 3 em
-   questões textuais; visuais continuam neutras. Total = 30 por fase.      */
 const FASES_DISTRIBUICAO = {
   1:{word:12, number:5, count:6, category:4, "picture-sort":3},
   2:{word:8, number:3, count:4, category:3, "picture-sort":3, meaning:4, audio:3, order:2},
@@ -1219,7 +1210,6 @@ function montarFase(fase){
       else if(GERADORES_SIMPLES[tipo]){
         q = GERADORES_SIMPLES[tipo](fase);
       }
-      /* ✱ Guarda-final: qualquer questão que declare imagem precisa ter PNG */
       if(q){
         const VISUAIS = new Set(["word","count","category","picture-sort","parentesco"]);
         if(VISUAIS.has(q.type)){
@@ -1364,6 +1354,7 @@ function render(){
     atualizarEstrelas();
     $("feedback").textContent = "";
     $("feedback").className = "feedback";
+    limparRespostaCerta();
     $("next").disabled = true;
     $("next").textContent = state.index === state.questions.length - 1 ? "VER RESULTADO →" : "PRÓXIMO DESAFIO →";
     const ans = $("answers");
@@ -1986,11 +1977,159 @@ function answers(q){
 }
 
 /* ---------- §12 VERIFICAÇÃO ---------- */
+/* ✱ SELO "RESPOSTA CORRETA" COM TRADUÇÃO
+   Aparece SOMENTE quando o jogador acerta.
+   Cada tipo de questão produz duas linhas:
+     • tupi — a forma em Tupi (palavra, frase, conjugação)
+     • pt   — a tradução em português
+   Quando um dos dois não existe, só a linha presente é exibida.      */
+
+function _descreverRespostaCerta(q){
+  if(!q) return null;
+  const numero = n => {
+    const v = numberWord(Number(n));
+    return v ? v.word : "";
+  };
+
+  switch(q.type){
+    case "word": {
+      const item = q.imageItem || buscarVocab(q.target);
+      return { tupi: q.target, pt: item ? item.meaning : "" };
+    }
+    case "meaning": {
+      return { tupi: q.targetWord || "", pt: q.target };
+    }
+    case "reverse": {
+      return { tupi: q.target, pt: q.targetMeaning || "" };
+    }
+    case "audio": {
+      const item = q.audioItem || buscarVocab(q.target);
+      return { tupi: q.target, pt: item ? item.meaning : "" };
+    }
+    case "number": {
+      return { tupi: numero(q.target), pt: String(q.target) };
+    }
+    case "count": {
+      return { tupi: numero(q.target), pt: `${q.target} ${q.countItem && q.countItem.meaning ? "· " + q.countItem.meaning : ""}`.trim() };
+    }
+    case "category": {
+      return { tupi: q.targetWord || "", pt: `Categoria: ${q.target}` };
+    }
+    case "odd": {
+      const v = buscarVocab(q.target);
+      return { tupi: q.target, pt: v ? v.meaning : "" };
+    }
+    case "gap": {
+      return { tupi: (q.sentence || "").replace("_", q.target), pt: "" };
+    }
+    case "verb":
+    case "choose-verb": {
+      const pessoa = q.targetPessoa ? ` (${q.targetPessoa})` : "";
+      return { tupi: q.target, pt: `${q.targetBase ? q.targetBase.toUpperCase() : ""} — ${pessoa}`.trim() };
+    }
+    case "adv": {
+      const v = buscarVocab(q.targetWord);
+      return { tupi: q.targetWord, pt: `Classe: ${q.target}${v ? " · " + v.meaning : ""}` };
+    }
+    case "interrog": {
+      return { tupi: q.targetWord, pt: q.target };
+    }
+    case "picture-sort": {
+      const item = q.targetItem || buscarVocab(q.target);
+      return { tupi: q.target, pt: item ? item.meaning : "" };
+    }
+    case "greeting": {
+      return { tupi: q.targetWord, pt: q.target };
+    }
+    case "greeting-rev": {
+      return { tupi: q.target, pt: q.targetMeaning || "" };
+    }
+    case "saudacao":
+    case "adv-meaning":
+    case "parentesco":
+    case "cardinal":
+    case "month":
+    case "day":
+    case "poss-post": {
+      return { tupi: q.targetWord, pt: q.target };
+    }
+    case "adv-reverse": {
+      return { tupi: q.target, pt: q.targetMeaning || "" };
+    }
+    case "match": {
+      const pares = (q.pairs || []).map(p => `${p.a} = ${p.b}`).join(" · ");
+      return { tupi: pares, pt: "" };
+    }
+    case "order": {
+      return { tupi: (q.target || "").split("|").join(" "), pt: q.translation || "" };
+    }
+    case "search": {
+      const lista = (q.words || []).map(w => {
+        const v = buscarVocab(w);
+        return v ? `${w} (${v.meaning})` : w;
+      }).join(" · ");
+      return { tupi: lista, pt: "" };
+    }
+    case "cross": {
+      const lista = ((q.puzzle && q.puzzle.words) || []).map(w => {
+        const v = buscarVocab(w.word);
+        const traducao = v ? v.meaning : (w.clue || "");
+        return `${w.word}${traducao ? " (" + traducao + ")" : ""}`;
+      }).join(" · ");
+      return { tupi: lista, pt: "" };
+    }
+    default:
+      return null;
+  }
+}
+
+function mostrarRespostaCerta(q){
+  const ref = $("feedback");
+  if(!ref) return;
+  const dados = _descreverRespostaCerta(q);
+  if(!dados || (!dados.tupi && !dados.pt)) return;
+
+  const anterior = document.querySelector(".answer-key");
+  if(anterior) anterior.remove();
+
+  const selo = document.createElement("div");
+  selo.className = "answer-key";
+  selo.setAttribute("role","status");
+
+  const rotulo = document.createElement("span");
+  rotulo.className = "answer-key-label";
+  rotulo.textContent = "Resposta correta";
+  selo.append(rotulo);
+
+  if(dados.tupi){
+    const linhaTupi = document.createElement("span");
+    linhaTupi.className = "answer-key-tupi";
+    linhaTupi.textContent = dados.tupi;
+    selo.append(linhaTupi);
+  }
+  if(dados.pt){
+    const linhaPt = document.createElement("span");
+    linhaPt.className = "answer-key-pt";
+    linhaPt.textContent = dados.pt;
+    selo.append(linhaPt);
+  }
+
+  const parent = ref.parentElement;
+  if(parent) parent.insertBefore(selo, ref.nextSibling);
+  else ref.after(selo);
+}
+
+function limparRespostaCerta(){
+  document.querySelectorAll(".answer-key").forEach(el => el.remove());
+}
+
+/* ✱ verificar() — para tipos compostos (search, cross, match, order). */
 function verificar(q, ok, anchor){
   if(state.answered) return;
   state.answered = true;
   document.querySelectorAll(".answer").forEach(b => b.disabled = true);
   const pontos = 10 + FASES_INFO[state.fase].bonus;
+
   if(ok){
     state.score += pontos;
     state.acertos += 1;
@@ -2000,17 +2139,21 @@ function verificar(q, ok, anchor){
     sfx.acerto();
     if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);
     else if(q.imageItem && q.imageItem.audio) audio(q.imageItem.audio);
+    mostrarRespostaCerta(q);
   } else {
     state.erros += 1;
-    $("feedback").textContent = "Ainda não! Veja a resposta correta.";
+    $("feedback").textContent = "Ainda não! Tente novamente na próxima.";
     $("feedback").className = "feedback error";
     sfx.erro();
   }
+
   $("score").textContent = state.score;
   atualizarEstrelas();
   $("next").disabled = false;
   salvarProgresso();
 }
+
+/* ✱ check() — para tipos com alternativas. */
 function check(value, button){
   if(state.answered) return;
   const q = state.questions[state.index];
@@ -2018,6 +2161,7 @@ function check(value, button){
   state.answered = true;
   document.querySelectorAll(".answer").forEach(b => b.disabled = true);
   const pontos = 10 + FASES_INFO[state.fase].bonus;
+
   if(ok){
     state.score += pontos;
     state.acertos += 1;
@@ -2027,6 +2171,7 @@ function check(value, button){
     sfx.acerto();
     if(q.audioItem && q.audioItem.audio) audio(q.audioItem.audio);
     else if(q.imageItem && q.imageItem.audio) audio(q.imageItem.audio);
+    mostrarRespostaCerta(q);
   } else {
     state.erros += 1;
     button.classList.add("wrong");
@@ -2036,11 +2181,13 @@ function check(value, button){
     $("feedback").className = "feedback error";
     sfx.erro();
   }
+
   $("score").textContent = state.score;
   atualizarEstrelas();
   $("next").disabled = false;
   salvarProgresso();
 }
+
 function next(){
   if(!state.answered) return;
   sfx.clique();
@@ -2292,6 +2439,54 @@ function montarSeletorClima(){
 }
 
 /* ---------- §16 BIND E BOOT ---------- */
+/* ✱ CSS do selo — injetado em runtime, com linha Tupi + linha PT. */
+function instalarEstiloRespostaCerta(){
+  if(document.getElementById("answer-key-style")) return;
+  const css = `
+    .answer-key{
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(123, 228, 149, .14);
+      border: 1px solid rgba(123, 228, 149, .55);
+      color: #eafff1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      animation: answerKeyIn .28s ease-out;
+    }
+    .answer-key .answer-key-label{
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #7be495;
+      opacity: .9;
+    }
+    .answer-key .answer-key-tupi{
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .answer-key .answer-key-pt{
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: #b6f0c6;
+      word-break: break-word;
+    }
+    @keyframes answerKeyIn{
+      from{ opacity: 0; transform: translateY(-6px); }
+      to  { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  const st = document.createElement("style");
+  st.id = "answer-key-style";
+  st.textContent = css;
+  document.head.appendChild(st);
+}
+
 function bindEvents(){
   safeBind("start", "click", () => { state.salvar = true; apagarProgresso(); start(1); });
   safeBind("next", "click", next);
@@ -2314,6 +2509,7 @@ function bindEvents(){
 
 document.addEventListener("DOMContentLoaded", () => {
   try{
+    instalarEstiloRespostaCerta();
     aplicarSaudacao();
     bindEvents();
     atualizarSeletorFase();

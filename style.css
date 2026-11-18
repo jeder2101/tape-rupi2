@@ -583,3 +583,209 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .visual-image{width:min(50vh, 40vw);height:min(50vh, 40vw)}
   .card{overflow-y:auto}
 }
+/* ============================================================
+   §16 DESKTOP / TABLET LARGO — mesmo fluxo do mobile, largura maior
+   Ativado quando a viewport tem no mínimo 900px de largura
+   ============================================================ */
+@media (min-width:900px){
+
+  /* 16.1 Casca — libera a largura, sem transformar em grid */
+  html,body{height:100%}
+  body{padding:0}
+  .app{
+    max-width:min(1480px, 96vw);
+    min-height:100dvh;
+    height:auto;
+    padding:24px 32px 32px;
+    gap:18px;
+    overflow:visible;
+  }
+  .screen.active{
+    gap:18px;
+    overflow:visible;
+  }
+
+  /* 16.2 Header/HUD mais largos e alinhados */
+  header{align-items:center;gap:14px}
+  header .chip{font-size:12px;padding:8px 14px}
+  header .icon-btn{width:48px;height:48px;font-size:20px;border-radius:16px}
+  header #sound{margin-left:auto}
+
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .hud-left{flex-direction:row;align-items:center;gap:12px}
+  .hud-left .chip,
+  .hud-left .chip-accent{font-size:11px;padding:6px 12px}
+  .hud-score{font-size:14px;padding:10px 16px}
+  .hud-score #stars{font-size:13px}
+  .progress-wrap{margin-top:6px}
+
+  /* 16.3 HOME — hero grande à esquerda, fases à direita (sem sobreposição) */
+  #home.active{
+    display:grid;
+    grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-auto-rows:min-content;
+    gap:18px 24px;
+    align-items:start;
+  }
+  #home .hero{
+    grid-column:1;
+    grid-row:1 / span 3;
+    align-self:stretch;
+    padding-bottom:26px;
+    border-radius:30px;
+  }
+  #home .hero-image-wrap{aspect-ratio:16/9}
+  #home .hero-title-brand{font-size:clamp(52px,5vw,76px)}
+  #home .hero-subtitle{font-size:12px;letter-spacing:.32em}
+  #home .hero-greeting-card{padding:24px}
+  #home .hero-icon{font-size:64px}
+  #home .hero-title{font-size:clamp(28px,2.4vw,40px)}
+  #home .hero-desc{font-size:15px;max-width:460px}
+
+  #home .section-title{
+    grid-column:2;
+    margin:0;
+    font-size:12px;
+    align-self:end;
+  }
+  #home .fase-grid{
+    grid-column:2;
+    margin:0;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+  }
+  #home .ghost-btn--continuar{
+    grid-column:2;
+    margin-top:6px;
+    font-size:12px;
+  }
+  .fase-btn{padding:18px 10px;border-radius:20px}
+  .fase-btn span{font-size:13px}
+  .fase-btn small{font-size:10.5px}
+
+  /* 16.4 GAME — volta para coluna única, só mais espaçado e largo */
+  #game.active{
+    display:flex;            /* anula qualquer grid residual */
+    flex-direction:column;
+    gap:18px;
+  }
+  .card{
+    flex:initial;
+    max-width:100%;
+    max-height:none;
+    overflow:visible;
+    padding:28px 32px;
+    border-radius:26px;
+    gap:18px;
+  }
+  .card-head{padding-bottom:4px}
+  .kind-tag{font-size:11px;letter-spacing:.18em}
+  .listen-btn{width:44px;height:44px;border-radius:14px;font-size:19px}
+  #prompt{font-size:clamp(22px, 1.6vw, 28px);line-height:1.32}
+  #hint{font-size:14px;line-height:1.55}
+
+  .visual{padding:16px 0 10px;gap:16px}
+  .visual-card{padding:24px;gap:16px;border-radius:24px}
+  .visual-image{width:min(380px, 28vw);height:min(380px, 28vw)}
+  .word-highlight{font-size:clamp(32px,3vw,48px);padding:28px 36px;max-width:560px}
+  .number-visual{font-size:128px}
+  .visual-count{max-width:560px;gap:18px}
+  .count-bubble{width:120px;height:120px;padding:14px}
+  .cat-grid{max-width:420px;gap:20px}
+  .cat-slot-fallback{font-size:64px}
+  .gap-sentence,.interrog-sentence{font-size:19px;padding:22px;max-width:840px;margin:0 auto}
+  .sort-grid{max-width:600px;gap:18px}
+
+  /* Alternativas — 2 colunas em telas largas, exceto tipos que exigem coluna */
+  .answers{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+    max-width:100%;
+  }
+  .answers[data-kind="number"],
+  .answers[data-kind="count"],
+  .answers[data-kind="order"],
+  .answers[data-kind="cross"],
+  .answers[data-kind="search"],
+  .answers[data-kind="match"],
+  .answers[data-kind="picture-sort"]{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .answers[data-kind="picture-sort"]{
+    display:grid!important;
+    grid-template-columns:repeat(3, 1fr)!important;
+    max-width:760px;
+    margin:0 auto;
+  }
+  .answer{
+    padding:18px 22px;
+    font-size:16px;
+    min-height:62px;
+    border-radius:20px;
+  }
+
+  /* Rodapé (feedback + próximo) — um abaixo do outro, sem colisão */
+  #feedback{font-size:14px;min-height:24px}
+  .next-btn{padding:18px;font-size:15px;border-radius:22px}
+
+  /* Order / Match / Cruzadinha / Caça-palavras maiores */
+  .tokens{min-height:70px;padding:16px;gap:10px;padding-top:30px;border-radius:20px}
+  .tokens.label-wrap::before{font-size:10px;top:8px}
+  .token{padding:12px 18px;font-size:15px;border-radius:14px}
+  .match-grid{column-gap:clamp(80px, 12vw, 160px)}
+  .match-col{gap:22px}
+  .match-item{min-height:60px;font-size:14.5px;padding:14px 18px;border-radius:18px}
+  .match-stage{padding:16px 8px}
+  .cw-grid{max-width:min(100%, calc(var(--cw-cols,5) * 70px + (var(--cw-cols,5) - 1) * 6px))!important;gap:6px}
+  .cw-input{font-size:clamp(18px,1.6vw,24px)}
+  .cw-num{font-size:11px}
+  .cw-clues{max-width:640px;font-size:13px}
+  .cw-note{font-size:12px;padding:10px 14px}
+  .search-grid{max-width:720px;margin:0 auto;gap:4px;padding:12px!important}
+  .search-cell{font-size:14px!important}
+  .search-word{font-size:12px;padding:6px 12px}
+
+  /* 16.5 FINISH — resumo em cima, mensagens e ações embaixo, largura confortável */
+  #finish.active{display:flex;flex-direction:column;gap:18px;align-items:center;padding-top:12px}
+  .finish-wrap{max-width:900px;width:100%}
+  .finish-bubble{padding:36px 32px 40px;border-radius:34px}
+  .finish-medal{font-size:92px}
+  .finish-title{font-size:30px}
+  .finish-sub{font-size:12px;margin-bottom:22px}
+  .finish-score-big{font-size:92px}
+  .score-breakdown{max-width:520px;margin:0 auto 22px;gap:12px}
+  .score-cell{padding:16px 8px;border-radius:18px}
+  .score-cell .val{font-size:26px}
+  .score-cell .lbl{font-size:10px}
+  .support-msg,.attention-msg{max-width:900px;width:100%;font-size:14.5px;padding:16px 20px}
+  .finish-actions{max-width:900px;width:100%;padding-top:16px}
+  .finish-actions .primary-btn,
+  .finish-actions .ghost-btn{padding:16px;font-size:14px}
+
+  /* 16.6 Weather hero e cards auxiliares */
+  .weather-card--hero{max-width:420px;padding:16px 20px}
+  .weather-temp{font-size:28px}
+}
+
+/* 16.7 Notebooks 900–1200px — respira um pouco menos */
+@media (min-width:900px) and (max-width:1200px){
+  .app{padding:18px 22px 24px;gap:16px}
+  .card{padding:22px 24px;gap:16px}
+  #prompt{font-size:clamp(20px, 1.9vw, 24px)}
+  .visual-image{width:min(320px, 26vw);height:min(320px, 26vw)}
+  #home .fase-grid{grid-template-columns:repeat(3, 1fr)}
+  #home .hero-title-brand{font-size:clamp(46px,5.2vw,64px)}
+}
+
+/* 16.8 Monitores muito largos — não estoura, mas mantém tipografia confortável */
+@media (min-width:1400px){
+  .app{max-width:min(1700px, 94vw)}
+  #prompt{font-size:clamp(22px, 1.4vw, 30px)}
+  .visual-image{width:min(420px, 26vw);height:min(420px, 26vw)}
+  .answer{font-size:17px;min-height:66px}
+  #home .fase-grid{gap:16px}
+  #home .fase-btn{padding:20px 12px}
+}

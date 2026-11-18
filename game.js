@@ -323,7 +323,7 @@ const FRASES_POSPOSICAO = [
   {frase:"Ndekytsé oĩ angu'a__.",resp:"-arõ",distratores:["-gwi","-py","-mbyté-py"]},
   {frase:"Mitãngwé onhimangá ywyrá__.",resp:"-gwypy",distratores:["-arõ","-py","-gwi"]},
   {frase:"Tuwitxá oikó nhandetekoá__.",resp:"-mbyté-py",distratores:["-arõ","-py","-rupi"]},
-  {frase:"Txera'y Piaçaguera__ oikó.",resp:"-py",distratores:["-arõ","-rupi","-gwi"]},
+  {frase:"Txera'y tekoa karugwá__ oikó.",resp:"-py",distratores:["-arõ","-rupi","-gwi"]},
   {frase:"Kweé txetuty oú narãi__.",resp:"-gwi",distratores:["-py","-arõ","-rupi"]},
   {frase:"Tapeó põrã tá__.",resp:"-rupi",distratores:["-py","-gwi","-arõ"]}
 ];

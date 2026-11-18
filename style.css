@@ -583,3 +583,43 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .visual-image{width:min(50vh, 40vw);height:min(50vh, 40vw)}
   .card{overflow-y:auto}
 }
+/* ============================================================
+   §18 CATEGORIA — imagem maior DENTRO do círculo (só qCategory)
+   Não colide com §5.1, §13.1, §14, §15.x:
+   · .cat-slot-img NÃO é .visual-card img / .answer img / .sort-item img
+     (não herda o padrão único do §13)
+   · §15.2 mexe em .cat-grid e .cat-slot-fallback, mas NÃO em .cat-slot
+     nem em .cat-slot-img — então mantém a compactação de grid e
+     só controla a densidade interna da imagem
+   ============================================================ */
+
+/* 18.1 Reduz o padding do slot — o círculo NÃO cresce, a imagem interna sim */
+.cat-slot{padding:2%}
+
+/* 18.2 A imagem preenche o slot (zera padding/borda herdados) */
+.cat-slot .cat-slot-img{
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  object-fit:contain;
+}
+
+/* 18.3 Desktop: slot grande, respira mais um pouco */
+@media (min-width:900px){
+  .cat-slot{padding:3%}
+}
+
+/* 18.4 Mantém o padrão do §15.2 (grid menor, emoji menor) — só ajusta
+   o padding do slot para não sumir a imagem quando o círculo fica pequeno */
+@media (max-height:740px) and (max-width:520px){
+  .cat-slot{padding:4%}
+}
+@media (max-height:640px) and (max-width:520px){
+  .cat-slot{padding:5%}
+}

@@ -214,7 +214,7 @@ const VOCABULARY = [
   {word:"DJASY",meaning:"lua",category:"NATUREZA",audio:"jasy.mp3",file:"djasy.png"},
   {word:"TATÁ",meaning:"fogo",category:"NATUREZA",audio:"tata.mp3",file:"tata.png"},
   {word:"YY",meaning:"água",category:"NATUREZA",audio:"yy.mp3",file:"yy.png"},
-  {word:"YWY",meaning:"terra",category:"NATUREZA",audio:"yby.mp3",file:"ywy.png"},
+  {word:"YWY",meaning:"terra",category:"NATUREZA",audio:"ywy.mp3",file:"ywy.png"},
   {word:"OKY",meaning:"chuva",category:"NATUREZA",audio:"oky.mp3",file:"oky.png"},
   {word:"YWYRÁ",meaning:"árvore",category:"NATUREZA",audio:"ywyra.mp3",file:"ywyra.png"},
   {word:"YWYTU",meaning:"vento",category:"NATUREZA",audio:"yywyru.mp3",file:"ywytu.png"},
@@ -406,7 +406,7 @@ const SEARCH_LIMITE = {
 };
 const SEARCH_POOL_EXTRA = [
   "YY","TAY","KY","PY","MUA","TATA","TATU","TUKU","KAI","OWY","MBOI",
-  "PIRA","OKY","JASY","YBY","UU","AWY","PO","KYA","UY","EIA"
+  "PIRA","OKY","JASY","YWY","UU","AWY","PO","KYA","UY","EIA"
 ];
 
 function searchClean(s){

@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi  (v15 · SAUDAÇÕES sem PNG)
+   JAVASCRIPT — Tape-rupi  (v16 · caça-palavras diagonal corrigido)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -20,15 +20,12 @@
    §15  Clima — Open-Meteo
    §16  Bind e boot
 
-   ✱ v15 — SAUDAÇÕES sem PNG:
-     · removido o campo `file` das 6 palavras de SAUDAÇÕES
-       (ARY PORÃ, KA'ARU PORÃ, PYNTŨ PORÃ, ADJIWYMA,
-        NDERA'EWÉ, PEMAẼ PORÃ)
-     · essas palavras deixam de entrar em FACIL_IMG e, portanto,
-       não aparecem mais em qWord/qMeaning/qReverse/qPictureSort
-       ("observe a imagem"). Continuam nas questões textuais
-       (qSaudacaoVocab, qGreeting, qGreetingTupi, qMatch).
-     · CORES seguem com PNG (não mexidas)
+   ✱ v16 — caça-palavras: seleção em diagonal funcionando
+     · marcar() agora calcula len com Math.max(|dr|,|dc|) + 1
+       (antes |dr| + |dc| + 1 dava valor errado na diagonal)
+     · checa diagonal como |dr| === |dc|
+     · após extrair a lista de células, valida retângulo alinhado
+       e compara conjunto com cada palavra em found
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -36,7 +33,7 @@ const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/te
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 11;
+const SAVE_VERSION = 12;
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"1️⃣", bonus:0},
@@ -369,10 +366,10 @@ const FRASES_ORDENAR = [
   {tokens:["Nhaneramõi","oendá-py","oké"], pt:"Nosso avô dormiu em casa.", nivel:2},
   {tokens:["Petsy","oóta","Barão-py"], pt:"Tua mãe vai para Barão.", nivel:4},
   {tokens:["Kweé","txetuty","oú","São Paulo-gwi"], pt:"Ontem meu tio veio de São Paulo.", nivel:4},
-  {tokens:["Nhandé","nhaporandu","Nhanderu-upé"], pt:"Nós cantanmos para DEUS.", nivel:4},
+  {tokens:["Nhandé","nhaporandu","Nhanderu-upé"], pt:"Nós falamos com Nhanderu.", nivel:4},
   {tokens:["Yy","opytá","tapé","koty","rowai-py"], pt:"A água fica ao lado da estrada.", nivel:6},
   {tokens:["Mitãngwé","onhimangá","ywyrá-gwypy"], pt:"As crianças brincam debaixo da árvore.", nivel:4},
-  {tokens:["Txekywy","oó","ka'agwy-py","odjaya","djedjy"], pt:"Meu irmão foi à mata colher palmito.", nivel:6},
+  {tokens:["Txekywy","oó","ka'agwy-py","odjaya","djedjy"], pt:"Meu irmão foi à mata colher mel.", nivel:6},
   {tokens:["Tuwitxá","oikó","nhandetekoá-mbyté-py"], pt:"O chefe mora no meio da nossa aldeia.", nivel:4},
   {tokens:["Oré","roetxá","nderu","oporaei"], pt:"Nós vimos teu pai cantar.", nivel:6},
   {tokens:["Ko'ẽ","py'i","eté","o'owy"], pt:"Cedo da manhã ela veio.", nivel:6},
@@ -1932,21 +1929,40 @@ function answers(q){
       }
     }
     function marcar(a, b){
+      if(!a || !b || a === b){
+        if(a) a.classList.remove("sel");
+        startCell = null;
+        return;
+      }
       const r1 = +a.dataset.r, c1 = +a.dataset.c;
       const r2 = +b.dataset.r, c2 = +b.dataset.c;
-      const dr = Math.sign(r2 - r1), dc = Math.sign(c2 - c1);
-      const len = Math.abs(r2-r1) + Math.abs(c2-c1) + 1;
-      const straight = (r1===r2) || (c1===c2) || Math.abs(r2-r1)===Math.abs(c2-c1);
+      const dRow = r2 - r1;
+      const dCol = c2 - c1;
+      const absRow = Math.abs(dRow);
+      const absCol = Math.abs(dCol);
       a.classList.remove("sel");
       startCell = null;
-      if(!straight || len < 2) return;
+
+      const horizontal = dRow === 0;
+      const vertical   = dCol === 0;
+      const diagonal   = absRow > 0 && absRow === absCol;
+      if(!horizontal && !vertical && !diagonal) return;
+
+      const len = Math.max(absRow, absCol) + 1;
+      if(len < 2) return;
+
+      const stepR = horizontal ? 0 : (dRow > 0 ? 1 : -1);
+      const stepC = vertical   ? 0 : (dCol > 0 ? 1 : -1);
+
       const picked = [];
-      for(let i=0;i<len;i++){
-        const r = r1 + dr*i, c = c1 + dc*i;
-        if(r<0||r>=q.grid.size||c<0||c>=q.grid.size) return;
-        picked.push(r+":"+c);
+      for(let i = 0; i < len; i++){
+        const r = r1 + stepR * i;
+        const c = c1 + stepC * i;
+        if(r < 0 || r >= q.grid.size || c < 0 || c >= q.grid.size) return;
+        picked.push(r + ":" + c);
       }
-      const alvo = found.find(f => !f.ok && (f.cells.size === picked.length && picked.every(k=>f.cells.has(k))));
+
+      const alvo = found.find(f => !f.ok && f.cells.size === picked.length && picked.every(k => f.cells.has(k)));
       if(alvo){
         alvo.ok = true;
         picked.forEach(k => {
@@ -1957,7 +1973,9 @@ function answers(q){
         if(strip) strip.classList.add("done");
         sfx.acerto();
         if(found.every(f=>f.ok)) verificar(q, true, wrap);
-      } else sfx.erro();
+      } else {
+        sfx.erro();
+      }
     }
     box.append(wordStrip, wrap);
     return;

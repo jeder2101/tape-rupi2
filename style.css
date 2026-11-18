@@ -583,3 +583,230 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:10p
   .visual-image{width:min(50vh, 40vw);height:min(50vh, 40vw)}
   .card{overflow-y:auto}
 }
+/* ============================================================
+   §16 DESKTOP / TABLET LARGO — layout alargado em duas colunas
+   Ativado quando a viewport tem no mínimo 900px de largura
+   ============================================================ */
+@media (min-width:900px){
+
+  /* 16.1 Casca do app: ocupa a tela, sem travar em 520px */
+  html,body{height:100%;overflow:hidden}
+  body{
+    padding:0;
+    background:radial-gradient(circle at 12% 6%,#1b4a34 0%,transparent 42%),
+               radial-gradient(circle at 88% 94%,#2b2438 0%,transparent 42%),
+               linear-gradient(180deg,var(--bg-0),var(--bg-1) 45%,var(--bg-2));
+  }
+  .app{
+    max-width:min(1600px, 96vw);
+    min-height:100dvh;
+    padding:20px 28px 24px;
+    gap:16px;
+  }
+
+  /* 16.2 Header lateral: chip + som em cima, botão home à direita */
+  header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  header .chip{font-size:12px;padding:8px 14px}
+  header .icon-btn{width:48px;height:48px;font-size:20px;border-radius:16px}
+  header #sound{margin-left:auto}   /* som cola à direita */
+
+  /* 16.3 HOME no desktop: hero central e fases em 3 colunas largas */
+  #home.active{
+    display:grid;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+    grid-template-areas:
+      "hero fases"
+      "hero continuar";
+    gap:22px;
+    align-items:start;
+  }
+  #home .hero{grid-area:hero;padding-bottom:26px;border-radius:30px}
+  #home .hero-image-wrap{aspect-ratio:16/9}
+  #home .hero-title-brand{font-size:clamp(52px,5vw,76px)}
+  #home .hero-subtitle{font-size:12px;letter-spacing:.32em}
+  #home .hero-greeting-card{padding:24px 24px 22px}
+  #home .hero-icon{font-size:64px}
+  #home .hero-title{font-size:clamp(30px,2.6vw,42px)}
+  #home .hero-desc{font-size:15px;max-width:460px}
+
+  #home .section-title,
+  #home .fase-grid,
+  #home .ghost-btn--continuar{grid-column:2}
+  #home .section-title{grid-area:fases;margin:2px 0 10px;font-size:12px}
+  #home .fase-grid{
+    grid-area:fases;
+    align-self:start;
+    margin-top:26px;               /* compensa o section-title acima */
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+  }
+  .fase-btn{padding:18px 10px;border-radius:20px}
+  .fase-btn span{font-size:13px}
+  .fase-btn small{font-size:10.5px}
+  .ghost-btn--continuar{grid-area:continuar;font-size:12px}
+
+  /* 16.4 GAME no desktop: painel esquerdo (pergunta/respostas) e direito (status) */
+  #game.active{
+    display:grid;
+    grid-template-columns:minmax(0, 1.5fr) minmax(0, 1fr);
+    grid-template-rows:auto 1fr auto;
+    grid-template-areas:
+      "hud    hud"
+      "card   side"
+      "footer footer";
+    gap:18px;
+    align-items:start;
+  }
+  .hud{grid-area:hud;display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px}
+  .hud-left{flex-direction:row;align-items:center;gap:10px}
+  .hud-left .chip,
+  .hud-left .chip-accent{font-size:11px;padding:6px 12px}
+  .progress-wrap{grid-column:1 / -1;margin-top:10px}
+
+  /* .card ganha o miolo grande da esquerda */
+  .card{
+    grid-area:card;
+    grid-template-columns:1fr;
+    padding:26px 28px;
+    border-radius:26px;
+    gap:18px;
+  }
+  .card-head{padding-bottom:2px}
+  .kind-tag{font-size:11px}
+  .listen-btn{width:42px;height:42px;border-radius:14px;font-size:18px}
+  #prompt{font-size:clamp(20px, 1.7vw, 26px);line-height:1.32}
+  #hint{font-size:13.5px}
+
+  /* Visual mais solto no desktop */
+  .visual{padding:14px 0 8px;gap:14px}
+  .visual-card{padding:22px;gap:14px;border-radius:24px}
+  .visual-image{width:min(340px, 26vw);height:min(340px, 26vw)}
+  .word-highlight{font-size:clamp(30px,3vw,44px);padding:26px 34px;max-width:520px}
+  .number-visual{font-size:120px}
+  .visual-count{max-width:520px;gap:16px}
+  .count-bubble{width:120px;height:120px;padding:14px}
+  .cat-grid{max-width:440px;gap:18px}
+  .cat-slot-fallback{font-size:64px}
+
+  /* Alternativas em coluna única mais larga */
+  .answers{max-width:100%}
+  .answer{padding:18px 22px;font-size:16px;min-height:60px;border-radius:20px}
+  .answer{letter-spacing:.03em}
+
+  /* Cruzadinha / caça-palavras / match escalam junto */
+  .cw-grid{max-width:min(100%, calc(var(--cw-cols,5) * 68px + (var(--cw-cols,5) - 1) * 6px));gap:6px}
+  .cw-input{font-size:clamp(18px,1.8vw,26px)}
+  .cw-num{font-size:11px}
+  .cw-clues{max-width:560px}
+  .search-grid{max-width:640px;margin:0 auto;gap:4px;padding:10px}
+  .search-cell{font-size:14px}
+  .search-word{font-size:12px;padding:6px 12px}
+  .match-grid{column-gap:clamp(60px, 10vw, 140px)}
+  .match-item{min-height:60px;font-size:14.5px;padding:14px 18px}
+  .match-col{gap:22px}
+  .token{padding:12px 16px;font-size:15px}
+
+  /* 16.5 Painel direito: feedback + next + tradução/resultado */
+  #game #feedback{
+    grid-area:side;
+    position:sticky;
+    top:24px;
+    align-self:start;
+    padding:18px;
+    border-radius:20px;
+    background:linear-gradient(160deg, rgba(123,228,149,.10), rgba(0,0,0,.20));
+    border:1px solid var(--stroke);
+    box-shadow:var(--shadow);
+    min-height:80px;
+    text-align:center;
+    font-size:14px;
+    line-height:1.5;
+  }
+  #game #feedback:empty::before{
+    content:"Responda à esquerda para ver o resultado aqui.";
+    display:block;
+    opacity:.55;
+    font-style:italic;
+    font-weight:700;
+  }
+  #game #feedback.error{background:linear-gradient(160deg, rgba(255,122,122,.12), rgba(0,0,0,.20))}
+  #game #feedback + .next-btn,
+  #game .next-btn{grid-area:footer;max-width:100%;padding:18px;font-size:15px}
+
+  /* O bloco de tradução (ordem / answer-key) também pode sentar no painel direito,
+     mas ele é injetado dinamicamente ao lado do feedback — por isso fica solto. */
+  #game .order-translation,
+  #game .answer-key{max-width:100%}
+
+  /* 16.6 FINISH: painel resumo grande e dois "cards" (resumo + mensagens) */
+  #finish.active{
+    display:grid;
+    grid-template-columns:minmax(0, 1.1fr) minmax(0, .9fr);
+    grid-template-areas:
+      "bubble side"
+      "bubble side";
+    gap:22px;
+    align-items:start;
+    padding-top:16px;
+  }
+  #finish .finish-wrap{grid-area:bubble}
+  #finish .finish-bubble{padding:34px 30px 38px;border-radius:36px}
+  #finish .finish-medal{font-size:88px}
+  #finish .finish-title{font-size:28px}
+  #finish .finish-sub{font-size:12px;letter-spacing:.24em;margin-bottom:22px}
+  #finish .finish-score-big{font-size:88px}
+  #finish .score-breakdown{gap:12px;margin-bottom:22px}
+  #finish .score-cell{padding:16px 8px;border-radius:18px}
+  #finish .score-cell .val{font-size:26px}
+  #finish .score-cell .lbl{font-size:10px}
+
+  #finish .support-msg,
+  #finish .attention-msg{
+    grid-area:side;
+    font-size:14.5px;
+    padding:16px 18px;
+    margin-bottom:12px;
+  }
+  #finish .support-msg{grid-column:2;align-self:start}
+  #finish .attention-msg{grid-column:2;align-self:start;margin-top:92px}
+  #finish .finish-actions{
+    grid-column:2;
+    align-self:end;
+    margin-top:auto;
+    padding-top:20px;
+  }
+  #finish .finish-actions .primary-btn,
+  #finish .finish-actions .ghost-btn{padding:16px;font-size:14px}
+
+  /* 16.7 Weather hero (quando aparece em home) fica central no hero */
+  .weather-card--hero{max-width:420px;padding:16px 20px}
+  .weather-temp{font-size:28px}
+
+  /* 16.8 Safe: com muito pouco vão, o card rola internamente em vez de cortar */
+  .card{max-height:calc(100dvh - 200px);overflow-y:auto;scrollbar-width:thin}
+  .card::-webkit-scrollbar{width:5px}
+  .card::-webkit-scrollbar-thumb{background:rgba(243,201,105,.35);border-radius:5px}
+}
+
+/* 16.9 Ajuste fino em notebooks pequenos (900–1200px) */
+@media (min-width:900px) and (max-width:1200px){
+  .app{padding:16px 20px 20px}
+  #game.active{grid-template-columns:minmax(0, 1.35fr) minmax(0, 1fr);gap:16px}
+  .card{padding:22px 22px;gap:16px}
+  #prompt{font-size:clamp(19px, 2vw, 24px)}
+  .visual-image{width:min(300px, 26vw);height:min(300px, 26vw)}
+  .fase-grid{grid-template-columns:repeat(3, 1fr)}
+}
+
+/* 16.10 Monitores largos: mantém texto grande, mas não estoura */
+@media (min-width:1400px){
+  .app{max-width:min(1800px, 94vw)}
+  #game.active{grid-template-columns:minmax(0, 1.6fr) minmax(0, 1fr)}
+  #prompt{font-size:clamp(22px, 1.5vw, 30px)}
+  .visual-image{width:min(400px, 28vw);height:min(400px, 28vw)}
+  .answer{font-size:17px;min-height:66px}
+}

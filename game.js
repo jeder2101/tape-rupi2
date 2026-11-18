@@ -222,7 +222,7 @@ const VOCABULARY = [
   {word:"PARÁ",meaning:"rio",category:"GEOGRAFIA",audio:"parana.mp3",file:"parana.png"},
   {word:"PARAGWATSU",meaning:"mar",category:"GEOGRAFIA",audio:"paragwatsu.mp3",file:"paragwatsu.png"},
   {word:"YY KWÁ",meaning:"lago",category:"GEOGRAFIA",audio:"yy-kwa.mp3",file:"yy-kwa.png"},
-  {word:"YY KWÁTY",meaning:"lagoa",category:"GEOGRAFIA",audio:"yy-kwaty.mp3",file:"yy-kwa.png"},
+  {word:"YY KWÁTY",meaning:"lagoa",category:"GEOGRAFIA",audio:"yy-kwaty.mp3",file:"yy-kwa1.png"},
   {word:"YY AKÃ",meaning:"cachoeira",category:"GEOGRAFIA",audio:"yy-aka.mp3",file:"yy-aka.png"},
   {word:"KA'AGWY",meaning:"mata",category:"GEOGRAFIA",audio:"ka-agwy.mp3",file:"ka-agwy.png"},
   {word:"TAPÉ",meaning:"estrada",category:"GEOGRAFIA",audio:"tape.mp3",file:"tape.png"},

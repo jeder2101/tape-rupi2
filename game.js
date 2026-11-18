@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi  (v14 · fusão GEOGRAFIA→NATUREZA + PARENTESCO como categoria)
+   JAVASCRIPT — Tape-rupi  (v15 · SAUDAÇÕES sem PNG)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -20,17 +20,15 @@
    §15  Clima — Open-Meteo
    §16  Bind e boot
 
-   ✱ v14 — fusão de categorias:
-     · PARÁ, PARAGWATSU, YY KWÁ, YY KWÁTY, YY AKÃ, KA'AGWY, TAPÉ,
-       OKÁ RUTSU passam de GEOGRAFIA para NATUREZA
-     · PARENTESCO vira categoria visual forte (usa o PNG
-       assets/imagens/categorias/parentesco.png no slot de categoria)
-     · removido "GEOGRAFIA" de CATS_VISUAIS, CATS_BASE, CATEGORIA_ARQUIVO
-       e CATEGORIA_EMOJI
-     · qCategory() e qPictureSort() continuam exigindo PNG por palavra;
-       no PARENTESCO (sem PNG por palavra), eles caem no fallback e a
-       categoria aparece nas questões textuais (qSaudacaoVocab,
-       qParentesco, qMatch).
+   ✱ v15 — SAUDAÇÕES sem PNG:
+     · removido o campo `file` das 6 palavras de SAUDAÇÕES
+       (ARY PORÃ, KA'ARU PORÃ, PYNTŨ PORÃ, ADJIWYMA,
+        NDERA'EWÉ, PEMAẼ PORÃ)
+     · essas palavras deixam de entrar em FACIL_IMG e, portanto,
+       não aparecem mais em qWord/qMeaning/qReverse/qPictureSort
+       ("observe a imagem"). Continuam nas questões textuais
+       (qSaudacaoVocab, qGreeting, qGreetingTupi, qMatch).
+     · CORES seguem com PNG (não mexidas)
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -38,7 +36,7 @@ const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/te
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 10;
+const SAVE_VERSION = 11;
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"1️⃣", bonus:0},
@@ -239,12 +237,12 @@ const VOCABULARY = [
   {word:"KA'AGWY",meaning:"mata",category:"NATUREZA",audio:"ka-agwy.mp3",file:"ka-agwy.png"},
   {word:"TAPÉ",meaning:"estrada",category:"NATUREZA",audio:"tape.mp3",file:"tape.png"},
   {word:"OKÁ RUTSU",meaning:"campo",category:"NATUREZA",audio:"oka-rutsu.mp3",file:"oka-rutsu.png"},
-  {word:"ARY PORÃ",meaning:"bom dia",category:"SAUDAÇÕES",audio:"ary-pora.mp3",file:"ary-pora.png"},
-  {word:"KA'ARU PORÃ",meaning:"boa tarde",category:"SAUDAÇÕES",audio:"kaaru-pora.mp3",file:"kaaru-pora.png"},
-  {word:"PYNTŨ PORÃ",meaning:"boa noite",category:"SAUDAÇÕES",audio:"pyntu-pora.mp3",file:"pyntu-pora.png"},
-  {word:"ADJIWYMA",meaning:"tchau",category:"SAUDAÇÕES",audio:"adjiwyma.mp3",file:"adjiwyma.png"},
-  {word:"NDERA'EWÉ",meaning:"tudo bem?",category:"SAUDAÇÕES",audio:"nderaewe.mp3",file:"nderaewe.png"},
-  {word:"PEMAẼ PORÃ",meaning:"bem-vindos",category:"SAUDAÇÕES",audio:"pemae-pora.mp3",file:"pemae-pora.png"},
+  {word:"ARY PORÃ",meaning:"bom dia",category:"SAUDAÇÕES",audio:"ary-pora.mp3"},
+  {word:"KA'ARU PORÃ",meaning:"boa tarde",category:"SAUDAÇÕES",audio:"kaaru-pora.mp3"},
+  {word:"PYNTŨ PORÃ",meaning:"boa noite",category:"SAUDAÇÕES",audio:"pyntu-pora.mp3"},
+  {word:"ADJIWYMA",meaning:"tchau",category:"SAUDAÇÕES",audio:"adjiwyma.mp3"},
+  {word:"NDERA'EWÉ",meaning:"tudo bem?",category:"SAUDAÇÕES",audio:"nderaewe.mp3"},
+  {word:"PEMAẼ PORÃ",meaning:"bem-vindos",category:"SAUDAÇÕES",audio:"pemae-pora.mp3"},
   {word:"WEI",meaning:"bem, bastante",category:"ADVÉRBIOS",audio:"wei.mp3"},
   {word:"ARIENTÉ",meaning:"bastante",category:"ADVÉRBIOS",audio:"ariente.mp3"},
   {word:"ETÉ",meaning:"muito",category:"ADVÉRBIOS",audio:"ete.mp3"},
@@ -609,7 +607,6 @@ const FACIL_IMG      = VOCABULARY.filter(v => v.file);
 const COM_AUDIO_IMG  = VOCABULARY.filter(v => v.audio && v.file);
 const ANIMAIS_COUNT  = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
 const PARENTESCO_IMG = VOCABULARY.filter(v => v.category === "PARENTESCO" && v.file);
-/* ✱ GEOGRAFIA removida — NATUREZA absorveu as 8 palavras */
 const CATS_VISUAIS   = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","NATUREZA"];
 
 function catsComImagem(){
@@ -620,12 +617,10 @@ function catsComImagem(){
 
 const FACIL        = VOCABULARY.filter(v => v.file);
 const COM_AUDIO    = VOCABULARY.filter(v => v.audio);
-/* ✱ CATS_BASE sem GEOGRAFIA */
 const CATS_BASE    = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA"];
 const PARENTESCO   = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
 /* ---------- §6.2 IMAGENS DAS CATEGORIAS ---------- */
-/* ✱ GEOGRAFIA removida — PARENTESCO permanece com PNG próprio */
 const CATEGORIA_ARQUIVO = {
   "OBJETOS":    "objetos.png",
   "ALIMENTOS":  "alimentos.png",

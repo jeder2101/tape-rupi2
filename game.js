@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi  (v13 · selo count/number simplificado)
+   JAVASCRIPT — Tape-rupi  (v14 · fusão GEOGRAFIA→NATUREZA + PARENTESCO como categoria)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -20,9 +20,17 @@
    §15  Clima — Open-Meteo
    §16  Bind e boot
 
-   ✱ v13 — selo count/number:
-     · count  → "número = N" (sem nome do animal)
-     · number → "número = N"
+   ✱ v14 — fusão de categorias:
+     · PARÁ, PARAGWATSU, YY KWÁ, YY KWÁTY, YY AKÃ, KA'AGWY, TAPÉ,
+       OKÁ RUTSU passam de GEOGRAFIA para NATUREZA
+     · PARENTESCO vira categoria visual forte (usa o PNG
+       assets/imagens/categorias/parentesco.png no slot de categoria)
+     · removido "GEOGRAFIA" de CATS_VISUAIS, CATS_BASE, CATEGORIA_ARQUIVO
+       e CATEGORIA_EMOJI
+     · qCategory() e qPictureSort() continuam exigindo PNG por palavra;
+       no PARENTESCO (sem PNG por palavra), eles caem no fallback e a
+       categoria aparece nas questões textuais (qSaudacaoVocab,
+       qParentesco, qMatch).
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -30,7 +38,7 @@ const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/te
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 9;
+const SAVE_VERSION = 10;
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"1️⃣", bonus:0},
@@ -223,14 +231,14 @@ const VOCABULARY = [
   {word:"YWYRÁ",meaning:"árvore",category:"NATUREZA",audio:"ywyra.mp3",file:"ywyra.png"},
   {word:"YWYTU",meaning:"vento",category:"NATUREZA",audio:"yywyru.mp3",file:"ywytu.png"},
   {word:"YWYTY",meaning:"serra",category:"NATUREZA",audio:"ywyty.mp3",file:"ywyty.png"},
-  {word:"PARÁ",meaning:"rio",category:"GEOGRAFIA",audio:"parana.mp3",file:"parana.png"},
-  {word:"PARAGWATSU",meaning:"mar",category:"GEOGRAFIA",audio:"paragwatsu.mp3",file:"paragwatsu.png"},
-  {word:"YY KWÁ",meaning:"lago",category:"GEOGRAFIA",audio:"yy-kwa.mp3",file:"yy-kwa.png"},
-  {word:"YY KWÁTY",meaning:"lagoa",category:"GEOGRAFIA",audio:"yy-kwaty.mp3",file:"yy-kwa1.png"},
-  {word:"YY AKÃ",meaning:"cachoeira",category:"GEOGRAFIA",audio:"yy-aka.mp3",file:"yy-aka.png"},
-  {word:"KA'AGWY",meaning:"mata",category:"GEOGRAFIA",audio:"ka-agwy.mp3",file:"ka-agwy.png"},
-  {word:"TAPÉ",meaning:"estrada",category:"GEOGRAFIA",audio:"tape.mp3",file:"tape.png"},
-  {word:"OKÁ RUTSU",meaning:"campo",category:"GEOGRAFIA",audio:"oka-rutsu.mp3",file:"oka-rutsu.png"},
+  {word:"PARÁ",meaning:"rio",category:"NATUREZA",audio:"parana.mp3",file:"parana.png"},
+  {word:"PARAGWATSU",meaning:"mar",category:"NATUREZA",audio:"paragwatsu.mp3",file:"paragwatsu.png"},
+  {word:"YY KWÁ",meaning:"lago",category:"NATUREZA",audio:"yy-kwa.mp3",file:"yy-kwa.png"},
+  {word:"YY KWÁTY",meaning:"lagoa",category:"NATUREZA",audio:"yy-kwaty.mp3",file:"yy-kwa1.png"},
+  {word:"YY AKÃ",meaning:"cachoeira",category:"NATUREZA",audio:"yy-aka.mp3",file:"yy-aka.png"},
+  {word:"KA'AGWY",meaning:"mata",category:"NATUREZA",audio:"ka-agwy.mp3",file:"ka-agwy.png"},
+  {word:"TAPÉ",meaning:"estrada",category:"NATUREZA",audio:"tape.mp3",file:"tape.png"},
+  {word:"OKÁ RUTSU",meaning:"campo",category:"NATUREZA",audio:"oka-rutsu.mp3",file:"oka-rutsu.png"},
   {word:"ARY PORÃ",meaning:"bom dia",category:"SAUDAÇÕES",audio:"ary-pora.mp3",file:"ary-pora.png"},
   {word:"KA'ARU PORÃ",meaning:"boa tarde",category:"SAUDAÇÕES",audio:"kaaru-pora.mp3",file:"kaaru-pora.png"},
   {word:"PYNTŨ PORÃ",meaning:"boa noite",category:"SAUDAÇÕES",audio:"pyntu-pora.mp3",file:"pyntu-pora.png"},
@@ -601,7 +609,8 @@ const FACIL_IMG      = VOCABULARY.filter(v => v.file);
 const COM_AUDIO_IMG  = VOCABULARY.filter(v => v.audio && v.file);
 const ANIMAIS_COUNT  = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
 const PARENTESCO_IMG = VOCABULARY.filter(v => v.category === "PARENTESCO" && v.file);
-const CATS_VISUAIS   = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","NATUREZA","GEOGRAFIA"];
+/* ✱ GEOGRAFIA removida — NATUREZA absorveu as 8 palavras */
+const CATS_VISUAIS   = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","NATUREZA"];
 
 function catsComImagem(){
   return CATS_VISUAIS.filter(c =>
@@ -611,10 +620,12 @@ function catsComImagem(){
 
 const FACIL        = VOCABULARY.filter(v => v.file);
 const COM_AUDIO    = VOCABULARY.filter(v => v.audio);
-const CATS_BASE    = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
+/* ✱ CATS_BASE sem GEOGRAFIA */
+const CATS_BASE    = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA"];
 const PARENTESCO   = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
 /* ---------- §6.2 IMAGENS DAS CATEGORIAS ---------- */
+/* ✱ GEOGRAFIA removida — PARENTESCO permanece com PNG próprio */
 const CATEGORIA_ARQUIVO = {
   "OBJETOS":    "objetos.png",
   "ALIMENTOS":  "alimentos.png",
@@ -623,13 +634,12 @@ const CATEGORIA_ARQUIVO = {
   "CORPO":      "corpo.png",
   "PARENTESCO": "parentesco.png",
   "NATUREZA":   "natureza.png",
-  "GEOGRAFIA":  "geografia.png",
   "SAUDAÇÕES":  "saudacoes.png",
   "ADVÉRBIOS":  "adverbios.png"
 };
 const CATEGORIA_EMOJI = {
   "OBJETOS":"🏺","ALIMENTOS":"🍌","ANIMAIS":"🐾","CORES":"🎨",
-  "CORPO":"👁️","PARENTESCO":"👪","NATUREZA":"🌿","GEOGRAFIA":"🗺️",
+  "CORPO":"👁️","PARENTESCO":"👪","NATUREZA":"🌿",
   "SAUDAÇÕES":"👋","ADVÉRBIOS":"💬"
 };
 const CATEGORIA_FALLBACK = "📂";
@@ -1975,13 +1985,6 @@ function answers(q){
 }
 
 /* ---------- §12 VERIFICAÇÃO ---------- */
-/* ✱ SELO "RESPOSTA CORRETA"
-   Aparece SOMENTE quando o jogador acerta.
-   Cada tipo produz duas linhas:
-     • tupi — a forma em Tupi
-     • pt   — a tradução em português
-   count e number usam apenas "número = N".                  */
-
 function _descreverRespostaCerta(q){
   if(!q) return null;
   const numero = n => {
@@ -2004,7 +2007,6 @@ function _descreverRespostaCerta(q){
       const item = q.audioItem || buscarVocab(q.target);
       return { tupi: q.target, pt: item ? item.meaning : "" };
     }
-    /* ✱ count e number: apenas "número = N" */
     case "number": {
       return { tupi: numero(q.target), pt: `número = ${q.target}` };
     }

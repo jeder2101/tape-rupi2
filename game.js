@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi  (v11 · selo com tradução)
+   JAVASCRIPT — Tape-rupi  (v12 · selo com tradução + categoria)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -20,11 +20,13 @@
    §15  Clima — Open-Meteo
    §16  Bind e boot
 
-   ✱ v11 — selo "Resposta correta" com TUPI + TRADUÇÃO
-     · _textoRespostaCerta retorna {topo, tupi, pt}
-     · mostrarRespostaCerta renderiza as 3 linhas
-     · Tradução aparece em TODOS os tipos de questão ao acertar
-     · Não aparece quando erra — só destaca o botão certo
+   ✱ v12 — corrige qCategory()
+     · qCategory() agora também carrega `targetMeaning`
+       (significado da palavra-alvo) e `targetCategory` (a
+       categoria correta), separados do `target` (que é o valor
+       comparado pelo check()).
+     · _descreverRespostaCerta() usa esses campos para o selo:
+       linha TUPI = palavra; linha PT = "significado · Categoria: X"
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -878,6 +880,11 @@ function qNumber(fase){
     choices:shuffle(pickN(n, NUMBER_VOCABULARY, qtdOpcoes)).map(x=>x.value)
   };
 }
+/* ✱ qCategory() agora carrega TRÊS campos:
+     target         → a categoria (valor que o check() compara)
+     targetWord     → a palavra Tupi mostrada
+     targetMeaning  → o significado da palavra em português
+     targetCategory → a categoria correta (para o selo) */
 function qCategory(){
   const cats = catsComImagem();
   if(cats.length < 3) return null;
@@ -890,7 +897,11 @@ function qCategory(){
     type:"category", kind:"CATEGORIA",
     prompt:`A palavra «${item.word}» pertence a qual categoria?`,
     hint:"Escolha entre as categorias.",
-    target:cat, targetWord:item.word, imageItem:item,
+    target:cat,
+    targetWord:item.word,
+    targetMeaning:item.meaning,
+    targetCategory:cat,
+    imageItem:item,
     choices, categorias: choices
   };
 }
@@ -2012,8 +2023,13 @@ function _descreverRespostaCerta(q){
     case "count": {
       return { tupi: numero(q.target), pt: `${q.target} ${q.countItem && q.countItem.meaning ? "· " + q.countItem.meaning : ""}`.trim() };
     }
+    /* ✱ category: mostra a palavra Tupi + o significado + a categoria */
     case "category": {
-      return { tupi: q.targetWord || "", pt: `Categoria: ${q.target}` };
+      const palavra = q.targetWord || "";
+      const significado = q.targetMeaning || "";
+      const categoria = q.targetCategory || q.target || "";
+      const pt = [significado, categoria ? `Categoria: ${categoria}` : ""].filter(Boolean).join(" · ");
+      return { tupi: palavra, pt };
     }
     case "odd": {
       const v = buscarVocab(q.target);

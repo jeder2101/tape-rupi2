@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================
-   JAVASCRIPT — Tape-rupi
+   JAVASCRIPT — Tape-rupi  (v9 · patch visual)
    §1   Constantes e configuração
    §2   Listas de conteúdo
    §3   Motor legado de cruzadinha (reserva)
@@ -19,6 +19,14 @@
    §14  Seletor e continuar
    §15  Clima — Open-Meteo
    §16  Bind e boot
+
+   ✱ v9 — Separação de conteúdo textual × visual
+     · Questões que pedem "observe a imagem" só usam itens com `file`
+     · Itens sem PNG (SAUDAÇÕES, ADVÉRBIOS e alguns PARENTESCO)
+       permanecem nas questões textuais (tradução, ligar, ordenar)
+     · Novos geradores: qGreetingTupi, qSaudacaoVocab,
+       qAdvMeaning, qAdvReverse, qPossPost
+     · Guarda final em montarFase() impede imagem quebrada
    ============================================================ */
 
 /* ---------- §1 CONSTANTES ---------- */
@@ -26,7 +34,7 @@ const ASSET = { images:"assets/imagens/", audio:"assets/audio/", home:"assets/te
 const QS_PER_FASE = 30;
 const TOTAL_FASES = 9;
 const SAVE_KEY = "tape-rupi-progresso";
-const SAVE_VERSION = 8;
+const SAVE_VERSION = 9;   /* ✱ bump pela nova distribuição */
 
 const FASES_INFO = {
   1:{nome:"Fase 1",nivel:"Fácil",    icone:"1️⃣", bonus:0},
@@ -544,7 +552,8 @@ function salvarProgresso(){
     const atual = lerProgresso();
     const concluidas = Math.max(atual ? atual.concluidas : 0, state.fase > 1 ? state.fase - 1 : 0);
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      v:SAVE_VERSION, fase:state.fase, index:state.index, score:state.score, concluidas, data:new Date().toISOString()
+      v:SAVE_VERSION, fase:state.fase, index:state.index, score:state.score,
+      acertos:state.acertos, erros:state.erros, concluidas, data:new Date().toISOString()
     }));
   }catch(e){}
 }
@@ -560,7 +569,7 @@ function registrarConclusao(fase){
   p.concluidas = Math.max(p.concluidas || 0, fase);
   p.v = SAVE_VERSION;
   p.fase = Math.min(fase + 1, TOTAL_FASES);
-  p.index = 0; p.score = 0;
+  p.index = 0; p.score = 0; p.acertos = 0; p.erros = 0;
   p.data = new Date().toISOString();
   try{ localStorage.setItem(SAVE_KEY, JSON.stringify(p)); }catch(e){}
 }
@@ -586,11 +595,26 @@ function pickMeanings(item, list, n){
 }
 function numberWord(n){ return NUMBER_VOCABULARY.find(v => v.value === n); }
 
-const FACIL = VOCABULARY.filter(v => v.file);
-const COM_AUDIO = VOCABULARY.filter(v => v.audio);
-const ANIMAIS_COUNT = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
-const CATS_BASE = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
-const PARENTESCO = VOCABULARY.filter(v => v.category === "PARENTESCO");
+/* ✱ Todos os conjuntos abaixo são SEGUROS para questões visuais */
+const TEM_IMAGEM     = item => !!(item && item.file);
+const FACIL_IMG      = VOCABULARY.filter(v => v.file);
+const COM_AUDIO_IMG  = VOCABULARY.filter(v => v.audio && v.file);
+const ANIMAIS_COUNT  = VOCABULARY.filter(v => v.category === "ANIMAIS" && v.file);
+const PARENTESCO_IMG = VOCABULARY.filter(v => v.category === "PARENTESCO" && v.file);
+const CATS_VISUAIS   = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","NATUREZA","GEOGRAFIA"];
+
+/* Categorias com pelo menos 3 itens com PNG — alvo seguro de pergunta visual */
+function catsComImagem(){
+  return CATS_VISUAIS.filter(c =>
+    VOCABULARY.filter(v => v.category === c && v.file).length >= 3
+  );
+}
+
+/* Compat com o restante do código (§9 distribuições, §11 render) */
+const FACIL        = VOCABULARY.filter(v => v.file);
+const COM_AUDIO    = VOCABULARY.filter(v => v.audio);
+const CATS_BASE    = ["OBJETOS","ALIMENTOS","ANIMAIS","CORPO","PARENTESCO","NATUREZA","GEOGRAFIA"];
+const PARENTESCO   = VOCABULARY.filter(v => v.category === "PARENTESCO");
 
 /* ---------- §6.2 IMAGENS DAS CATEGORIAS ---------- */
 const CATEGORIA_ARQUIVO = {
@@ -784,27 +808,60 @@ function qSearch(fase, usadas){
   };
 }
 
-/* §8.3 Geradores simples */
+/* §8.3 Geradores com imagem — ✱ só itens com PNG */
+
 function qWord(fase){
-  const item = shuffle(FACIL)[0];
-  return {type:"word",kind:"VOCABULÁRIO",prompt:"Como se diz isto na língua Tupi?",hint:"Observe a imagem e escolha a palavra.",target:item.word,imageItem:item,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+  if(FACIL_IMG.length < 3) return null;
+  const item = shuffle(FACIL_IMG)[0];
+  return {
+    type:"word", kind:"VOCABULÁRIO",
+    prompt:"Como se diz isto na língua Tupi?",
+    hint:"Observe a imagem e escolha a palavra.",
+    target:item.word, imageItem:item,
+    choices:pickN(item, FACIL_IMG, fase>=5?4:3).map(x=>x.word)
+  };
 }
 function qMeaning(fase){
-  const item = shuffle(FACIL)[0];
-  return {type:"meaning",kind:"TRADUÇÃO",prompt:`O que significa «${item.word}»?`,hint:"Escolha o significado em português.",target:item.meaning,targetWord:item.word,audioItem:item,choices:pickMeanings(item,FACIL,fase>=5?4:3)};
+  const item = shuffle(FACIL_IMG)[0];
+  return {
+    type:"meaning", kind:"TRADUÇÃO",
+    prompt:`O que significa «${item.word}»?`,
+    hint:"Escolha o significado em português.",
+    target:item.meaning, targetWord:item.word, audioItem:item,
+    choices:pickMeanings(item, FACIL_IMG, fase>=5?4:3)
+  };
 }
 function qReverse(fase){
-  const item = shuffle(FACIL)[0];
-  return {type:"reverse",kind:"PALAVRA EM TUPI",prompt:`Como se diz «${item.meaning}» em Tupi?`,hint:"Escolha a palavra correta.",target:item.word,targetMeaning:item.meaning,choices:pickN(item,FACIL,fase>=5?4:3).map(x=>x.word)};
+  const item = shuffle(FACIL_IMG)[0];
+  return {
+    type:"reverse", kind:"PALAVRA EM TUPI",
+    prompt:`Como se diz «${item.meaning}» em Tupi?`,
+    hint:"Escolha a palavra correta.",
+    target:item.word, targetMeaning:item.meaning,
+    choices:pickN(item, FACIL_IMG, fase>=5?4:3).map(x=>x.word)
+  };
 }
 function qAudio(fase){
-  const item = shuffle(COM_AUDIO)[0];
-  return {type:"audio",kind:"ESCUTE E ESCOLHA",prompt:"Ouça a pronúncia e escolha a palavra certa.",hint:"Toque no alto-falante para ouvir.",target:item.word,audioItem:item,choices:pickN(item,COM_AUDIO,fase>=5?4:3).map(x=>x.word)};
+  const item = shuffle(COM_AUDIO_IMG.length ? COM_AUDIO_IMG : COM_AUDIO)[0];
+  return {
+    type:"audio", kind:"ESCUTE E ESCOLHA",
+    prompt:"Ouça a pronúncia e escolha a palavra certa.",
+    hint:"Toque no alto-falante para ouvir.",
+    target:item.word, audioItem:item,
+    choices:pickN(item, (COM_AUDIO_IMG.length ? COM_AUDIO_IMG : COM_AUDIO), fase>=5?4:3).map(x=>x.word)
+  };
 }
 function qCount(fase){
+  if(ANIMAIS_COUNT.length < 1) return null;
   const n = 1 + Math.floor(Math.random()*7);
   const animal = shuffle(ANIMAIS_COUNT)[0];
-  return {type:"count",kind:"CONTE E DESCUBRA",prompt:"Quantos animais aparecem na imagem?",hint:"Toque em cada figura para marcar que já contou.",target:n,countItem:animal,choices:shuffle(pickN(numberWord(n),NUMBER_VOCABULARY,Math.min(4,(fase>=5?4:3)+1))).map(x=>x.value)};
+  return {
+    type:"count", kind:"CONTE E DESCUBRA",
+    prompt:"Quantos animais aparecem na imagem?",
+    hint:"Toque em cada figura para marcar que já contou.",
+    target:n, countItem:animal,
+    choices:shuffle(pickN(numberWord(n), NUMBER_VOCABULARY, Math.min(4,(fase>=5?4:3)+1))).map(x=>x.value)
+  };
 }
 function qNumber(fase){
   const n = shuffle(NUMBER_VOCABULARY)[0];
@@ -814,66 +871,100 @@ function qNumber(fase){
     prompt:"Qual é a palavra Tupi para este número?",
     hint:"Observe o algarismo.",
     target:n.value,
-    choices:shuffle(pickN(n,NUMBER_VOCABULARY,qtdOpcoes)).map(x=>x.value)
+    choices:shuffle(pickN(n, NUMBER_VOCABULARY, qtdOpcoes)).map(x=>x.value)
   };
 }
 function qCategory(){
-  const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.some(v => v.category === c && v.file));
+  const cats = catsComImagem();
   if(cats.length < 3) return null;
   const cat = shuffle(cats)[0];
-  const item = shuffle(VOCABULARY.filter(v => v.category === cat && v.file))[0];
-  if(!item) return null;
+  const itensCat = VOCABULARY.filter(v => v.category === cat && v.file);
+  if(itensCat.length < 3) return null;
+  const item = shuffle(itensCat)[0];
   const choices = shuffle([cat, ...shuffle(cats.filter(c => c !== cat)).slice(0, 3)]);
   return {
     type:"category", kind:"CATEGORIA",
     prompt:`A palavra «${item.word}» pertence a qual categoria?`,
     hint:"Escolha entre as categorias.",
-    target:cat,
-    targetWord:item.word,
-    imageItem:item,
-    choices,
-    categorias: choices
+    target:cat, targetWord:item.word, imageItem:item,
+    choices, categorias: choices
   };
 }
 function qOdd(){
-  const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.filter(v=>v.category===c).length >= 4);
+  const cats = catsComImagem();
   if(cats.length < 2) return null;
   const [catA, catB] = shuffle(cats);
-  const intru = shuffle(VOCABULARY.filter(v => v.category === catB))[0];
-  const grupo = shuffle(VOCABULARY.filter(v => v.category === catA)).slice(0,3);
-  if(!intru || grupo.length < 3) return null;
-  return {type:"odd",kind:"INTRUSO",prompt:`Três palavras são de «${catA.toLowerCase()}». Qual NÃO pertence?`,hint:"Escolha a de outra categoria.",target:intru.word,choices:shuffle([...grupo.map(x=>x.word),intru.word])};
+  const intruso = shuffle(VOCABULARY.filter(v => v.category === catB))[0];
+  const grupo   = shuffle(VOCABULARY.filter(v => v.category === catA)).slice(0,3);
+  if(!intruso || grupo.length < 3) return null;
+  return {
+    type:"odd", kind:"INTRUSO",
+    prompt:`Três palavras são de «${catA.toLowerCase()}». Qual NÃO pertence?`,
+    hint:"Escolha a de outra categoria.",
+    target:intruso.word,
+    choices:shuffle([...grupo.map(x=>x.word), intruso.word])
+  };
 }
 function qGap(){
   const item = shuffle(FRASES_POSPOSICAO)[0];
-  return {type:"gap",kind:"POSPOSIÇÃO",prompt:"Complete a frase com a posposição correta:",hint:"As posposições vêm depois da palavra.",sentence:item.frase,target:item.resp,choices:shuffle([item.resp,...item.distratores])};
+  return {
+    type:"gap", kind:"POSPOSIÇÃO",
+    prompt:"Complete a frase com a posposição correta:",
+    hint:"As posposições vêm depois da palavra.",
+    sentence:item.frase, target:item.resp,
+    choices:shuffle([item.resp, ...item.distratores])
+  };
 }
 function qVerb(){
   const v = shuffle(VERBOS_IRREGULARES)[0];
   const i = Math.floor(Math.random()*v.conjugacoes.length);
   const certa = v.conjugacoes[i];
   const erradas = shuffle(VERBOS_IRREGULARES.filter(x=>x.base!==v.base).map(x=>x.conjugacoes[Math.floor(Math.random()*x.conjugacoes.length)])).slice(0,3);
-  return {type:"verb",kind:"VERBO IRREGULAR",prompt:`Como se conjuga «${v.pessoa[i]}» do verbo ${v.base.toUpperCase()}?`,hint:"Verbos irregulares (vol. 2, p.29).",target:certa,targetBase:v.base,choices:shuffle([certa,...erradas])};
+  return {
+    type:"verb", kind:"VERBO IRREGULAR",
+    prompt:`Como se conjuga «${v.pessoa[i]}» do verbo ${v.base.toUpperCase()}?`,
+    hint:"Verbos irregulares (vol. 2, p.29).",
+    target:certa, targetBase:v.base,
+    choices:shuffle([certa, ...erradas])
+  };
 }
 function qChooseVerb(){
   const v = shuffle(VERBOS_REGULARES)[0];
   const i = Math.floor(Math.random()*v.conjug.length);
   const certa = v.conjug[i];
   const opcoes = [certa, ...VERBOS_REGULARES.filter(x=>x.base!==v.base).map(x=>x.conjug[Math.floor(Math.random()*x.conjug.length)])];
-  return {type:"choose-verb",kind:"CONJUGAÇÃO",prompt:`Qual é a forma correta em «${["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"][i]}» para o verbo ${v.base.toUpperCase()}?`,hint:"Verbos da 1ª conjugação (vol. 1, p.39).",target:certa,targetBase:v.base,choices:shuffle(opcoes).slice(0,4)};
+  return {
+    type:"choose-verb", kind:"CONJUGAÇÃO",
+    prompt:`Qual é a forma correta em «${["eu","você","ele/ela","nós (incl.)","nós (excl.)","vocês"][i]}» para o verbo ${v.base.toUpperCase()}?`,
+    hint:"Verbos da 1ª conjugação (vol. 1, p.39).",
+    target:certa, targetBase:v.base,
+    choices:shuffle(opcoes).slice(0,4)
+  };
 }
 function qAdv(){
   const grupo = shuffle(CLASSES_ADV)[0];
   const p = shuffle(grupo.exemplos)[0];
-  return {type:"adv",kind:"ADVÉRBIO",prompt:`O advérbio «${p}» pertence a qual classe?`,hint:"Classes de advérbios (vol. 2, p.10).",target:grupo.classe,targetWord:p,choices:shuffle(CLASSES_ADV.map(c=>c.classe))};
+  return {
+    type:"adv", kind:"ADVÉRBIO",
+    prompt:`O advérbio «${p}» pertence a qual classe?`,
+    hint:"Classes de advérbios (vol. 2, p.10).",
+    target:grupo.classe, targetWord:p,
+    choices:shuffle(CLASSES_ADV.map(c=>c.classe))
+  };
 }
 function qInterrog(){
   const item = shuffle(INTERROGATIVAS)[0];
   const distr = shuffle(INTERROGATIVAS.filter(x=>x.palavra!==item.palavra)).slice(0,2).map(x=>x.significado);
-  return {type:"interrog",kind:"PALAVRA INTERROGATIVA",prompt:"Qual significado corresponde a esta palavra interrogativa?",hint:"Fazendo Perguntas (vol. 2, p.43).",target:item.significado,targetWord:item.palavra,choices:shuffle([item.significado,...distr])};
+  return {
+    type:"interrog", kind:"PALAVRA INTERROGATIVA",
+    prompt:"Qual significado corresponde a esta palavra interrogativa?",
+    hint:"Fazendo Perguntas (vol. 2, p.43).",
+    target:item.significado, targetWord:item.palavra,
+    choices:shuffle([item.significado,...distr])
+  };
 }
 function qPictureSort(){
-  const cats = CATS_BASE.filter(c => c !== "PARENTESCO" && VOCABULARY.filter(v=>v.category===c && v.file).length >= 1);
+  const cats = catsComImagem();
   if(cats.length < 3) return null;
   const [cA, cB, cC] = shuffle(cats).slice(0,3);
   const iA = shuffle(VOCABULARY.filter(v=>v.category===cA && v.file))[0];
@@ -881,44 +972,67 @@ function qPictureSort(){
   const iC = shuffle(VOCABULARY.filter(v=>v.category===cC && v.file))[0];
   if(!iA || !iB || !iC) return null;
   const alvo = shuffle([iA,iB,iC])[0];
-  return {type:"picture-sort",kind:"QUAL É ESTA PALAVRA?",prompt:`Qual figura corresponde a «${alvo.word}»?`,hint:"Três imagens — escolha a da palavra.",target:alvo.word,targetItem:alvo,items:[iA,iB,iC]};
+  return {
+    type:"picture-sort", kind:"QUAL É ESTA PALAVRA?",
+    prompt:`Qual figura corresponde a «${alvo.word}»?`,
+    hint:"Três imagens — escolha a da palavra.",
+    target:alvo.word, targetItem:alvo,
+    items:[iA,iB,iC]
+  };
 }
 function qGreeting(){
   const item = shuffle(FRASES_COTIDIANO)[0];
-  return {type:"greeting",kind:"FRASE DO COTIDIANO",prompt:`O que significa «${item.word}»?`,hint:"Frases do dia a dia (vol. 2, p.7).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,FRASES_COTIDIANO,4)};
+  return {
+    type:"greeting", kind:"FRASE DO COTIDIANO",
+    prompt:`O que significa «${item.word}»?`,
+    hint:"Frases do dia a dia (vol. 2, p.7).",
+    target:item.meaning, targetWord:item.word,
+    choices:pickMeanings(item, FRASES_COTIDIANO, 4)
+  };
 }
 function qCardinal(){
   const item = shuffle(CARDINAIS)[0];
-  return {type:"cardinal",kind:"PONTO CARDEAL",prompt:"Este ponto cardeal corresponde a qual direção?",hint:"Vol. 2, p.17.",target:item.meaning,targetWord:item.word,choices:shuffle(CARDINAIS.map(c=>c.meaning))};
+  return {
+    type:"cardinal", kind:"PONTO CARDEAL",
+    prompt:"Este ponto cardeal corresponde a qual direção?",
+    hint:"Vol. 2, p.17.",
+    target:item.meaning, targetWord:item.word,
+    choices:shuffle(CARDINAIS.map(c=>c.meaning))
+  };
 }
 function qMonthDay(){
   const isMes = Math.random() < 0.5;
   const arr = isMes ? MESES : DIAS;
   const item = shuffle(arr)[0];
-  return {type:isMes ? "month" : "day",kind:isMes ? "MÊS" : "DIA DA SEMANA",prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,hint:"Calendário Tupi (vol. 2, p.46).",target:item.meaning,targetWord:item.word,choices:pickMeanings(item,arr,4)};
+  return {
+    type:isMes ? "month" : "day",
+    kind:isMes ? "MÊS" : "DIA DA SEMANA",
+    prompt:`«${item.word}» corresponde a qual ${isMes ? "mês" : "dia da semana"}?`,
+    hint:"Calendário Tupi (vol. 2, p.46).",
+    target:item.meaning, targetWord:item.word,
+    choices:pickMeanings(item, arr, 4)
+  };
 }
 
 let _filaParentesco = [];
 let _faseFilaParentesco = 0;
 function _resetarFilaParentesco(){
-  _filaParentesco = shuffle(PARENTESCO.slice());
+  _filaParentesco = shuffle(PARENTESCO_IMG.slice());
 }
 function qParentesco(fase){
-  if(PARENTESCO.length < 4) return null;
+  if(PARENTESCO_IMG.length < 4) return null;
   if(_faseFilaParentesco !== fase){
     _faseFilaParentesco = fase;
     _resetarFilaParentesco();
   }
   if(_filaParentesco.length === 0) _resetarFilaParentesco();
   const item = _filaParentesco.shift();
-  const outros = shuffle(
-    PARENTESCO.filter(x => x.meaning !== item.meaning)
-  ).slice(0, 3);
+  const outros = shuffle(PARENTESCO_IMG.filter(x => x.meaning !== item.meaning)).slice(0, 3);
   return {
-    type:"parentesco",kind:"PARENTESCO",
+    type:"parentesco", kind:"PARENTESCO",
     prompt:"O que significa esta palavra em português?",
     hint:"Termo de parentesco (vol. 2, p.35).",
-    target:item.meaning,targetWord:item.word,audioItem:item,
+    target:item.meaning, targetWord:item.word, audioItem:item,
     choices:shuffle([item.meaning, ...outros.map(x => x.meaning)])
   };
 }
@@ -929,7 +1043,7 @@ function qOrder(fase){
   if(viaveis.length === 0) return null;
   const base = shuffle(viaveis)[0];
   return {
-    type:"order",kind:"ORDENE A FRASE",
+    type:"order", kind:"ORDENE A FRASE",
     prompt:"Ordene as palavras para formar a frase correta:",
     hint:"Toque nas palavras na ordem certa. Sujeito + complemento + verbo.",
     target: base.tokens.join("|"),
@@ -942,11 +1056,86 @@ function qOrder(fase){
 function qMatch(){
   const selecionados = shuffle(PARES_LIGAR).slice(0, 4);
   return {
-    type:"match",kind:"LIGUE AS PALAVRAS",
+    type:"match", kind:"LIGUE AS PALAVRAS",
     prompt:"Ligue cada palavra Tupi ao seu significado:",
     hint:"Toque num item da esquerda e depois no seu correspondente da direita.",
     pairs: selecionados,
     target: selecionados.map(p=>p.a+"="+p.b).join("|")
+  };
+}
+
+/* ✱ §8.4 NOVOS GERADORES textuais (sem imagem) — SAUDAÇÕES e ADVÉRBIOS */
+
+/* SAUDAÇÕES → tradução PT → Tupi (usa FRASES_COTIDIANO, sem PNG) */
+function qGreetingTupi(){
+  const item = shuffle(FRASES_COTIDIANO)[0];
+  const distr = shuffle(FRASES_COTIDIANO.filter(x=>x.word!==item.word)).slice(0,2).map(x=>x.word);
+  return {
+    type:"greeting-rev", kind:"SAUDAÇÃO EM TUPI",
+    prompt:`Como se diz «${item.meaning}» em Tupi?`,
+    hint:"Frases do cotidiano (vol. 2, p.7).",
+    target:item.word, targetMeaning:item.meaning,
+    choices:shuffle([item.word, ...distr])
+  };
+}
+
+/* SAUDAÇÕES do VOCABULARY (ARY PORÃ, KA'ARU PORÃ…) → significado */
+function qSaudacaoVocab(){
+  const pool = VOCABULARY.filter(v => v.category === "SAUDAÇÕES");
+  if(pool.length < 3) return null;
+  const item = shuffle(pool)[0];
+  const distr = shuffle(pool.filter(x=>x.meaning!==item.meaning)).slice(0,2).map(x=>x.meaning);
+  return {
+    type:"saudacao", kind:"SAUDAÇÃO",
+    prompt:`«${item.word}» significa:`,
+    hint:"Cumprimentos em Tupi.",
+    target:item.meaning, targetWord:item.word, audioItem:item,
+    choices:shuffle([item.meaning, ...distr])
+  };
+}
+
+/* ADVÉRBIOS → Tupi → tradução */
+function qAdvMeaning(){
+  const pool = VOCABULARY.filter(v => v.category === "ADVÉRBIOS");
+  if(pool.length < 3) return null;
+  const item = shuffle(pool)[0];
+  const distr = shuffle(pool.filter(x=>x.meaning!==item.meaning)).slice(0,2).map(x=>x.meaning);
+  return {
+    type:"adv-meaning", kind:"ADVÉRBIO",
+    prompt:`O que significa «${item.word}»?`,
+    hint:"Advérbios (vol. 2, p.10).",
+    target:item.meaning, targetWord:item.word, audioItem:item,
+    choices:shuffle([item.meaning, ...distr])
+  };
+}
+
+/* ADVÉRBIOS → tradução → Tupi */
+function qAdvReverse(){
+  const pool = VOCABULARY.filter(v => v.category === "ADVÉRBIOS");
+  if(pool.length < 3) return null;
+  const item = shuffle(pool)[0];
+  const distr = shuffle(pool.filter(x=>x.word!==item.word)).slice(0,2).map(x=>x.word);
+  return {
+    type:"adv-reverse", kind:"ADVÉRBIO EM TUPI",
+    prompt:`Como se diz «${item.meaning}» em Tupi?`,
+    hint:"Escolha a palavra correta.",
+    target:item.word, targetMeaning:item.meaning,
+    choices:shuffle([item.word, ...distr])
+  };
+}
+
+/* POSPOSIÇÃO / LIGAR curto — usa PARES_LIGAR, textual */
+function qPossPost(){
+  const pool = PARES_LIGAR.filter(p => p.a.startsWith("-"));
+  const item = shuffle(pool)[0];
+  if(!item) return null;
+  const distr = shuffle(pool.filter(x => x.b !== item.b)).slice(0,2).map(x=>x.b);
+  return {
+    type:"poss-post", kind:"POSPOSIÇÃO",
+    prompt:`Qual é o significado da posposição «${item.a}»?`,
+    hint:"Posposições Tupi (vol. 2, p.19).",
+    target:item.b, targetWord:item.a,
+    choices:shuffle([item.b, ...distr])
   };
 }
 
@@ -956,32 +1145,53 @@ const GERADORES_SIMPLES = {
   gap:qGap, verb:qVerb, "choose-verb":qChooseVerb, adv:qAdv,
   interrog:qInterrog, "picture-sort":qPictureSort, greeting:qGreeting,
   cardinal:qCardinal, "month-day":qMonthDay, parentesco:qParentesco,
-  order:qOrder, match:qMatch
+  order:qOrder, match:qMatch,
+  /* ✱ novos */
+  "greeting-rev":qGreetingTupi,
+  saudacao:qSaudacaoVocab,
+  "adv-meaning":qAdvMeaning,
+  "adv-reverse":qAdvReverse,
+  "poss-post":qPossPost
 };
 
 /* ---------- §9 MONTAGEM DA FASE ---------- */
+/* ✱ Distribuição revisada: SAUDAÇÕES e ADVÉRBIOS entram já na fase 3 em
+   questões textuais; visuais continuam neutras. Total = 30 por fase.      */
 const FASES_DISTRIBUICAO = {
   1:{word:12, number:5, count:6, category:4, "picture-sort":3},
   2:{word:8, number:3, count:4, category:3, "picture-sort":3, meaning:4, audio:3, order:2},
-  3:{word:6, meaning:5, reverse:4, audio:3, count:3, category:2, "picture-sort":3, order:2, match:2},
-  4:{meaning:4, reverse:4, audio:3, gap:3, cardinal:2, count:2, word:3, odd:3, parentesco:2, order:2, match:2},
-  5:{meaning:4, reverse:4, odd:3, gap:4, "picture-sort":3, count:2, audio:2, category:2, parentesco:2, order:1, match:1, search:2},
-  6:{meaning:3, reverse:3, audio:3, gap:4, verb:4, greeting:2, adv:3, "picture-sort":2, order:2, match:2, cross:1},
-  7:{meaning:3, reverse:3, audio:2, adv:3, gap:3, interrog:3, "month-day":3, "picture-sort":2, parentesco:2, order:2, match:2, search:2},
-  8:{meaning:3, reverse:3, adv:3, gap:3, "month-day":3, greeting:3, verb:3, "choose-verb":3, parentesco:2, order:2, cross:2, search:2},
-  9:{meaning:2, reverse:2, audio:2, adv:3, gap:3, interrog:3, verb:3, "choose-verb":3, cardinal:2, "month-day":2, order:2, match:2, cross:1, search:2}
+  3:{word:6, meaning:5, reverse:4, audio:3, count:3, category:2, "picture-sort":3,
+     order:2, match:1, saudacao:1},
+  4:{meaning:4, reverse:4, audio:3, gap:3, cardinal:2, count:2, word:3, odd:3,
+     parentesco:2, order:2, match:2, "greeting-rev":1, "adv-meaning":2},
+  5:{meaning:4, reverse:4, odd:3, gap:4, "picture-sort":3, count:2, audio:2, category:2,
+     parentesco:2, order:1, match:1, search:2, saudacao:1, "adv-meaning":1},
+  6:{meaning:3, reverse:3, audio:3, gap:4, verb:4, greeting:2, adv:3, "picture-sort":2,
+     order:2, match:2, cross:1, "greeting-rev":1},
+  7:{meaning:3, reverse:3, audio:2, adv:3, gap:3, interrog:3, "month-day":3, "picture-sort":2,
+     parentesco:2, order:2, match:2, search:2, "adv-reverse":1},
+  8:{meaning:3, reverse:3, adv:3, gap:3, "month-day":3, greeting:3, verb:3, "choose-verb":3,
+     parentesco:2, order:2, cross:2, search:2, "poss-post":1},
+  9:{meaning:2, reverse:2, audio:2, adv:3, gap:3, interrog:3, verb:3, "choose-verb":3,
+     cardinal:2, "month-day":2, order:2, match:2, cross:1, search:2, "adv-reverse":1, "poss-post":1}
 };
 
 const NIVEIS_FASE = {
   1:["word","number","count","category","picture-sort"],
   2:["word","number","count","category","picture-sort","meaning","audio","order"],
-  3:["word","meaning","reverse","audio","count","category","picture-sort","order","match"],
-  4:["meaning","reverse","audio","gap","cardinal","count","word","odd","parentesco","order","match"],
-  5:["meaning","reverse","odd","gap","picture-sort","count","audio","category","parentesco","order","match","search"],
-  6:["meaning","reverse","audio","gap","verb","greeting","adv","picture-sort","order","match","cross"],
-  7:["meaning","reverse","audio","adv","gap","interrog","month","day","picture-sort","parentesco","order","match","search"],
-  8:["meaning","reverse","adv","gap","month","day","greeting","verb","choose-verb","parentesco","order","cross","search"],
-  9:["meaning","reverse","audio","adv","gap","interrog","verb","choose-verb","cardinal","month","day","order","match","cross","search"]
+  3:["word","meaning","reverse","audio","count","category","picture-sort","order","match","saudacao"],
+  4:["meaning","reverse","audio","gap","cardinal","count","word","odd","parentesco","order","match",
+     "greeting-rev","adv-meaning"],
+  5:["meaning","reverse","odd","gap","picture-sort","count","audio","category","parentesco",
+     "order","match","search","saudacao","adv-meaning"],
+  6:["meaning","reverse","audio","gap","verb","greeting","adv","picture-sort","order","match","cross",
+     "greeting-rev"],
+  7:["meaning","reverse","audio","adv","gap","interrog","month","day","picture-sort","parentesco",
+     "order","match","search","adv-reverse"],
+  8:["meaning","reverse","adv","gap","month","day","greeting","verb","choose-verb","parentesco",
+     "order","cross","search","poss-post"],
+  9:["meaning","reverse","audio","adv","gap","interrog","verb","choose-verb","cardinal","month",
+     "day","order","match","cross","search","adv-reverse","poss-post"]
 };
 
 function tipoPermitido(fase, tipo){
@@ -1008,6 +1218,16 @@ function montarFase(fase){
       }
       else if(GERADORES_SIMPLES[tipo]){
         q = GERADORES_SIMPLES[tipo](fase);
+      }
+      /* ✱ Guarda-final: qualquer questão que declare imagem precisa ter PNG */
+      if(q){
+        const VISUAIS = new Set(["word","count","category","picture-sort","parentesco"]);
+        if(VISUAIS.has(q.type)){
+          if(q.imageItem && !TEM_IMAGEM(q.imageItem)) q = null;
+          if(q.countItem && !TEM_IMAGEM(q.countItem)) q = null;
+          if(q.items && q.items.some(it => !TEM_IMAGEM(it))) q = null;
+          if(q.targetItem && !TEM_IMAGEM(q.targetItem)) q = null;
+        }
       }
       if(q) pool.push(q);
     }
@@ -1368,7 +1588,8 @@ function visual(q){
     trad.style.display = "none";
     box.append(trad);
   }
-  else if(["meaning","reverse","odd","adv","greeting","cardinal","month","day"].includes(q.type)){
+  else if(["meaning","reverse","odd","adv","greeting","cardinal","month","day",
+           "saudacao","adv-meaning","adv-reverse","greeting-rev","poss-post"].includes(q.type)){
     const card = document.createElement("div");
     card.className = "visual-card";
     const w = document.createElement("span");
@@ -1376,7 +1597,11 @@ function visual(q){
     if(q.type === "meaning") w.textContent = q.targetWord || q.target;
     else if(q.type === "reverse") w.textContent = q.targetMeaning || q.target;
     else if(q.type === "adv") w.textContent = q.targetWord || "";
-    else if(q.type === "greeting" || q.type === "cardinal" || q.type === "month" || q.type === "day") w.textContent = q.targetWord || "";
+    else if(q.type === "greeting" || q.type === "cardinal" || q.type === "month" || q.type === "day")
+      w.textContent = q.targetWord || "";
+    else if(q.type === "saudacao" || q.type === "adv-meaning") w.textContent = q.targetWord || "";
+    else if(q.type === "adv-reverse" || q.type === "greeting-rev") w.textContent = q.targetMeaning || q.target || "";
+    else if(q.type === "poss-post") w.textContent = q.targetWord || "";
     else if(q.type === "odd") w.textContent = "🤔";
     const lab = document.createElement("span");
     lab.className = "visual-label";
